@@ -1,0 +1,115 @@
+<app-navbar></app-navbar>
+
+<main class="orders-container">
+  <div class="orders-inner">
+    <div class="orders-header">
+      <h1 class="orders-title">Mis Compras</h1>
+      <p class="orders-subtitle">Haz seguimiento al estado de tus pedidos recientes.</p>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-state">Cargando tus pedidos...</div>
+    } @else {
+      @if (orders().length === 0) {
+        <div class="empty-state">
+          <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+          <h3>Aún no has realizado ninguna compra</h3>
+          <button class="btn-primary" routerLink="/catalog">Ir al catálogo</button>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="orders-table">
+            <thead>
+            <tr>
+              <th>Nro. Pedido</th>
+              <th>Fecha de Compra</th>
+              <th>Total</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+            </thead>
+            <tbody>
+              @for (order of orders(); track order.id) {
+                <tr>
+                  <td class="font-mono font-bold">ORD-00{{ order.id }}</td>
+                  <td>{{ formatDate(order.fechaOrden) }}</td>
+                  <td class="font-bold text-blue">{{ formatPrice(order.total) }}</td>
+                  <td>
+                    <span class="status-badge" [ngClass]="{
+                      'status-pending': order.estado === 'PENDIENTE',
+                      'status-completed': order.estado === 'COMPLETADO',
+                      'status-cancelled': order.estado === 'CANCELADO'
+                    }">
+                      {{ order.estado }}
+                    </span>
+                  </td>
+                  <td>
+                    <!-- Reemplaza el botón actual de "Ver detalle" por este -->
+                    <button class="btn-secondary" (click)="openDetail(order)">Ver detalle</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </div>
+  <!-- Modal de Detalle de Orden -->
+  @if (selectedOrder()) {
+    <div class="modal-overlay" (click)="closeDetail()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+
+        <div class="modal-header">
+          <h2>Detalle del Pedido ORD-00{{ selectedOrder().id }}</h2>
+          <button class="close-btn" (click)="closeDetail()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <p><strong>Fecha:</strong> {{ formatDate(selectedOrder().fechaOrden) }}</p>
+          <p><strong>Estado:</strong>
+            <span class="status-badge" [ngClass]="{
+            'status-pending': selectedOrder().estado === 'PENDIENTE',
+            'status-completed': selectedOrder().estado === 'COMPLETADO'
+          }">
+            {{ selectedOrder().estado }}
+          </span>
+          </p>
+
+          <table class="details-table">
+            <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cant.</th>
+              <th>Precio Unit.</th>
+              <th>Subtotal</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- NOTA: Revisa que 'detalles' coincida con la lista de items que envía tu JSON de Spring Boot -->
+              @for (item of selectedOrder().detalles; track item.id) {
+                <tr>
+                  <td>{{ item.producto?.nombre || 'Producto no especificado' }}</td>
+                  <td>{{ item.cantidad }}</td>
+                  <td>{{ formatPrice(item.precioUnitario) }}</td>
+                  <td>{{ formatPrice(item.cantidad * item.precioUnitario) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+
+          <div class="modal-footer">
+            <h3 class="total-text">Total Pagado: {{ formatPrice(selectedOrder().total) }}</h3>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  }
+</main>
+
+<app-footer></app-footer>

@@ -1,0 +1,123 @@
+<div class="admin-form-container">
+  <div class="form-header">
+    <h2>{{ isEditMode ? 'Editar Producto' : 'Publicar Nuevo Producto' }}</h2>
+    <p>Ingresa los detalles para añadir un artículo al catálogo de FERREMAS.</p>
+  </div>
+
+  <form (ngSubmit)="guardarProducto()" #productForm="ngForm" class="admin-form">
+
+    <!-- Bloque 1: Información Principal -->
+    <div class="form-section">
+      <h3>1. Información Principal</h3>
+      <div class="input-group">
+        <label>Nombre del Producto</label>
+        <input type="text" name="nombre" [(ngModel)]="producto.nombre" required placeholder="Ej. Taladro Percutor 800W">
+      </div>
+
+      <div class="grid-2-cols">
+        <div class="input-group">
+          <label>Marca</label>
+          <input type="text" name="marca" [(ngModel)]="producto.marca" required placeholder="Ej. Bosch">
+        </div>
+        <div class="input-group">
+          <label>Categoría</label>
+          <select name="categoriaId" [(ngModel)]="producto.categoriaId" required>
+            <option [ngValue]="null" disabled>Selecciona una categoría...</option>
+            @for (cat of categorias; track cat.id) {
+              <option [value]="cat.id">{{ cat.nombre }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Descripción General</label>
+        <textarea name="descripcion" [(ngModel)]="producto.descripcion" rows="3" placeholder="Breve resumen del producto..."></textarea>
+      </div>
+    </div>
+
+    <!-- Bloque 2: Precios e Inventario -->
+    <div class="form-section">
+      <h3>2. Precio e Inventario</h3>
+      <div class="grid-2-cols">
+        <div class="input-group">
+          <label>Precio (S/)</label>
+          <input type="number" name="precio" [(ngModel)]="producto.precio" min="0" step="0.10" required>
+        </div>
+        <div class="input-group">
+          <label>Stock Inicial</label>
+          <input type="number" name="stock" [(ngModel)]="producto.stock" min="0" required>
+        </div>
+      </div>
+      <!-- Nueva Zona de Carga de Imagen -->
+      <div class="input-group image-upload-group">
+        <label>Fotografía del Producto</label>
+
+        <div class="file-upload-zone" [class.has-image]="imagePreview">
+          <input
+            type="file"
+            class="file-input-hidden"
+            accept="image/png, image/jpeg, image/webp"
+            (change)="onFileSelected($event)"
+          />
+
+          @if (!imagePreview) {
+            <div class="upload-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <span>Haz clic o arrastra una imagen aquí</span>
+              <span class="upload-hint">PNG, JPG o WEBP (Máx. 2MB)</span>
+            </div>
+          }
+
+          @if (imagePreview) {
+            <div class="preview-container">
+              <img [src]="imagePreview" alt="Vista previa del producto" class="img-preview" />
+              <button type="button" class="btn-change-img">Cambiar foto</button>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloque 3: Especificaciones Dinámicas (El corazón del diseño) -->
+    <div class="form-section specs-section">
+      <div class="specs-header">
+        <h3>3. Especificaciones Técnicas</h3>
+        <button type="button" class="btn-add-row" (click)="agregarFila()">+ Agregar fila</button>
+      </div>
+
+      <div class="specs-table">
+        <div class="specs-labels">
+          <label>PROPIEDAD</label>
+          <label>VALOR</label>
+        </div>
+
+        @for (espec of especificaciones; track $index) {
+          <div class="spec-row">
+            <input type="text" name="prop_{{$index}}" [(ngModel)]="espec.propiedad" placeholder="Ej. Potencia">
+            <input type="text" name="val_{{$index}}" [(ngModel)]="espec.valor" placeholder="Ej. 750 W">
+            <button type="button" class="btn-delete-row" (click)="eliminarFila($index)" title="Eliminar fila">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+              </svg>
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Acciones Finales -->
+    <div class="form-actions">
+      <label class="toggle-status">
+        <input type="checkbox" name="activo" [(ngModel)]="producto.activo">
+        <span>Publicar inmediatamente (Activo)</span>
+      </label>
+      <button type="submit" class="btn-submit-form" [disabled]="!productForm.valid">Guardar Producto</button>
+    </div>
+
+  </form>
+</div>

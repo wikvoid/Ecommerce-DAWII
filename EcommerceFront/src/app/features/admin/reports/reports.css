@@ -1,0 +1,270 @@
+.reports-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* KPIs */
+.metrics-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .metrics-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.metric-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.metric-info-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-micro-label {
+  font-family: 'font-semibold', monospace;
+  font-size: 0.90rem;
+  font-weight: 700;
+  color: #718096;
+  letter-spacing: 0.05em;
+}
+
+.metric-big-number {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #0f1c2e;
+  line-height: 1.1;
+  margin: 0.5rem 0 0.35rem 0;
+}
+
+.metric-sub-trend {
+  font-size: 0.8125rem;
+  margin: 0;
+}
+
+.text-trend-green {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.text-trend-muted {
+  color: #718096;
+}
+
+/* Badges */
+.metric-icon-badge {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.badge-green-light {
+  background-color: #ecfdf5;
+  color: #10b981;
+}
+
+.badge-blue-light {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.badge-gold-light {
+  background-color: #fffbeb;
+  color: #d97706;
+}
+
+/* Grid de Paneles */
+.reports-main-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 1024px) {
+  .reports-main-grid {
+    grid-template-columns: 1.2fr 1fr;
+  }
+}
+
+.report-panel-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header-simple {
+  margin-bottom: 1.5rem;
+}
+
+.panel-main-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f1c2e;
+  margin: 0;
+}
+
+.panel-sub-desc {
+  font-size: 0.8125rem;
+  color: #718096;
+  margin: 0.25rem 0 0 0;
+}
+
+/* Barras de Ventas por Categoría */
+.category-bars-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.category-bar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.category-data-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cat-name-label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0f1c2e;
+}
+
+.cat-amount-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f1c2e;
+}
+
+.progress-bar-track {
+  width: 100%;
+  height: 0.65rem;
+  background-color: #f1f5f9;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #10233d;
+  border-radius: 9999px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Reportes Descargables */
+.downloads-rows-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.download-row-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.15rem 0;
+  border-bottom: 1px solid #edf1f5;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.download-row-item:last-child {
+  border-bottom: none;
+}
+
+.download-row-item:hover .download-item-title {
+  color: #1a3a6b;
+}
+
+.download-row-item:hover .btn-download-icon {
+  color: #1a3a6b;
+  transform: translateY(2px);
+}
+
+.download-item-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #0f1c2e;
+  transition: color 0.2s;
+}
+
+.btn-download-icon {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+/* Toast */
+.reports-toast-pill {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #0f1c2e;
+  color: #ffffff;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+  animation: slideToastUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideToastUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.toast-check-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  background-color: #10b981;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 900;
+}

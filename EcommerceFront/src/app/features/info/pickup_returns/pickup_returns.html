@@ -1,0 +1,165 @@
+<app-navbar></app-navbar>
+
+<main class="delivery-page-container">
+  <section class="delivery-hero-banner">
+    <div class="delivery-hero-bg-layer">
+      <img
+        src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1600&h=400&fit=crop&auto=format"
+        alt="Fondo Obra"
+        class="delivery-hero-img"
+      />
+      <div class="delivery-hero-gradient"></div>
+    </div>
+
+    <div class="delivery-hero-content">
+      <button (click)="goBack()" class="btn-back-breadcrumb">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span>Volver</span>
+      </button>
+
+      <span class="hero-brand-subtitle">FERREMAS</span>
+      <h1 class="hero-page-title">Entrega y devoluciones</h1>
+      <p class="hero-page-tagline">
+        Retiro 100% gratuito en tienda física y política de cambios garantizada.
+      </p>
+    </div>
+  </section>
+
+  <!-- Contenido Central -->
+  <div class="delivery-body-wrapper">
+    <!-- Bloque 1: Modalidad de Entrega  -->
+    <section class="pickup-info-section">
+      <div class="section-badge-header">
+        <span class="badge-icon">🏬</span>
+        <span class="section-tag-gold">MODALIDAD DE ENTREGA</span>
+      </div>
+      <h2 class="section-main-title">Recojo gratuito en tienda</h2>
+
+      <!-- Banner Destacado Costo Cero -->
+      <div class="free-pickup-banner">
+        <span class="banner-emoji">🎉</span>
+        <p class="banner-text">
+          <strong>Costo de entrega S/0.00:</strong> Todos los pedidos online están listos para
+          recojo en mostrador sin cargos adicionales de envío.
+        </p>
+      </div>
+
+      <!-- Pasos para el recojo -->
+      <div class="pickup-steps-grid">
+        @for (step of pickupSteps; track step) {
+          <div class="pickup-step-card">
+            <div class="pickup-step-number">{{ step.n }}</div>
+            <h3 class="pickup-step-title">{{ step.title }}</h3>
+            <p class="pickup-step-desc">{{ step.desc }}</p>
+          </div>
+        }
+      </div>
+
+      <!-- Requisitos para retirar -->
+      <div class="requirements-box">
+        <h4 class="requirements-heading">📋 ¿Qué necesitás para retirar tu compra?</h4>
+        <ul class="requirements-list">
+          <li><strong>DNI o documento de identidad:</strong> Del titular de la compra.</li>
+          <li>
+            <strong>Número o comprobante de orden:</strong> Te llega por correo al finalizar el
+            pago.
+          </li>
+          <li>
+            <strong>Tercera persona autorizada:</strong> Si no podés venir vos, indicalo en la nota
+            de pedido o envianos copia de su DNI.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Bloque 2: Ubicación y Horarios de Atención -->
+    <section class="store-details-section">
+      <div class="section-badge-header">
+        <span class="badge-icon">📍</span>
+        <span class="section-tag-gold">LOCAL PRINCIPAL</span>
+      </div>
+      <h2 class="section-main-title">Dónde y cuándo retirar</h2>
+
+      <div class="store-cards-grid">
+        <div class="store-info-card">
+          <div class="store-card-icon">📍</div>
+          <h3 class="store-card-title">Dirección de la tienda</h3>
+          <p class="store-card-text">
+            Av. Corrientes 1234, Almagro<br />
+            Buenos Aires, Argentina<br />
+            (Frente a estación de subte, fácil estacionamiento)
+          </p>
+        </div>
+
+        <div class="store-info-card">
+          <div class="store-card-icon">🕐</div>
+          <h3 class="store-card-title">Horarios de atención</h3>
+          <p class="store-card-text">
+            <strong>Lunes a viernes:</strong> 8:00 a.m. – 7:00 p.m.<br />
+            <strong>Sábados:</strong> 8:00 a.m. – 1:00 p.m.<br />
+            <strong>Domingos y feriados:</strong> Cerrado
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bloque 3: Devoluciones y Garantía -->
+    <section class="returns-policy-section">
+      <div class="section-badge-header">
+        <span class="badge-icon">↩️</span>
+        <span class="section-tag-gold">CAMBIOS Y GARANTÍAS</span>
+      </div>
+      <h2 class="section-main-title">30 días para cambios y devoluciones</h2>
+
+      <div class="returns-grid">
+        @for (r of returnPolicies; track r) {
+          <div class="return-card">
+            <div class="return-card-icon">{{ r.icon }}</div>
+            <h3 class="return-card-title">{{ r.title }}</h3>
+            <p class="return-card-desc">{{ r.desc }}</p>
+          </div>
+        }
+      </div>
+
+      <!-- Ayuda para tramitar devoluciones -->
+      <div class="returns-help-card">
+        <div class="returns-help-info">
+          <h4 class="help-heading">¿Necesitás iniciar un cambio o solicitar garantía?</h4>
+          <p class="help-desc">
+            Podés acercarte directamente con el producto y comprobante a nuestra tienda o
+            escribirnos a <strong>devoluciones&#64;ferremas.com.ar</strong> con tu número de pedido.
+          </p>
+        </div>
+        <a href="tel:+541145238800" class="btn-help-phone"> 📞 (011) 4523-8800 </a>
+      </div>
+    </section>
+
+    <!-- Botón  -->
+    <div class="bottom-action-container">
+      <button (click)="goCatalog()" class="btn-cta-catalog">
+        <span>Ir al catálogo de productos</span>
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>

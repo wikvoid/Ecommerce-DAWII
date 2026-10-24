@@ -1,0 +1,327 @@
+<app-navbar></app-navbar>
+
+<main class="catalog-page-container">
+  <!-- Cabecera del Catálogo -->
+  <div class="catalog-header-bar">
+    <div>
+      <h1 class="catalog-title">{{ selectedCategory ?? 'Catálogo completo' }}</h1>
+      <p class="catalog-counter">{{ filteredProducts.length }} productos encontrados</p>
+    </div>
+
+    <div class="top-controls-group">
+      <div class="view-toggle-box">
+        <button
+          type="button"
+          (click)="viewMode = 'grid'"
+          [class.active-view]="viewMode === 'grid'"
+          class="btn-toggle-view"
+          title="Vista Cuadrícula"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <rect x="0" y="0" width="7" height="7" rx="1"></rect>
+            <rect x="9" y="0" width="7" height="7" rx="1"></rect>
+            <rect x="0" y="9" width="7" height="7" rx="1"></rect>
+            <rect x="9" y="9" width="7" height="7" rx="1"></rect>
+          </svg>
+        </button>
+        <button
+          type="button"
+          (click)="viewMode = 'list'"
+          [class.active-view]="viewMode === 'list'"
+          class="btn-toggle-view"
+          title="Vista Lista"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="0" y1="4" x2="16" y2="4"></line>
+            <line x1="0" y1="8" x2="16" y2="8"></line>
+            <line x1="0" y1="12" x2="16" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+
+      <select [(ngModel)]="sortBy" class="sort-select">
+        <option value="relevance">Relevancia</option>
+        <option value="price-asc">Precio: menor a mayor</option>
+        <option value="price-desc">Precio: mayor a menor</option>
+        <option value="rating">Mejor calificados</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Buscador en Catálogo -->
+  <div class="catalog-search-wrapper">
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      placeholder="Buscar en este catálogo…"
+      class="catalog-search-input"
+    />
+    <svg
+      class="search-lens-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="M21 21l-4.35-4.35"></path>
+    </svg>
+  </div>
+
+  <!-- Etiquetas de Filtros Activos -->
+  @if (selectedCategory || selectedSubcat || selectedBrand || onlyStock || maxPrice < 200000) {
+    <div class="active-pills-row">
+      @if (selectedCategory) {
+        <span class="filter-pill">
+          {{ selectedCategory }}
+          <button (click)="selectCategory(null)" class="pill-remove-btn">✕</button>
+        </span>
+      }
+      <!-- Subcategoría -->
+      @if (selectedSubcat) {
+        <span class="filter-pill pill-yellow">
+          {{ selectedSubcat }}
+          <button (click)="removeSubcat()" class="pill-remove-btn">✕</button>
+        </span>
+      }
+      @if (selectedBrand) {
+        <span class="filter-pill">
+          {{ selectedBrand }}
+          <button (click)="selectedBrand = null" class="pill-remove-btn">✕</button>
+        </span>
+      }
+      @if (maxPrice < 200000) {
+        <span class="filter-pill pill-yellow">
+          Hasta {{ formatPrice(maxPrice) }}
+          <button (click)="maxPrice = 200000" class="pill-remove-btn">✕</button>
+        </span>
+      }
+      @if (onlyStock) {
+        <span class="filter-pill pill-green">
+          Con stock
+          <button (click)="onlyStock = false" class="pill-remove-btn">✕</button>
+        </span>
+      }
+    </div>
+  }
+
+  <!-- Layout Principal -->
+  <div class="catalog-layout">
+    <!-- Barra Lateral de Filtros -->
+    <aside class="filters-sidebar">
+      <div class="filter-group">
+        <h3 class="filter-title">CATEGORÍA</h3>
+        <div class="categories-list">
+          <button
+            type="button"
+            (click)="selectCategory(null)"
+            [class.cat-active]="!selectedCategory"
+            class="cat-filter-btn"
+          >
+            Todas las categorías
+          </button>
+          @for (cat of categories; track cat) {
+            <button
+              type="button"
+              (click)="selectCategory(cat)"
+              [class.cat-active]="selectedCategory === cat"
+              class="cat-filter-btn cat-with-count"
+            >
+              <span>{{ cat }}</span>
+              <span class="cat-count-badge">{{ getCategoryCount(cat) }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <h3 class="filter-title">MARCA</h3>
+        <div class="brands-checkbox-list">
+          @for (b of brands; track b) {
+            <label class="brand-checkbox-item">
+              <input
+                type="checkbox"
+                [checked]="selectedBrand === b"
+                (change)="toggleBrand(b)"
+                class="brand-check-input"
+              />
+              <span class="brand-check-label">{{ b }}</span>
+            </label>
+          }
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <h3 class="filter-title">PRECIO</h3>
+        <input
+          type="range"
+          min="0"
+          max="200000"
+          step="1000"
+          [(ngModel)]="maxPrice"
+          class="price-range-slider"
+        />
+        <div class="price-slider-labels">
+          <span>S/0</span>
+          <span class="max-price-val">{{ formatPrice(maxPrice) }}</span>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label class="stock-check-box">
+          <input type="checkbox" [(ngModel)]="onlyStock" class="stock-input" />
+          <span class="stock-text">Solo con stock</span>
+        </label>
+      </div>
+
+      <button (click)="clearFilters()" class="btn-clear-filters">✕ Limpiar filtros</button>
+    </aside>
+
+    <!-- Listado de Productos -->
+    <section class="products-container">
+
+      <!-- 1. PANTALLA DE CARGA (Se muestra mientras isLoading sea true) -->
+      @if (isLoading) {
+        <div class="loading-state-card">
+          <div class="spinner"></div>
+          <h3 class="loading-title">Cargando catálogo...</h3>
+          <p class="loading-desc">Buscando los mejores productos para ti.</p>
+        </div>
+      }
+
+      <!-- 2. SIN RESULTADOS (Solo se muestra si ya cargó Y no hay productos) -->
+      @if (!isLoading && filteredProducts.length === 0) {
+        <div class="no-results-card">
+          <div class="no-results-icon">🔍</div>
+          <h3 class="no-results-title">Sin resultados</h3>
+          <p class="no-results-desc">Probá con otros filtros o términos de búsqueda.</p>
+          <button (click)="clearFilters()" class="btn-reset-search">Restablecer filtros</button>
+        </div>
+      }
+
+      <!-- 3. VISTA GRID (Solo se muestra si ya cargó, hay productos y estamos en modo grid) -->
+      @if (!isLoading && viewMode === 'grid' && filteredProducts.length > 0) {
+        <div class="catalog-grid">
+          @for (p of paginatedProducts; track p.id) {
+            <div class="catalog-card">
+              <div class="card-img-wrapper" (click)="goToDetail(p.id)">
+                <img [src]="p.img" alt="" />
+                @if (p.badge && p.stock) {
+                  <span
+                    class="card-badge"
+                    [class.badge-offer]="p.badge === 'OFERTA' || p.badge.startsWith('-')"
+                  >
+                    {{ p.badge }}
+                  </span>
+                }
+                @if (!p.stock) {
+                  <div class="card-out-overlay">
+                    <span class="card-out-tag">SIN STOCK</span>
+                  </div>
+                }
+                <button
+                  type="button"
+                  (click)="goToDetail(p.id); $event.stopPropagation()"
+                  class="btn-card-floating"
+                >
+                  Ver detalle
+                </button>
+              </div>
+              <div class="card-info">
+                <span class="card-brand">{{ p.brand }}</span>
+                <h4 class="card-name" (click)="goToDetail(p.id)">{{ p.name }}</h4>
+                <div class="card-rating-row">
+                  <span class="stars-gold">★★★★★</span>
+                  <span class="reviews-count">({{ p.reviews }})</span>
+                </div>
+                <div class="card-price-row">
+                  <span class="card-price">{{ formatPrice(p.price) }}</span>
+                  @if (p.oldPrice) {
+                    <span class="card-old-price">{{ formatPrice(p.oldPrice) }}</span>
+                  }
+                </div>
+                <button
+                  (click)="cartService.addToCart(p)"
+                  [disabled]="!p.stock"
+                  [ngClass]="p.stock ? 'btn-add-cart' : 'btn-disabled'"
+                >
+                  <svg
+                    class="cart-icon-btn"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 01-8 0"></path>
+                  </svg>
+                  <span>{{ p.stock ? 'Agregar al carrito' : 'Sin stock' }}</span>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- 4. VISTA LISTA -->
+      @if (!isLoading && viewMode === 'list' && filteredProducts.length > 0) {
+        <div class="catalog-list">
+          @for (p of paginatedProducts; track p.id) {
+            <div class="catalog-list-row">
+              <div class="list-img-box" (click)="goToDetail(p.id)">
+                <!-- CORREGIDO AQUÍ: Elimina la llamada falsa a unsplash -->
+                <img
+                  [src]="p.img"
+                  [alt]="p.name"
+                />
+              </div>
+              <div class="list-details">
+                <span class="card-brand">{{ p.brand }}</span>
+                <h3 class="list-name" (click)="goToDetail(p.id)">{{ p.name }}</h3>
+                <div class="card-rating-row">
+                  <span class="stars-gold">★★★★★</span>
+                  <span class="reviews-count">({{ p.reviews }})</span>
+                  @if (p.badge) {
+                    <span class="list-badge">{{ p.badge }}</span>
+                  }
+                </div>
+                <p class="list-description">{{ p.description }}</p>
+              </div>
+              <div class="list-actions-col">
+                <div class="card-price">{{ formatPrice(p.price) }}</div>
+                @if (p.oldPrice) {
+                  <div class="card-old-price">{{ formatPrice(p.oldPrice) }}</div>
+                }
+                <div class="list-btns-group">
+                  <button (click)="goToDetail(p.id)" class="btn-list-view">Ver más</button>
+                  <button
+                    (click)="cartService.addToCart(p)"
+                    [disabled]="!p.stock"
+                    [ngClass]="p.stock ? 'btn-list-add' : 'btn-disabled'"
+                  >
+                    {{ p.stock ? 'Agregar' : 'Sin stock' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+      <app-pagination
+        [currentPage]="currentPage"
+        [totalPages]="totalPages"
+        (pageChange)="goToPage($event)"
+      ></app-pagination>
+    </section>
+  </div>
+</main>
+
+<app-footer></app-footer>

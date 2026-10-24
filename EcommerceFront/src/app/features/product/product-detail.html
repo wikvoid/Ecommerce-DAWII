@@ -1,0 +1,138 @@
+<app-navbar></app-navbar>
+
+@if (product()) {
+  <main class="product-page-container">
+    <nav class="breadcrumb-nav">
+      <button (click)="goBack()" class="breadcrumb-link">Inicio</button>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-link">{{ product().category }}</span>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-current">{{ product().name }}</span>
+    </nav>
+    <div class="product-main-grid">
+      <div class="gallery-col">
+        <div class="main-image-wrapper">
+          <img
+            [src]="product().imgs[selectedImageIndex()]"
+            [alt]="product().name"
+            class="main-product-img"
+          />
+          @if (product().badge) {
+            <span class="badge-corner" [class.badge-red]="product().discountPercent > 0">
+              {{ product().badge }}
+            </span>
+          }
+          @if (!product().stock) {
+            <div class="out-of-stock-overlay">
+              <span class="out-of-stock-label">SIN STOCK</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="info-col">
+        <div class="meta-row">
+          <span class="brand-tag">{{ product().brand }}</span>
+          <span class="meta-dot">·</span>
+          <span class="sku-tag">SKU: {{ product().sku }}</span>
+          @if (product().badge) {
+            <span class="badge-pill">{{ product().badge }}</span>
+          }
+        </div>
+        <h1 class="product-title">{{ product().name }}</h1>
+        <div class="rating-stock-row">
+          <div class="stars-box">
+            <span class="star-icon">★★★★★</span>
+            <span class="rating-number">{{ product().rating }}</span>
+          </div>
+          <span class="stock-pill" [class.stock-out]="!product().stock">
+            {{ product().stock ? '✓ EN STOCK' : '✕ SIN STOCK' }}
+          </span>
+        </div>
+        <div class="price-box">
+          <div class="price-row">
+            <span class="current-price">{{ formatPrice(product().price) }}</span>
+          </div>
+          <p class="pickup-text">✓ Recojo gratis disponible en tienda</p>
+          <p class="installments-text">Hasta 3 cuotas sin interés con tarjetas seleccionadas</p>
+        </div>
+        <div class="quantity-section">
+          <span class="qty-label">CANTIDAD:</span>
+          <div class="qty-selector">
+            <button (click)="decreaseQty()" class="qty-btn" [disabled]="!product().stock">−</button>
+            <span class="qty-display">{{ quantity() }}</span>
+            <button (click)="increaseQty()" class="qty-btn" [disabled]="!product().stock">+</button>
+          </div>
+        </div>
+        <div class="actions-row">
+          <button
+            (click)="addToCart()"
+            [disabled]="!product().stock"
+            [class.btn-disabled]="!product().stock"
+            class="btn-add-main"
+          >
+            <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 01-8 0"></path>
+            </svg>
+            <span>{{ product().stock ? 'Agregar al carrito' : 'Sin stock' }}</span>
+          </button>
+        </div>
+        @if (product().includes.length > 0) {
+          <div class="includes-card">
+            <p class="includes-title">📦 Incluye en la caja:</p>
+            <ul class="includes-list">
+              @for (item of product().includes; track item) {
+                <li>
+                  <span class="bullet-dot"></span>
+                  <span>{{ item }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
+    </div>
+
+    <section class="tabs-section">
+      <div class="tabs-header">
+        <button
+          (click)="activeTab.set('desc')"
+          [class.tab-selected]="activeTab() === 'desc'"
+          class="tab-nav-btn"
+        >
+          Descripción
+        </button>
+        <button
+          (click)="activeTab.set('specs')"
+          [class.tab-selected]="activeTab() === 'specs'"
+          class="tab-nav-btn"
+        >
+          Especificaciones
+        </button>
+      </div>
+      <div class="tabs-content">
+        @if (activeTab() === 'desc') {
+          <div class="tab-panel-desc">
+            <p class="desc-text">{{ product().description }}</p>
+          </div>
+        }
+        @if (activeTab() === 'specs') {
+          <div class="tab-panel-specs">
+            <div class="specs-table-modern">
+              @for (s of product().specs; track s) {
+                <div class="specs-row-modern">
+                  <span class="spec-label-modern">{{ s.label }}</span>
+                  <span class="spec-value-modern">{{ s.value }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  </main>
+}
+
+<app-footer></app-footer>

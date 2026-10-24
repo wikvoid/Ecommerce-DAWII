@@ -1,0 +1,157 @@
+<app-navbar></app-navbar>
+
+<main class="home-container">
+  <section class="hero-banner">
+    <div class="hero-bg-layer">
+      <img
+        src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1600&h=800&fit=crop&auto=format"
+        alt="Fondo Ferretería"
+        class="hero-bg-img"
+      />
+      <div class="hero-bg-gradient"></div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-badge">Tu Ferretería De Confianza</div>
+        <h1 class="hero-headline">
+          HERRAMIENTAS<br />
+          AL MEJOR<br />
+          <span class="text-accent">PRECIO.</span>
+        </h1>
+        <p class="hero-subtext">
+          Más de 5.000 productos de las mejores marcas. Bosch, Stanley, Makita y mucho más.
+        </p>
+        <div class="hero-cta-group">
+          <button class="btn-catalog" (click)="goToCatalog()">Ver Catálogo</button>
+          <button class="btn-offers">Sobre Nosotros</button>
+        </div>
+      </div>
+
+      <div class="hero-promos-col">
+        <div class="promo-card" style="background-color: #1a3a6b; color: #ffffff;">
+          <div>
+            <p class="promo-title">ENVÍO GRATIS</p>
+            <p class="promo-sub">En compras mayores a S/ 200</p>
+          </div>
+        </div>
+        <div class="promo-card" style="background-color: #f5c800; color: #0f1c2e;">
+          <div>
+            <p class="promo-title">RETIRO EN TIENDA</p>
+            <p class="promo-sub">Listo en 2 horas hábiles</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Productos -->
+  <section class="content-section">
+    <div class="section-header">
+      <h2 class="section-title">Productos</h2>
+      <div class="tabs-group">
+        @for (tab of ['Destacados', 'Ofertas', 'Nuevos']; track tab) {
+          <button (click)="activeTab = tab" [class.tab-active]="activeTab === tab" class="tab-btn">
+            {{ tab }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="products-grid">
+      @for (prod of products(); track prod) {
+        <div class="product-card">
+          <div class="product-img-box" (click)="goToDetail(prod.id)">
+            <img [src]="prod.img" [alt]="prod.name" />
+            @if (prod.badge && prod.stock) {
+              <span
+                class="product-badge"
+                [ngClass]="{
+                  'badge-offer': prod.badge === 'OFERTA' || prod.badge.startsWith('-'),
+                  'badge-new': prod.badge === 'NUEVO',
+                  'badge-top': prod.badge === 'TOP',
+                }"
+              >
+                {{ prod.badge }}
+              </span>
+            }
+            @if (!prod.stock) {
+              <div class="out-of-stock-overlay">
+                <span class="out-of-stock-tag">SIN STOCK</span>
+              </div>
+            }
+            <!-- Botón Ver Detalle  -->
+            <button
+              type="button"
+              (click)="goToDetail(prod.id); $event.stopPropagation()"
+              class="btn-floating-view"
+            >
+              Ver detalle
+            </button>
+          </div>
+          <div class="product-info">
+            <p class="product-brand">{{ prod.brand }}</p>
+            <h3 class="product-name" (click)="goToDetail(prod.id)">{{ prod.name }}</h3>
+            <div class="product-price-row">
+              <span class="product-price">{{ formatPrice(prod.price) }}</span>
+              @if (prod.oldPrice) {
+                <span class="product-old-price">{{ formatPrice(prod.oldPrice) }}</span>
+              }
+            </div>
+            <!-- Botón Agregar  -->
+            <button
+              (click)="prod.stock && addToCart(prod)"
+              [disabled]="!prod.stock"
+              [ngClass]="prod.stock ? 'btn-add-cart' : 'btn-out-of-stock'"
+            >
+              <svg
+                class="cart-icon-btn"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 01-8 0"></path>
+              </svg>
+              <span>{{ prod.stock ? 'Agregar al carrito' : 'Sin stock' }}</span>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Asesoramiento Banner -->
+  <div class="advice-banner">
+    <div class="advice-inner">
+      <div>
+        <h3 class="advice-title">¿NECESITÁS ASESORAMIENTO?</h3>
+        <p class="advice-subtitle">Nuestros expertos te ayudan a elegir el producto ideal.</p>
+      </div>
+      <div class="advice-actions">
+        <a href="tel:+541145238800" class="btn-phone">📞 (011) 4523-8800</a>
+        <button class="btn-chat">💬 Chat en línea</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Marcas -->
+  <section class="content-section brands-section">
+    <h2 class="brands-title">Las Mejores Marcas para Tus Proyectos</h2>
+    <div class="brands-grid">
+      @for (b of topBrands; track b.name) {
+        <div class="brand-item">
+          <div class="brand-circle" style="background-color: #ffffff">
+            <img [src]="b.logoUrl" [alt]="b.name" class="brand-logo-img" />
+          </div>
+          <span class="brand-label">{{ b.name }}</span>
+        </div>
+      }
+    </div>
+  </section>
+</main>
+
+<app-footer></app-footer>

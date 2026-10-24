@@ -1,0 +1,260 @@
+<app-navbar></app-navbar>
+
+<main class="checkout-page-wrapper">
+  <div class="checkout-container">
+    <div class="checkout-header-row">
+      <button (click)="goBack()" class="btn-back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span>Volver al carrito</span>
+      </button>
+      <h1 class="checkout-main-title">Finalizar compra y retiro</h1>
+    </div>
+
+    <div class="checkout-grid-layout">
+      <!-- Columna Izquierda -->
+      <div class="checkout-forms-col">
+
+        <!-- 1. Datos del Cliente (MODO LECTURA COMPACTO) -->
+        <section class="checkout-card">
+          <div class="card-step-header">
+            <span class="step-circle">✓</span>
+            <h2 class="card-step-title">Datos del titular de la compra</h2>
+          </div>
+
+          <!-- Diseño simplificado como "Tarjeta de presentación" -->
+          <div class="user-profile-box">
+            <div class="user-avatar-placeholder">
+              {{ userProfile().fullName.charAt(0) | uppercase }}
+            </div>
+            <div class="user-details-text">
+              <p class="user-name-bold">{{ userProfile().fullName }}</p>
+              <p class="user-contact-muted">{{ userProfile().email }}</p>
+            </div>
+          </div>
+          <p class="info-note-micro">
+            * Estos datos se usarán para la facturación electrónica. Puedes cambiarlos desde la configuración de tu perfil.
+          </p>
+        </section>
+
+        <!-- 2. Información de Retiro en Tienda -->
+        <section class="checkout-card">
+          <div class="card-step-header">
+            <span class="step-circle">2</span>
+            <h2 class="card-step-title">Punto y modalidad de entrega</h2>
+          </div>
+
+          <div class="pickup-store-box">
+            <div class="store-badge">🏬 LOCAL CENTRAL</div>
+            <p class="store-address-text">
+              <strong>Av. Corrientes 1234, Almagro</strong> — Buenos Aires
+            </p>
+            <p class="store-schedule-hint">
+              Horario de retiro: Lun a Sáb 8:00 a.m. a 7:00 p.m. (Costo: S/0.00 Gratis)
+            </p>
+          </div>
+
+          <div class="pickup-person-toggle">
+            <label class="radio-option">
+              <input
+                type="radio"
+                name="pickupOpt"
+                [ngModel]="pickupOption()"
+                (ngModelChange)="pickupOption.set($event)"
+                value="self"
+              />
+              <span>Retiraré yo mismo con mi documento</span>
+            </label>
+
+            <label class="radio-option">
+              <input
+                type="radio"
+                name="pickupOpt"
+                [ngModel]="pickupOption()"
+                (ngModelChange)="pickupOption.set($event)"
+                value="other"
+              />
+              <span>Autorizo a otra persona a retirar</span>
+            </label>
+          </div>
+
+          @if (pickupOption() === 'other') {
+            <div class="form-group mt-3 fade-in">
+              <label class="form-label">Nombre completo y DNI de la persona autorizada:</label>
+              <input
+                type="text"
+                [ngModel]="authorizedPerson()"
+                (ngModelChange)="authorizedPerson.set($event)"
+                placeholder="Ej. María Gómez - DNI 44556677"
+                class="form-control"
+              />
+            </div>
+          }
+        </section>
+
+        <!-- 3. Medio de Pago -->
+        <section class="checkout-card">
+          <div class="card-step-header">
+            <span class="step-circle">3</span>
+            <h2 class="card-step-title">Selecciona el método de pago</h2>
+          </div>
+
+          <div class="payment-tabs-group">
+            <button
+              type="button"
+              (click)="paymentMethod.set('card')"
+              [class.tab-pay-active]="paymentMethod() === 'card'"
+              class="tab-pay-btn"
+            >
+              💳 Tarjeta Débito / Crédito
+            </button>
+
+            <button
+              type="button"
+              (click)="paymentMethod.set('transfer')"
+              [class.tab-pay-active]="paymentMethod() === 'transfer'"
+              class="tab-pay-btn"
+            >
+              🏦 Transferencia Bancaria
+            </button>
+
+            <button
+              type="button"
+              (click)="paymentMethod.set('store')"
+              [class.tab-pay-active]="paymentMethod() === 'store'"
+              class="tab-pay-btn"
+            >
+              💵 Pago en mostrador
+            </button>
+          </div>
+
+          <!-- Inputs Tarjeta -->
+          @if (paymentMethod() === 'card') {
+            <div class="card-inputs-panel fade-in">
+              <div class="form-group">
+                <label class="form-label">Número de tarjeta</label>
+                <input
+                  type="text"
+                  [ngModel]="cardData().number"
+                  (ngModelChange)="updateCardField('number', $event)"
+                  placeholder="4557 •••• •••• 1234"
+                  maxlength="19"
+                  class="form-control"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nombre impreso en la tarjeta</label>
+                <input
+                  type="text"
+                  [ngModel]="cardData().name"
+                  (ngModelChange)="updateCardField('name', $event)"
+                  placeholder="Como figura en la tarjeta"
+                  class="form-control"
+                />
+              </div>
+              <div class="form-grid-two">
+                <div class="form-group">
+                  <label class="form-label">Vencimiento</label>
+                  <input
+                    type="text"
+                    [ngModel]="cardData().expiry"
+                    (ngModelChange)="updateCardField('expiry', $event)"
+                    placeholder="MM/AA"
+                    maxlength="5"
+                    class="form-control"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Código CVV</label>
+                  <input
+                    type="password"
+                    [ngModel]="cardData().cvv"
+                    (ngModelChange)="updateCardField('cvv', $event)"
+                    placeholder="•••"
+                    maxlength="4"
+                    class="form-control"
+                  />
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Transferencia -->
+          @if (paymentMethod() === 'transfer') {
+            <div class="info-pay-box fade-in">
+              <p>
+                <strong>CBU / Alias para transferir:</strong> <code>FERREMAS.ONLINE.PAGOS</code>
+              </p>
+              <p class="text-muted-sm">
+                Envía tu constancia por WhatsApp con tu número de orden una vez finalizada la reserva.
+              </p>
+            </div>
+          }
+
+          <!-- Pago en mostrador -->
+          @if (paymentMethod() === 'store') {
+            <div class="info-pay-box fade-in">
+              <p>
+                <strong>Pago al retirar:</strong> Abonarás directamente en la caja de nuestra tienda física en efectivo o POS.
+              </p>
+            </div>
+          }
+        </section>
+      </div>
+
+      <!-- Columna Derecha: Resumen Flotante -->
+      <aside class="checkout-summary-col">
+        <div class="order-summary-card">
+          <h3 class="summary-title">Resumen de tu pedido</h3>
+
+          <div class="summary-items-scroll">
+            @for (item of cartService.cartItems(); track item) {
+              <div class="mini-order-item">
+                <img
+                  [src]="item.img"
+                  [alt]="item.name"
+                  class="mini-item-img"
+                />
+                <div class="mini-item-info">
+                  <p class="mini-item-name">{{ item.name }}</p>
+                  <p class="mini-item-qty">Cant: {{ item.qty }}</p>
+                </div>
+                <span class="mini-item-total">{{ formatPrice(item.price * item.qty) }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="summary-calc-list">
+            <div class="calc-row">
+              <span>Subtotal ({{ cartService.cartCount() }} arts.)</span>
+              <span class="mono-val">{{ formatPrice(cartService.subtotal()) }}</span>
+            </div>
+            <div class="calc-row">
+              <span>Entrega</span>
+              <span class="free-tag">Recojo en tienda (Gratis)</span>
+            </div>
+            <div class="calc-separator"></div>
+            <div class="calc-total-row">
+              <span>Total a pagar</span>
+              <span class="total-big-price">{{ formatPrice(cartService.total()) }}</span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            (click)="onSubmitOrder()"
+            [disabled]="isProcessing()"
+            class="btn-confirm-pay"
+          >
+            {{ isProcessing() ? 'Procesando orden...' : 'Confirmar y pagar' }}
+          </button>
+
+          <p class="security-lock-hint">🔒 Transacción cifrada con seguridad SSL</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>

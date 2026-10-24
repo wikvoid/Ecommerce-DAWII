@@ -1,0 +1,748 @@
+.catalog-page-container {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 2.5rem 1rem 5rem 1rem;
+}
+
+/* Cabecera y Controles Superiores */
+.catalog-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.catalog-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 2.5rem;
+  color: #0f1c2e;
+  line-height: 1;
+}
+
+.catalog-counter {
+  font-size: 0.875rem;
+  color: #5a6a7e;
+  margin-top: 0.35rem;
+}
+
+.top-controls-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.view-toggle-box {
+  display: flex;
+  border: 1px solid #d0d9e6;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.btn-toggle-view {
+  background: none;
+  border: none;
+  padding: 0.625rem;
+  color: #5a6a7e;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-toggle-view:hover {
+  background-color: #f4f6f8;
+}
+
+.active-view {
+  background-color: #1a3a6b !important;
+  color: #ffffff !important;
+}
+
+.sort-select {
+  border: 1px solid #d0d9e6;
+  background-color: #ffffff;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: #0f1c2e;
+  outline: none;
+  cursor: pointer;
+}
+
+.sort-select:focus {
+  border-color: #1a3a6b;
+}
+
+/* Buscador */
+.catalog-search-wrapper {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.catalog-search-input {
+  width: 100%;
+  border: 1px solid #d0d9e6;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  padding: 0.875rem 3rem 0.875rem 1.25rem;
+  font-size: 0.95rem;
+  color: #0f1c2e;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.catalog-search-input:focus {
+  border-color: #1a3a6b;
+  box-shadow: 0 0 0 3px rgba(26, 58, 107, 0.08);
+}
+
+.search-lens-icon {
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #a0aab8;
+}
+
+/* Pills de Filtros */
+.active-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #1a3a6b;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+}
+
+.pill-yellow {
+  background-color: #f5c800;
+  color: #0f1c2e;
+  font-weight: 700;
+}
+
+.pill-green {
+  background-color: #16a34a;
+}
+
+.pill-remove-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Layout General */
+.catalog-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .catalog-layout {
+    grid-template-columns: 16rem 1fr;
+  }
+}
+
+/* Sidebar de Filtros */
+.filters-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.filter-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: #0f1c2e;
+  letter-spacing: 0.05em;
+}
+
+.categories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cat-filter-btn {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: #5a6a7e;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cat-filter-btn:hover {
+  background-color: #f4f6f8;
+  color: #0f1c2e;
+}
+
+.cat-with-count {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cat-count-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #a0aab8;
+}
+
+.cat-active {
+  background-color: #1a3a6b !important;
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+.cat-active .cat-count-badge {
+  color: #bfdbfe;
+}
+
+/* Marcas */
+.brands-checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.brand-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.brand-checkbox-item:hover {
+  background-color: #f4f6f8;
+}
+
+.brand-check-input {
+  accent-color: #1a3a6b;
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+}
+
+.brand-check-label {
+  font-size: 0.875rem;
+  color: #5a6a7e;
+}
+
+/* Slider Precio */
+.price-range-slider {
+  accent-color: #1a3a6b;
+  width: 100%;
+}
+
+.price-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #5a6a7e;
+}
+
+.max-price-val {
+  font-weight: 700;
+  color: #1a3a6b;
+}
+
+/* Checkbox Stock */
+.stock-check-box {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  border: 1px solid #e8edf4;
+  padding: 0.625rem 0.75rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+}
+
+.stock-input {
+  accent-color: #1a3a6b;
+  cursor: pointer;
+}
+
+.stock-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #0f1c2e;
+}
+
+.btn-clear-filters {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  padding: 0.25rem 0;
+  transition: color 0.2s;
+}
+
+.btn-clear-filters:hover {
+  color: #b91c1c;
+}
+
+/* Grilla de Productos */
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .catalog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .catalog-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.catalog-card {
+  background-color: #ffffff;
+  border: 1px solid #e8edf4;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease-in-out;
+}
+
+.catalog-card:hover {
+  border-color: #f5c800;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.card-img-wrapper {
+  position: relative;
+  height: 14rem;
+  background-color: #f4f6f8;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.card-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease-in-out;
+}
+
+.catalog-card:hover .card-img-wrapper img {
+  transform: scale(1.06);
+}
+
+.card-badge {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  background-color: #1a3a6b;
+  color: #ffffff;
+  z-index: 5;
+}
+
+.badge-offer {
+  background-color: #ef4444;
+}
+
+.card-out-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 6;
+}
+
+.card-out-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #5a6a7e;
+  background-color: #ffffff;
+  border: 1px solid #d0d9e6;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.25rem;
+}
+
+.btn-card-floating {
+  position: absolute;
+  bottom: 0.625rem;
+  right: 0.625rem;
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #1a3a6b;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.25rem;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.catalog-card:hover .btn-card-floating {
+  opacity: 1;
+}
+
+.btn-card-floating:hover {
+  background-color: #ffffff;
+  transform: scale(1.04);
+}
+
+.card-info {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card-brand {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #a0aab8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.card-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0f1c2e;
+  margin: 0.25rem 0 0.5rem 0;
+  flex: 1;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.card-name:hover {
+  color: #1a3a6b;
+}
+
+.card-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-bottom: 0.5rem;
+}
+
+.stars-gold {
+  color: #f5c800;
+  font-size: 0.875rem;
+}
+
+.reviews-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #a0aab8;
+}
+
+.card-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.card-price {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 1.5rem;
+  color: #1a3a6b;
+}
+
+.card-old-price {
+  font-size: 0.75rem;
+  color: #a0aab8;
+  text-decoration: line-through;
+}
+
+.btn-add-cart {
+  width: 100%;
+  background-color: #f5c800;
+  color: #0f1c2e;
+  border: none;
+  padding: 0.625rem;
+  border-radius: 0.25rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-add-cart:hover {
+  background-color: #e0b500;
+}
+
+.btn-add-cart:active {
+  transform: scale(0.98);
+}
+
+.btn-disabled {
+  width: 100%;
+  background-color: #e8edf4;
+  color: #a0aab8;
+  border: none;
+  padding: 0.625rem;
+  border-radius: 0.25rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: not-allowed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-icon-btn {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Vista Lista */
+.catalog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.catalog-list-row {
+  background-color: #ffffff;
+  border: 1px solid #e8edf4;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  display: flex;
+  gap: 1.5rem;
+  transition: all 0.2s;
+}
+
+.catalog-list-row:hover {
+  border-color: #f5c800;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.list-img-box {
+  width: 7rem;
+  height: 7rem;
+  background-color: #f4f6f8;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.list-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.list-details {
+  flex: 1;
+}
+
+.list-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0f1c2e;
+  cursor: pointer;
+}
+
+.list-name:hover {
+  color: #1a3a6b;
+}
+
+.list-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  background-color: #ef4444;
+  color: #ffffff;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+}
+
+.list-description {
+  font-size: 0.8125rem;
+  color: #5a6a7e;
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+
+.list-actions-col {
+  text-align: right;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.list-btns-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.btn-list-view {
+  border: 1px solid #1a3a6b;
+  background: none;
+  color: #1a3a6b;
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-list-view:hover {
+  background-color: #1a3a6b;
+  color: #ffffff;
+}
+
+.btn-list-add {
+  background-color: #f5c800;
+  border: none;
+  color: #0f1c2e;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-list-add:hover {
+  background-color: #e0b500;
+}
+
+/* Sin resultados */
+.no-results-card {
+  text-align: center;
+  padding: 5rem 1rem;
+  background-color: #ffffff;
+  border: 1px solid #e8edf4;
+  border-radius: 0.5rem;
+}
+
+.no-results-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.no-results-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #5a6a7e;
+}
+
+.no-results-desc {
+  font-size: 0.875rem;
+  color: #a0aab8;
+  margin-bottom: 1.25rem;
+}
+
+.btn-reset-search {
+  background-color: #1a3a6b;
+  color: #ffffff;
+  border: none;
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Añadidos de Vic */
+
+/* Estado de Carga */
+.loading-state-card {
+  text-align: center;
+  padding: 6rem 1rem;
+  background-color: #ffffff;
+  border: 1px solid #e8edf4;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.spinner {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid #e8edf4;
+  border-top-color: #1a3a6b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1.5rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #0f1c2e;
+  margin: 0 0 0.5rem 0;
+}
+
+.loading-desc {
+  font-size: 0.875rem;
+  color: #5a6a7e;
+  margin: 0;
+}

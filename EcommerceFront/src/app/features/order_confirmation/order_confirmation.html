@@ -1,0 +1,138 @@
+<app-navbar></app-navbar>
+
+@if (isLoading()) {
+  <!-- ESTADO 1: CARGANDO -->
+  <main class="confirm-page-wrapper center-content">
+    <div class="spinner"></div>
+    <h2 class="status-title">Buscando tu pedido...</h2>
+  </main>
+}
+@else if (errorMsg()) {
+  <!-- ESTADO 2: ERROR O ACCESO DENEGADO -->
+  <main class="confirm-page-wrapper center-content">
+    <div class="error-card">
+      <div class="error-icon">🔒</div>
+      <h2 class="status-title">Acceso Denegado</h2>
+      <p class="status-desc">{{ errorMsg() }}</p>
+      <button (click)="goToHome()" class="btn-go-home mt-4">Ir al inicio</button>
+    </div>
+  </main>
+}
+@else if (order()) {
+  <!-- ESTADO 3: ORDEN CARGADA EXITOSAMENTE -->
+  <main class="confirm-page-wrapper">
+    <div class="confirm-container">
+      <div class="success-icon-badge">
+        <svg
+          class="check-svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3.5"
+        >
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <h1 class="confirm-main-title">¡Pedido confirmado!</h1>
+      <p class="confirm-subtitle">
+        Gracias por tu compra. Te enviamos un email con el comprobante y resumen de la orden.
+      </p>
+
+      <!-- Tarjeta Principal de Información -->
+      <div class="order-summary-card">
+        <!-- Fila de 4 Datos Clave -->
+        <div class="order-meta-grid">
+          <div class="meta-item">
+            <span class="meta-label">NRO. DE PEDIDO</span>
+            <span class="meta-value">{{ order().orderNumber }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">FECHA</span>
+            <span class="meta-value">{{ order().date }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">TOTAL PAGADO</span>
+            <span class="meta-value">{{ formatPrice(order().total) }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">RETIRO ESTIMADO</span>
+            <span class="meta-value">Listo en 2 horas hábiles</span>
+          </div>
+        </div>
+
+        <!-- Stepper / Progreso del Pedido -->
+        <div class="stepper-block">
+          <span class="stepper-heading">ESTADO DEL PEDIDO</span>
+          <div class="stepper-track">
+            @for (s of steps(); track s.id; let i = $index) {
+              <div class="step-unit">
+                <div class="step-circle-line">
+                  @if (i > 0) {
+                    <div
+                      class="step-connector"
+                      [class.connector-done]="s.done || steps()[i - 1].done"
+                    ></div>
+                  }
+                  <div
+                    class="step-bubble"
+                    [class.bubble-done]="s.done"
+                    [class.bubble-pending]="!s.done"
+                  >
+                    @if (s.done) {
+                      <span>✓</span>
+                    }
+                    @if (!s.done) {
+                      <span>{{ i + 1 }}</span>
+                    }
+                  </div>
+                  @if (i < steps().length - 1) {
+                    <div class="step-connector" [class.connector-done]="steps()[i + 1]?.done"></div>
+                  }
+                </div>
+                <span class="step-title-text" [class.text-done]="s.done">{{ s.label }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloque de Entrega / Recojo en Tienda -->
+      <div class="pickup-details-card">
+        <h3 class="pickup-card-title">📦 Información de retiro en mostrador</h3>
+        <div class="pickup-grid-data">
+          <div>
+            <p class="pickup-sublabel">DIRECCIÓN DE TIENDA</p>
+            <p class="pickup-maintext">Av. Corrientes 1234, Almagro, Buenos Aires</p>
+          </div>
+          <div>
+            <p class="pickup-sublabel">RETIRA</p>
+            <p class="pickup-maintext">{{ order().pickupPerson }} (DNI: {{ order().client.dni }})</p>
+          </div>
+          <div>
+            <p class="pickup-sublabel">HORARIO DE ATENCIÓN</p>
+            <p class="pickup-maintext">Lunes a Sábado de 8:00 a.m. a 7:00 p.m.</p>
+          </div>
+          <div>
+            <p class="pickup-sublabel">CONFIRMACIÓN ENVIADA A</p>
+            <p class="pickup-maintext">{{ order().client.email }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="actions-group-row">
+        <button (click)="goToCatalog()" class="btn-continue-shopping">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 01-8 0"></path>
+          </svg>
+          <span>Seguir comprando</span>
+        </button>
+        <button (click)="goToHome()" class="btn-go-home">Ir al inicio</button>
+      </div>
+    </div>
+  </main>
+}
+
+<app-footer></app-footer>

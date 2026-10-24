@@ -1,0 +1,179 @@
+<div class="auth-wrapper">
+  <div class="auth-brand-side">
+    <div class="concentric-circles-bg">
+      <div class="c-circle circle-1"></div>
+      <div class="c-circle circle-2"></div>
+      <div class="c-circle circle-3"></div>
+      <div class="c-circle circle-4"></div>
+      <div class="c-circle circle-5"></div>
+      <div class="c-circle circle-6"></div>
+      <div class="c-circle circle-7"></div>
+    </div>
+
+    <!-- Contenido Superior -->
+    <div class="brand-top-content">
+      <div class="logo-box">
+        <div class="logo-badge">
+          <span class="logo-letter">F</span>
+        </div>
+        <span class="logo-text">FERREMAS</span>
+      </div>
+
+      <h1 class="brand-headline">
+        TODO PARA<br />
+        <span class="text-accent">TU OBRA.</span>
+      </h1>
+
+      <p class="brand-description">
+        Más de 5.000 productos para construcción, electricidad, plomería y jardín. Siempre al mejor
+        precio.
+      </p>
+    </div>
+
+    <!-- Tarjetas Inferiores -->
+    <div class="brand-stats-row">
+      <div class="stat-card">
+        <span class="stat-number">+5.000</span>
+        <span class="stat-label">PRODUCTOS</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">24h</span>
+        <span class="stat-label">ENTREGA</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">15 años</span>
+        <span class="stat-label">EXPERIENCIA</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Columna Derecha: Formulario de Registro -->
+  <div class="auth-form-side">
+    <div class="form-card-wrapper">
+      <div class="mobile-logo-box">
+        <div class="logo-badge">
+          <span class="logo-letter">F</span>
+        </div>
+        <span class="logo-text text-navy">FERREMAS</span>
+      </div>
+
+      <h2 class="form-main-title">Crear cuenta</h2>
+      <p class="form-subtitle">Completá tus datos para registrarte en Ferremas.</p>
+
+      <!-- Alerta de Error -->
+      @if (error) {
+        <div class="error-banner">
+          {{ error }}
+        </div>
+      }
+      <!-- Alerta de Éxito -->
+      @if (success) {
+        <div class="success-banner">
+          {{ success }}
+        </div>
+      }
+      <!--      sss-->
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+        <!-- Nombres y DNI -->
+        <div class="form-row-two">
+          <div class="form-group">
+            <label class="input-label">NOMBRE COMPLETO *</label>
+            <input
+              type="text"
+              formControlName="fullName"
+              placeholder="Ej. Juan Pérez"
+              class="form-input"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="input-label">DNI / DOCUMENTO *</label>
+            <input
+              type="text"
+              formControlName="dni"
+              placeholder="Ej. 72458912"
+              class="form-input"
+            />
+          </div>
+        </div>
+
+        <!-- Email y Teléfono -->
+        <div class="form-row-two">
+          <div class="form-group">
+            <label class="input-label">EMAIL *</label>
+            <input
+              type="email"
+              formControlName="email"
+              placeholder="usuario@correo.com"
+              class="form-input"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="input-label">TELÉFONO / CELULAR</label>
+            <input
+              type="tel"
+              formControlName="phone"
+              placeholder="Ej. 987654321"
+              class="form-input"
+            />
+          </div>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="form-group">
+          <label class="input-label">CONTRASEÑA *</label>
+          <div class="password-wrapper">
+            <input
+              [type]="showPass ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="Mínimo 6 caracteres"
+              class="form-input"
+            />
+            <button type="button" (click)="toggleShowPass()" class="btn-toggle-eye">
+              <!-- SVGs de Nicole -->
+            </button>
+          </div>
+        </div>
+
+        <!-- Confirmar Contraseña -->
+        <div class="form-group">
+          <label class="input-label">CONFIRMAR CONTRASEÑA *</label>
+          <div class="password-wrapper">
+            <input
+              [type]="showConfirmPass ? 'text' : 'password'"
+              formControlName="confirmPass"
+              placeholder="Repetí tu contraseña"
+              class="form-input"
+            />
+            <button type="button" (click)="toggleShowConfirmPass()" class="btn-toggle-eye">
+              <!-- SVGs de Nicole -->
+            </button>
+          </div>
+          <!-- Alerta visual si las contraseñas no coinciden -->
+          @if (
+            registerForm.errors?.['passwordsMismatch'] && registerForm.get('confirmPass')?.touched
+          ) {
+            <div class="text-red-500 text-xs mt-1">Las contraseñas no coinciden.</div>
+          }
+        </div>
+
+        <!-- Botón Registrarse -->
+        <button type="submit" [disabled]="loading" class="btn-submit-register">
+          @if (!loading) {
+            <span>Registrarme</span>
+          }
+          @if (loading) {
+            <span>Creando cuenta...</span>
+          }
+        </button>
+      </form>
+
+      <!-- Enlace para volver al Login -->
+      <p class="login-footer-hint">
+        ¿Ya tenés una cuenta?
+        <button type="button" (click)="goToLogin()" class="link-to-login">Iniciar sesión</button>
+      </p>
+    </div>
+  </div>
+</div>

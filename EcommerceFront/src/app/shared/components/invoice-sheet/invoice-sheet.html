@@ -1,0 +1,87 @@
+<div *ngIf="data" class="print-document-container">
+  <div class="print-doc-header">
+    <div class="print-company-info">
+      <h1 class="print-brand-name">FERREMAS</h1>
+      <p class="print-company-legal">FERREMAS S.A.C.</p>
+      <p class="print-company-sub">Venta de materiales de construcción, herramientas y acabados</p>
+      <p class="print-company-sub">Av. Corrientes 1234 · Lima, Perú</p>
+      <p class="print-company-sub">Teléfono: (01) 4523-8800 · ventas&#64;ferremas.pe</p>
+    </div>
+
+    <div class="print-fiscal-box">
+      <p class="print-ruc-title">R.U.C. 20608945123</p>
+      <div class="print-doc-badge">
+        {{ isFactura ? 'FACTURA ELECTRÓNICA' : 'BOLETA ELECTRÓNICA' }}
+      </div>
+      <p class="print-series-number">{{ series }}</p>
+    </div>
+  </div>
+
+  <div class="print-client-grid">
+    <div class="print-client-row">
+      <span class="print-label">
+        {{ isFactura ? 'RAZÓN SOCIAL:' : 'SEÑOR(ES):' }}
+      </span>
+      <span class="print-value-bold">{{ data.customer }}</span>
+    </div>
+    <div class="print-client-row">
+      <span class="print-label">
+        {{ isFactura ? 'R.U.C.:' : 'DOCUMENTO (DNI):' }}
+      </span>
+      <span class="print-value">{{ data.docNumber }}</span>
+    </div>
+    <div class="print-client-row">
+      <span class="print-label">FECHA EMISIÓN:</span>
+      <span class="print-value">{{ data.createdAt || data.dateTime }}</span>
+    </div>
+    <div class="print-client-row">
+      <span class="print-label">FORMA DE PAGO:</span>
+      <span class="print-value">{{ data.payment || data.paymentMethod }} {{ data.opCode ? '(' + data.opCode + ')' : '' }}</span>
+    </div>
+    <div class="print-client-row">
+      <span class="print-label">MODALIDAD:</span>
+      <span class="print-value">{{ data.pickup ? 'Recojo en Tienda — Pedido Web ' + data.id : (data.channel || 'Venta en Tienda') }}</span>
+    </div>
+  </div>
+
+  <table class="print-items-table">
+    <thead>
+    <tr>
+      <th class="col-cant text-center">CANT.</th>
+      <th class="col-desc">DESCRIPCIÓN</th>
+      <th class="col-price text-right">P. UNIT</th>
+      <th class="col-total text-right">TOTAL</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let item of (data.products || data.items)">
+      <td class="text-center">{{ item.qty }}</td>
+      <td>{{ item.name || item.productName }}</td>
+      <td class="text-right">{{ formatPrice(item.unitPrice || (data.total / (data.items?.length || 1))) }}</td>
+      <td class="text-right font-bold">{{ formatPrice((item.unitPrice || (data.total / (data.items?.length || 1))) * item.qty) }}</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="print-totals-wrapper">
+    <div class="print-totals-box">
+      <div class="print-total-line">
+        <span>OP. GRAVADA:</span>
+        <span>{{ formatPrice(subtotal) }}</span>
+      </div>
+      <div class="print-total-line">
+        <span>I.G.V. (18%):</span>
+        <span>{{ formatPrice(igv) }}</span>
+      </div>
+      <div class="print-total-line total-highlight">
+        <span>IMPORTE TOTAL:</span>
+        <span>{{ formatPrice(data.total) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="print-legal-footer">
+    <p>Representación impresa autorizada mediante resolución SUNAT.</p>
+    <p>Consulte su comprobante en www.ferremas.pe/comprobantes</p>
+  </div>
+</div>

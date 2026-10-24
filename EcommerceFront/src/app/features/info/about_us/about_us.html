@@ -1,0 +1,131 @@
+<app-navbar></app-navbar>
+
+<main class="about-page-container">
+  <section class="about-hero-banner">
+    <div class="about-hero-bg-layer">
+      <img
+        src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1600&h=400&fit=crop&auto=format"
+        alt="Fondo Obra"
+        class="about-hero-img"
+      />
+      <div class="about-hero-gradient"></div>
+    </div>
+
+    <div class="about-hero-content">
+      <button (click)="goBack()" class="btn-back-breadcrumb">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span>Volver</span>
+      </button>
+
+      <span class="hero-brand-subtitle">FERREMAS</span>
+      <h1 class="hero-page-title">Sobre nosotros</h1>
+      <p class="hero-page-tagline">Más de 15 años siendo la ferretería de confianza de Perú.</p>
+    </div>
+  </section>
+
+  <!-- Contenido Central -->
+  <div class="about-body-wrapper">
+    <!-- Historia -->
+    <section class="history-grid">
+      <div class="history-text-col">
+        <span class="section-tag-gold">NUESTRA HISTORIA</span>
+        <h2 class="history-title">Nacimos en un garage, crecimos con vos.</h2>
+        <p class="history-p">
+          Ferremas nació en 2009 cuando Carlos Fernández abrió una pequeña ferretería en el barrio
+          de Almagro, Buenos Aires. Con apenas 80 m² y una vocación enorme, la idea era simple:
+          ofrecer el mejor producto al mejor precio, con asesoramiento real.
+        </p>
+        <p class="history-p">
+          Hoy somos un equipo de 48 personas, contamos con un depósito de 3.000 m², más de 5.000
+          productos en stock y atendemos con la mayor agilidad en tienda. Pero seguimos siendo la
+          misma ferretería de barrio: cercana, honesta y comprometida.
+        </p>
+      </div>
+
+      <div class="history-media-col">
+        <div class="history-img-box">
+          <img
+            src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=700&h=525&fit=crop&auto=format"
+            alt="Local Ferremas"
+            class="history-img"
+          />
+          <div class="foundation-badge">
+            <span class="foundation-year">2009</span>
+            <span class="foundation-label">FUNDACIÓN</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tarjetas de Estadísticas (KPIs) -->
+    <section class="stats-grid-row">
+      @for (s of stats; track s) {
+        <div class="stat-box-card">
+          <span class="stat-box-icon">{{ s.icon }}</span>
+          <span class="stat-box-val">{{ s.val }}</span>
+          <span class="stat-box-label">{{ s.label }}</span>
+        </div>
+      }
+    </section>
+
+    <!-- Valores de la Empresa -->
+    <section class="values-section">
+      <span class="section-tag-gold">LO QUE NOS MUEVE</span>
+      <h2 class="section-main-title">Nuestros valores</h2>
+
+      <div class="values-grid">
+        @for (v of valores; track v) {
+          <div class="value-item-card">
+            <span class="value-card-icon">{{ v.icon }}</span>
+            <h3 class="value-card-title">{{ v.title }}</h3>
+            <p class="value-card-desc">{{ v.desc }}</p>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Equipo Directivo -->
+    <section class="team-section">
+      <span class="section-tag-gold">LAS PERSONAS DETRÁS</span>
+      <h2 class="section-main-title">Nuestro equipo directivo</h2>
+
+      <div class="team-grid">
+        @for (m of equipo; track m) {
+          <div class="team-card">
+            <div class="team-img-box">
+              <img
+                [src]="'https://images.unsplash.com/' + m.img + '?w=400&h=300&fit=crop&auto=format'"
+                [alt]="m.name"
+                class="team-img"
+              />
+            </div>
+            <div class="team-info">
+              <h3 class="team-name">{{ m.name }}</h3>
+              <p class="team-role">{{ m.role }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Banner CTA Inferior -->
+    <section class="about-cta-banner">
+      <h3 class="cta-banner-title">¿Listo para empezar?</h3>
+      <p class="cta-banner-desc">
+        Explorá nuestro catálogo completo y encontrá todo lo que necesitás para tu obra.
+      </p>
+      <button (click)="goCatalog()" class="btn-cta-catalog">Ver catálogo</button>
+    </section>
+  </div>
+</main>
+
+<app-footer></app-footer>

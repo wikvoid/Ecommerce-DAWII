@@ -1,0 +1,366 @@
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .auth-wrapper {
+    flex-direction: row;
+  }
+}
+
+/* Columna Izquierda */
+.auth-brand-side {
+  display: none;
+  background-color: #1a3a6b;
+  width: 50%;
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+  .auth-brand-side {
+    display: flex;
+  }
+}
+
+/* Círculos  */
+.concentric-circles-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.c-circle {
+  position: absolute;
+  border: 1.5px solid #f5c800;
+  border-radius: 9999px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.circle-1 { width: 140px; height: 140px; }
+.circle-2 { width: 280px; height: 280px; }
+.circle-3 { width: 440px; height: 440px; }
+.circle-4 { width: 620px; height: 620px; }
+.circle-5 { width: 820px; height: 820px; }
+.circle-6 { width: 1040px; height: 1040px; }
+.circle-7 { width: 1280px; height: 1280px; }
+
+.brand-top-content {
+  position: relative;
+  z-index: 10;
+}
+
+.logo-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 3.5rem;
+}
+
+.logo-badge {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: #f5c800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-letter {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 1.35rem;
+  color: #0f1c2e;
+}
+
+.logo-text {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #ffffff;
+  letter-spacing: 0.1em;
+}
+
+.text-navy {
+  color: #1a3a6b !important;
+}
+
+.brand-headline {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(3rem, 5vw, 4.5rem);
+  color: #ffffff;
+  line-height: 1;
+  margin-bottom: 1.5rem;
+}
+
+.text-accent {
+  color: #f5c800;
+}
+
+.brand-description {
+  color: #a8c4e0;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  max-width: 28rem;
+}
+
+.brand-stats-row {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.stat-card {
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.375rem;
+  padding: 1rem 0.5rem;
+  text-align: center;
+}
+
+.stat-number {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 1.75rem;
+  color: #f5c800;
+  display: block;
+  line-height: 1;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6875rem;
+  color: #a8c4e0;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Columna Derecha (Formulario) */
+.auth-form-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+  background-color: #ffffff;
+}
+
+.form-card-wrapper {
+  width: 100%;
+  max-width: 28rem;
+}
+
+.mobile-logo-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .mobile-logo-box {
+    display: none;
+  }
+}
+
+.form-main-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 2.5rem;
+  color: #0f1c2e;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.form-subtitle {
+  color: #5a6a7e;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+.error-banner {
+  background-color: #fee2e2;
+  border: 1px solid #f87171;
+  color: #991b1b;
+  font-size: 0.875rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-row-two {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 480px) {
+  .form-row-two {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.input-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6875rem;
+  color: #5a6a7e;
+  letter-spacing: 0.05em;
+}
+
+.form-input {
+  width: 100%;
+  border: 1px solid #d0d9e6;
+  background-color: #f4f6f8;
+  border-radius: 0.25rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: #0f1c2e;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.form-input:focus {
+  background-color: #ffffff;
+  border-color: #1a3a6b;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper .form-input {
+  padding-right: 2.75rem;
+}
+
+.btn-toggle-eye {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #a0aab8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-toggle-eye:hover {
+  color: #1a3a6b;
+}
+
+.btn-submit-register {
+  width: 100%;
+  background-color: #1a3a6b;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.875rem;
+  border-radius: 0.25rem;
+  border: none;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-submit-register:hover:not(:disabled) {
+  background-color: #0f2a52;
+}
+
+.btn-submit-register:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.form-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: #e8edf4;
+}
+
+.divider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #a0aab8;
+}
+
+.btn-guest-action {
+  width: 100%;
+  border: 1px solid #d0d9e6;
+  background-color: #ffffff;
+  color: #0f1c2e;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.8125rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-guest-action:hover {
+  border-color: #1a3a6b;
+  background-color: #f4f6f8;
+}
+
+.login-footer-hint {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #5a6a7e;
+  margin-top: 2rem;
+}
+
+.link-to-login {
+  background: none;
+  border: none;
+  color: #1a3a6b;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.link-to-login:hover {
+  color: #f5c800;
+}
+
+.success-banner {
+  background-color: #dcfce7;
+  border: 1px solid #22c55e;
+  color: #166534;
+  font-size: 0.875rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+}

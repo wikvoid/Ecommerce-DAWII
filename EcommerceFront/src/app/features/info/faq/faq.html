@@ -1,0 +1,89 @@
+<app-navbar></app-navbar>
+
+<main class="faq-page-container">
+  <section class="faq-hero-banner">
+    <div class="faq-hero-bg-layer">
+      <img
+        src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1600&h=400&fit=crop&auto=format"
+        alt="Fondo Obra"
+        class="faq-hero-img"
+      />
+      <div class="faq-hero-gradient"></div>
+    </div>
+
+    <div class="faq-hero-content">
+      <button (click)="goBack()" class="btn-back-breadcrumb">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span>Volver</span>
+      </button>
+
+      <span class="hero-brand-subtitle">FERREMAS</span>
+      <h1 class="hero-page-title">Preguntas frecuentes</h1>
+      <p class="hero-page-tagline">
+        Encontrá respuestas rápidas a las dudas más comunes sobre tus compras y pedidos.
+      </p>
+    </div>
+  </section>
+
+  <!-- Contenido Central -->
+  <div class="faq-body-wrapper">
+    <div class="faq-sections-list">
+      @for (section of faqSections; track section; let sIdx = $index) {
+        <div class="faq-section-block">
+          <h2 class="faq-section-title">{{ section.cat }}</h2>
+          <div class="faq-accordion-group">
+            @for (item of section.items; track item; let iIdx = $index) {
+              <div class="faq-card" [class.faq-card-open]="isOpen(sIdx + '-' + iIdx)">
+                <button
+                  type="button"
+                  (click)="toggleItem(sIdx + '-' + iIdx)"
+                  class="faq-question-btn"
+                >
+                  <span class="faq-question-text">{{ item.q }}</span>
+                  <svg
+                    class="faq-chevron-icon"
+                    [class.chevron-rotated]="isOpen(sIdx + '-' + iIdx)"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                </button>
+                @if (isOpen(sIdx + '-' + iIdx)) {
+                  <div class="faq-answer-box">
+                    <div class="faq-separator"></div>
+                    <p class="faq-answer-text">{{ item.a }}</p>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="faq-help-footer">
+      <h3 class="help-footer-title">¿No encontraste lo que buscabas?</h3>
+      <p class="help-footer-desc">
+        Nuestro equipo de atención está listo para asesorarte en tus compras.
+      </p>
+      <div class="help-footer-actions">
+        <a href="tel:+541145238800" class="btn-help-primary"> 📞 (011) 4523-8800 </a>
+        <a href="mailto:ventas@ferremas.com.ar" class="btn-help-secondary"> ✉️ Enviar email </a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>

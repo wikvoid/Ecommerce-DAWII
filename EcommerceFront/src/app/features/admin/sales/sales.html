@@ -1,0 +1,228 @@
+<div class="sales-view-wrapper">
+  <div class="sales-card-table">
+    <div class="sales-toolbar">
+      <div class="filters-left-group">
+
+        <!-- Filtros Doc -->
+        <div class="doc-filters-group">
+          <button
+            *ngFor="let df of docFilters"
+            type="button"
+            (click)="updateFilterDoc(df)"
+            [class.btn-filter-active]="filterDoc() === df"
+            class="btn-doc-filter"
+          >
+            <span>{{ df }}</span>
+            <span *ngIf="df === 'Todos'" class="filter-count">({{ sales().length }})</span>
+          </button>
+        </div>
+
+        <!-- Selector de Fecha-->
+        <div class="date-picker-filter">
+          <svg class="date-lens-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <input
+            type="date"
+            [ngModel]="selectedDate()"
+            (ngModelChange)="updateDate($event)"
+            class="input-date-filter"
+            title="Filtrar por fecha específica"
+          />
+          <button
+            *ngIf="selectedDate()"
+            type="button"
+            (click)="updateDate('')"
+            class="btn-clear-date"
+            title="Quitar filtro de fecha"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Buscador -->
+      <div class="search-box-wrapper">
+        <svg class="search-lens" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+        </svg>
+        <input
+          type="text"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="updateSearchQuery($event)"
+          placeholder="Buscar por comprobante o DNI..."
+          class="sales-search-input"
+        />
+      </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="table-scroll-container">
+      <table class="sales-table">
+        <thead>
+        <tr>
+          <th>COMPROBANTE</th>
+          <th>CLIENTE</th>
+          <th>FECHA / HORA</th>
+          <th>MÉTODO DE PAGO</th>
+          <th>CANAL</th>
+          <th class="text-right-header">TOTAL</th>
+          <th class="text-center-header">ACCIÓN</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- CORRECCIÓN DE PARÉNTESIS -->
+        <tr
+          *ngFor="let s of paginatedSales()"
+          (click)="openSaleDetails(s)"
+          class="sale-interactive-row"
+        >
+          <td>
+            <p class="sale-id-code">{{ s.id }}</p>
+            <span
+              class="doc-type-pill"
+              [class.pill-boleta]="s.docType === 'Boleta'"
+              [class.pill-factura]="s.docType === 'Factura'"
+            >
+                {{ s.docType }}
+              </span>
+          </td>
+
+          <td>
+            <p class="sale-customer-name">{{ s.customer }}</p>
+            <span class="sale-doc-sub">{{ getDocumentLabel(s.docNumber) }}</span>
+          </td>
+
+          <td class="sale-datetime-cell">
+            {{ s.dateTime }}
+          </td>
+
+          <td>
+            <span class="payment-method-text">{{ s.paymentMethod }}</span>
+          </td>
+
+          <td>
+              <span class="channel-badge" [class.badge-pos]="s.channel === 'Tienda (POS)'">
+                {{ s.channel }}
+              </span>
+          </td>
+
+          <td class="text-right">
+            <span class="sale-total-price">{{ formatPrice(s.total) }}</span>
+          </td>
+
+          <td class="text-center">
+            <button
+              type="button"
+              (click)="$event.stopPropagation(); openSaleDetails(s)"
+              class="btn-action-icon btn-view-sale"
+              title="Ver detalle del comprobante"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </td>
+        </tr>
+
+        <!-- ESTADO VACÍO -->
+        <tr *ngIf="filteredSales().length === 0">
+          <td colspan="7" class="empty-sales-msg">
+            No se encontraron ventas con los criterios ingresados.
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <app-pagination
+      [currentPage]="currentPage()"
+      [totalPages]="totalPages()"
+      (pageChange)="onPageChange($event)"
+    ></app-pagination>
+  </div>
+
+  <!-- DRAWER LATERAL (Sin cambios, funciona perfecto) -->
+  <div *ngIf="selectedSale" class="drawer-backdrop" (click)="closeSaleDetails()">
+    <aside class="sale-drawer-panel" (click)="$event.stopPropagation()">
+      <div class="drawer-header">
+        <div>
+          <span class="drawer-meta-title">DETALLE DE VENTA</span>
+          <h2 class="drawer-sale-id">{{ selectedSale.id }}</h2>
+        </div>
+        <button type="button" (click)="closeSaleDetails()" class="btn-close-drawer">✕</button>
+      </div>
+
+      <div class="drawer-body">
+        <div class="drawer-row-split">
+          <span
+            class="doc-type-pill"
+            [class.pill-boleta]="selectedSale.docType === 'Boleta'"
+            [class.pill-factura]="selectedSale.docType === 'Factura'"
+          >
+            {{ selectedSale.docType }} Electrónica
+          </span>
+          <span class="drawer-date-sub">{{ selectedSale.dateTime }}</span>
+        </div>
+
+        <div class="drawer-client-card">
+          <p class="client-name">{{ selectedSale.customer }}</p>
+          <p class="client-sub">{{ getDocumentLabel(selectedSale.docNumber) }}</p>
+          <p class="client-sub">Atendido por: {{ selectedSale.cashier }}</p>
+        </div>
+
+        <div class="payment-summary-box">
+          <div class="pay-icon-col">💳</div>
+          <div class="pay-info-col">
+            <span class="pay-main-title">{{ selectedSale.paymentMethod }}</span>
+            <span class="pay-sub-channel">Canal: {{ selectedSale.channel }}</span>
+          </div>
+        </div>
+
+        <div class="drawer-section">
+          <span class="section-micro-title">PRODUCTOS FACTURADOS</span>
+          <div class="products-checkout-list">
+            <div *ngFor="let it of selectedSale.items" class="product-item-row">
+              <div class="item-name-col">
+                <span class="product-title">{{ it.productName }}</span>
+                <small class="product-calc">{{ it.qty }} x {{ formatPrice(it.unitPrice) }}</small>
+              </div>
+              <span class="product-subtotal">{{ formatPrice(it.subtotal) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="drawer-total-row">
+          <span>Total Facturado</span>
+          <span class="drawer-total-amount">{{ formatPrice(selectedSale.total) }}</span>
+        </div>
+
+        <div class="drawer-actions-container">
+          <button type="button" (click)="printReceipt()" class="btn-primary-print">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            Reimprimir Comprobante
+          </button>
+
+          <button type="button" (click)="downloadPdf()" [disabled]="isDownloadingPdf" class="btn-secondary-pdf">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            {{ isDownloadingPdf ? 'Generando PDF...' : 'Descargar PDF' }}
+          </button>
+        </div>
+      </div>
+    </aside>
+  </div>
+  <app-invoice-sheet *ngIf="selectedSale" [data]="selectedSale"></app-invoice-sheet>
+</div>

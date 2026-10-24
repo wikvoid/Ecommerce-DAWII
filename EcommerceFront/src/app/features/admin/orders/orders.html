@@ -1,0 +1,224 @@
+<div class="orders-view-wrapper">
+  <div class="orders-card-table">
+    <!-- Filtros y Buscador -->
+    <div class="orders-toolbar">
+      <div class="status-filters-group">
+        <button
+          *ngFor="let s of statuses"
+          type="button"
+          (click)="setFilter(s)"
+          [class.btn-filter-active]="filterStatus() === s"
+          class="btn-status-filter"
+        >
+          <span>{{ s }}</span>
+          <span *ngIf="s === 'Todos'" class="filter-count">({{ orders().length }})</span>
+        </button>
+      </div>
+
+      <div class="search-box-wrapper">
+        <svg class="search-lens" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+        </svg>
+        <input
+          type="text"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="updateSearch($event)"
+          placeholder="Buscar pedido o cliente"
+          class="orders-search-input"
+        />
+      </div>
+    </div>
+
+    <!-- Tabla de Pedidos -->
+    <div class="table-scroll-container">
+      <table class="orders-table">
+        <thead>
+        <tr>
+          <th>PEDIDO</th>
+          <th>CLIENTE</th>
+          <th>HORARIO DE RETIRO</th>
+          <th>ESTADO</th>
+          <th class="text-right">TOTAL</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let o of paginatedOrders()">
+          <td>
+            <p class="order-id-label">{{ o.id }}</p>
+            <p class="order-subdate">{{ o.createdAt }}</p>
+          </td>
+
+          <td>
+            <p class="customer-name-label">{{ o.customer }}</p>
+            <p class="customer-items-sub">{{ o.items }} productos</p>
+          </td>
+
+          <td>
+            <p class="pickup-time-label">{{ o.pickup }}</p>
+            <p class="pickup-sublabel">Recojo en tienda</p>
+          </td>
+
+          <td>
+              <span
+                class="status-pill"
+                [ngClass]="{
+                  'status-nuevo': o.status === 'Nuevo',
+                  'status-preparando': o.status === 'Preparando',
+                  'status-listo': o.status === 'Listo para retirar',
+                  'status-entregado': o.status === 'Entregado'
+                }"
+              >
+                <span class="status-bullet"></span>
+                <span>{{ o.status }}</span>
+              </span>
+          </td>
+
+          <td class="text-right">
+            <span class="order-total-price">{{ formatPrice(o.total) }}</span>
+          </td>
+
+          <!-- Botón Gestionar -->
+          <td class="text-right">
+            <button
+              type="button"
+              (click)="openOrderDetails(o)"
+              class="btn-manage-order"
+            >
+              Gestionar
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredOrders().length === 0">
+          <td colspan="6" style="text-align: center; padding: 2rem; color: #94a3b8;">
+            No se encontraron pedidos coincidentes.
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <app-pagination
+      [currentPage]="currentPage()"
+      [totalPages]="totalPages()"
+      (pageChange)="onPageChange($event)"
+    ></app-pagination>
+  </div>
+
+  <!-- DRAWER DE DETALLE ── -->
+  <div *ngIf="selectedOrder()" class="drawer-backdrop" (click)="closeOrderDetails()">
+    <aside class="order-drawer-panel" (click)="$event.stopPropagation()">
+      <div class="drawer-header">
+        <div>
+          <span class="drawer-meta-title">DETALLE DEL PEDIDO</span>
+          <h2 class="drawer-order-id">{{ selectedOrder()?.id }}</h2>
+        </div>
+        <button type="button" (click)="closeOrderDetails()" class="btn-close-drawer">✕</button>
+      </div>
+
+      <div class="drawer-body">
+        <div class="drawer-status-row">
+          <span
+            class="status-pill"
+            [ngClass]="{
+              'status-nuevo': selectedOrder()?.status === 'Nuevo',
+              'status-preparando': selectedOrder()?.status === 'Preparando',
+              'status-listo': selectedOrder()?.status === 'Listo para retirar',
+              'status-entregado': selectedOrder()?.status === 'Entregado'
+            }"
+          >
+            <span class="status-bullet"></span>
+            <span>{{ selectedOrder()?.status }}</span>
+          </span>
+          <span class="drawer-date-sub">{{ selectedOrder()?.createdAt }}</span>
+        </div>
+
+        <div class="drawer-client-card">
+          <p class="client-name">{{ selectedOrder()?.customer }}</p>
+          <p class="client-sub">{{ selectedOrder()?.phone }}</p>
+          <p class="client-sub">{{ selectedOrder()?.payment }}</p>
+        </div>
+
+        <div class="drawer-section">
+          <span class="section-micro-title">PRODUCTOS</span>
+          <div class="products-checkout-list">
+            <div *ngFor="let p of selectedOrder()?.products" class="product-item-row">
+              <span class="product-title">{{ p.name }}</span>
+              <span class="product-qty-tag">x{{ p.qty }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="drawer-total-row">
+          <span>Total cobrado</span>
+          <span class="drawer-total-amount">{{ formatPrice(selectedOrder()?.total || 0) }}</span>
+        </div>
+
+        <div class="pickup-highlight-banner">
+          <p class="pickup-banner-label">HORARIO DE RECOJO</p>
+          <p class="pickup-banner-time">{{ selectedOrder()?.pickup }}</p>
+          <p class="pickup-banner-address">Av. Corrientes 1234 · Mostrador de retiros</p>
+        </div>
+
+        <div class="payment-info-box">
+          <svg class="pay-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+            <line x1="2" y1="10" x2="22" y2="10"></line>
+          </svg>
+          <div class="payment-text-group">
+            <span class="pay-main-title">{{ selectedOrder()?.payment }}</span>
+            <div class="pay-sub-meta">
+              <span>{{ selectedOrder()?.paymentMethod }}</span>
+              <span class="pay-meta-dot">·</span>
+              <span class="pay-op-code">{{ selectedOrder()?.opCode }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selector de Comprobante -->
+        <div class="invoice-selector-group">
+          <span class="section-micro-title">TIPO DE COMPROBANTE</span>
+          <div class="invoice-toggle-container">
+            <button
+              type="button"
+              class="invoice-toggle-btn"
+              [class.active]="selectedOrder()?.invoiceType === 'Boleta electrónica'"
+              (click)="changeInvoiceType('Boleta electrónica')"
+            >
+              Boleta
+            </button>
+            <button
+              type="button"
+              class="invoice-toggle-btn"
+              [class.active]="selectedOrder()?.invoiceType === 'Factura electrónica'"
+              (click)="changeInvoiceType('Factura electrónica')"
+            >
+              Factura
+            </button>
+          </div>
+        </div>
+
+        <!-- Selector de Actualizar Estado -->
+        <div class="update-status-group">
+          <label class="section-micro-title">ACTUALIZAR ESTADO</label>
+          <select
+            [ngModel]="selectedOrder()?.status"
+            (ngModelChange)="updateOrderStatus($event)"
+            class="status-dropdown-select"
+          >
+            <option value="Nuevo">Nuevo</option>
+            <option value="Preparando">Preparando</option>
+            <option value="Listo para retirar">Listo para retirar</option>
+            <option value="Entregado">Entregado</option>
+            <option value="Cancelado">Cancelado</option>
+          </select>
+        </div>
+
+        <button type="button" (click)="printReceipt()" class="btn-print-receipt">
+          Imprimir comprobante
+        </button>
+      </div>
+    </aside>
+  </div>
+  <app-invoice-sheet *ngIf="selectedOrder()" [data]="selectedOrder()"></app-invoice-sheet>
+</div>

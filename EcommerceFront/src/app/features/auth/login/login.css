@@ -1,0 +1,307 @@
+@reference "../../../../styles.css";
+
+/* ─── Pop-up Alert ────────────────────────────────── */
+.popup-alert-toast {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 100;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  min-width: 320px;
+  max-width: 420px;
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.toast-error {
+  border-left: 4px solid #ef4444;
+}
+
+.toast-success {
+  border-left: 4px solid #10b981;
+}
+
+.toast-icon {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.toast-error .toast-icon {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.toast-success .toast-icon {
+  background-color: #d1fae5;
+  color: #10b981;
+}
+
+.toast-body {
+  flex: 1;
+}
+
+.toast-title {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: #0f1c2e;
+  margin: 0 0 0.125rem 0;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+.toast-message {
+  font-size: 0.8125rem;
+  color: #5a6a7e;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.toast-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: #a0aab8;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.toast-close-btn:hover {
+  color: #0f1c2e;
+}
+
+/* ─── Contenedor General ────────────────────────────────────────── */
+.login-wrapper {
+  @apply min-h-screen flex flex-col;
+}
+
+@media (min-width: 768px) {
+  .login-wrapper {
+    flex-direction: row;
+  }
+}
+
+/* ─── Panel Izquierdo ────────────────────────────────────────────── */
+.hero-panel {
+  @apply hidden bg-[#1a3a6b] flex-col justify-between p-12 relative overflow-hidden;
+}
+
+@media (min-width: 768px) {
+  .hero-panel {
+    display: flex;
+    width: 50%;
+  }
+}
+
+.circles-pattern {
+  @apply absolute inset-0 opacity-10 pointer-events-none;
+}
+
+.circle-ring {
+  @apply absolute border-2 border-[#f5c800] rounded-full;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.hero-content {
+  @apply relative z-10;
+}
+
+.brand-header {
+  @apply flex items-center gap-3 mb-16;
+}
+
+.brand-badge {
+  @apply w-10 h-10 bg-[#f5c800] flex items-center justify-center;
+}
+
+.brand-badge-letter {
+  @apply font-black text-xl text-[#0f1c2e];
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+.brand-name {
+  @apply font-bold text-2xl text-white tracking-wide;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+.hero-title {
+  @apply font-black text-6xl text-white leading-tight mb-6;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+.hero-title-accent {
+  @apply text-[#f5c800];
+}
+
+.hero-description {
+  @apply text-[#a8c4e0] text-lg leading-relaxed max-w-sm;
+}
+
+/* Estadísticas */
+.stats-grid {
+  @apply relative z-10 grid grid-cols-3 gap-4;
+}
+
+.stat-card {
+  @apply bg-white/10 rounded p-4 text-center;
+}
+
+.stat-value {
+  @apply font-black text-2xl text-[#f5c800];
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+.stat-label {
+  @apply text-xs text-[#a8c4e0] mt-1 uppercase tracking-wider;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ─── Panel Derecho ─────────────────────────────────────────────── */
+.form-panel {
+  @apply flex-1 flex items-center justify-center p-8 bg-white;
+}
+
+.form-container {
+  @apply w-full max-w-md;
+}
+
+.mobile-brand {
+  @apply flex items-center gap-3 mb-10 justify-center;
+}
+
+@media (min-width: 768px) {
+  .mobile-brand {
+    display: none;
+  }
+}
+
+.brand-name-mobile {
+  @apply font-bold text-2xl text-[#1a3a6b] tracking-wide;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+.form-title {
+  @apply font-bold text-4xl text-[#0f1c2e] mb-1;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+.form-subtitle {
+  @apply text-[#5a6a7e] mb-8;
+}
+
+.login-form {
+  @apply flex flex-col gap-5;
+}
+
+.form-group {
+  @apply flex flex-col gap-1.5;
+}
+
+.form-label {
+  @apply text-xs text-[#5a6a7e] uppercase tracking-wider;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.form-input {
+  @apply border border-[#d0d9e6] bg-[#f4f6f8] rounded px-4 py-3 text-sm text-[#0f1c2e]
+  placeholder-[#a0aab8] focus:outline-none focus:border-[#1a3a6b] focus:bg-white transition-colors;
+}
+
+.password-label-row {
+  @apply flex items-center justify-between;
+}
+
+.forgot-pass-btn {
+  @apply text-xs text-[#1a3a6b] hover:text-[#f5c800] transition-colors;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.password-input-wrapper {
+  @apply relative;
+}
+
+.form-input-pass {
+  @apply w-full pr-12;
+}
+
+.toggle-pass-btn {
+  @apply absolute right-3 top-1/2 -translate-y-1/2 text-[#a0aab8] hover:text-[#1a3a6b] transition-colors;
+}
+
+.eye-icon {
+  @apply w-[18px] h-[18px];
+}
+
+/* Botones */
+.btn-primary {
+  @apply bg-[#1a3a6b] text-white font-semibold py-3.5 rounded hover:bg-[#0f2a52]
+  active:scale-[0.98] transition-all duration-200 flex items-center justify-center
+  gap-2 disabled:opacity-70 cursor-pointer;
+}
+
+.spinner-icon {
+  @apply animate-spin w-4 h-4 text-white;
+}
+
+.spinner-track {
+  @apply opacity-25;
+}
+
+.spinner-path {
+  @apply opacity-75;
+}
+
+.divider-container {
+  @apply relative flex items-center gap-3;
+}
+
+.divider-line {
+  @apply flex-1 h-px bg-[#e8edf4];
+}
+
+.divider-text {
+  @apply text-xs text-[#a0aab8];
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.btn-guest {
+  @apply border border-[#d0d9e6] text-[#0f1c2e] font-medium py-3.5 rounded
+  hover:border-[#1a3a6b] hover:bg-[#f4f6f8] transition-colors text-sm
+  flex items-center justify-center gap-2 cursor-pointer;
+}
+
+.guest-icon {
+  @apply text-base;
+}
+
+.register-footer {
+  @apply text-center text-sm text-[#5a6a7e] mt-8;
+}
+
+.register-link {
+  @apply text-[#1a3a6b] font-semibold hover:text-[#f5c800] transition-colors;
+}

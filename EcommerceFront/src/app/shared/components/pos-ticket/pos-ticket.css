@@ -1,0 +1,72 @@
+.print-pos-ticket {
+  display: none;
+}
+
+@media print {
+  .print-pos-ticket {
+    display: block !important;
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: #ffffff !important;
+    z-index: 9999999 !important;
+    margin: 0 !important;
+    padding: 10mm 0 0 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .ticket-inner-wrap {
+    width: 76mm !important;
+    margin: 0 auto !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    font-size: 11px !important;
+    color: #000000 !important;
+    line-height: 1.35 !important;
+  }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  .ticket-header { text-align: center; }
+  .ticket-brand { font-size: 18px; font-weight: bold; margin: 0; }
+  .ticket-sub { font-size: 10px; margin: 1px 0; }
+  .ticket-doc-title { font-size: 12px; font-weight: bold; margin: 4px 0 2px 0; }
+  .ticket-series { font-size: 13px; font-weight: bold; margin: 0; }
+  .ticket-divider { margin: 4px 0; letter-spacing: -1px; text-align: center; }
+
+  .ticket-info { font-size: 10px; }
+  .ticket-info p { margin: 2px 0; }
+
+  .ticket-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+    margin: 4px 0;
+  }
+
+  .ticket-table th { text-align: left; border-bottom: 1px dashed #000; padding: 2px 0; }
+  .ticket-table td { padding: 2px 0; vertical-align: top; }
+
+  .ticket-totals {
+    font-size: 11px;
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  .ticket-line { display: flex; justify-content: space-between; }
+  .ticket-total-bold { font-size: 14px; font-weight: bold; margin: 4px 0; }
+  .ticket-footer { text-align: center; font-size: 10px; margin-top: 10px; }
+  .text-right { text-align: right; }
+}

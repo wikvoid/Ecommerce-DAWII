@@ -1,0 +1,44 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+
+@import 'tailwindcss';
+
+@theme inline {
+  --color-background: #f4f6f8;
+  --color-foreground: #0f1c2e;
+  --color-card: #ffffff;
+  --color-card-foreground: #0f1c2e;
+  --color-primary: #1a3a6b;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f5c800;
+  --color-secondary-foreground: #0f1c2e;
+  --color-muted: #e8edf4;
+  --color-muted-foreground: #5a6a7e;
+  --color-accent: #f5c800;
+  --color-accent-foreground: #0f1c2e;
+  --color-border: #d0d9e6;
+  --color-ring: #f5c800;
+  --radius: 4px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f4f6f8;
+  color: #0f1c2e;
+  font-family: 'Work Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-display {
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}

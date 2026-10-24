@@ -1,0 +1,68 @@
+.dots-pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 0;
+}
+
+.btn-nav-arrow {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #1a3a6b;
+  border-radius: 0.375rem;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-nav-arrow:hover:not(:disabled) {
+  background-color: #f1f5f9;
+  border-color: #1a3a6b;
+}
+
+.btn-nav-arrow:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dots-list {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.dot-bullet-btn {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #64748b;
+  min-width: 2rem;
+  height: 2rem;
+  border-radius: 0.375rem;
+  padding: 0 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.dot-bullet-btn:hover {
+  background-color: #f8fafc;
+  border-color: #1a3a6b;
+  color: #1a3a6b;
+}
+
+.dot-bullet-btn.dot-active {
+  background-color: #1a3a6b;
+  border-color: #1a3a6b;
+  color: #ffffff;
+  font-weight: 700;
+}

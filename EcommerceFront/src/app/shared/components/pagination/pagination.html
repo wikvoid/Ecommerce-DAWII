@@ -1,0 +1,36 @@
+@if (totalPages > 1) {
+  <div class="dots-pagination-wrapper">
+    <!-- Flecha anterior -->
+    <button
+      type="button"
+      (click)="selectPage(currentPage - 1)"
+      [disabled]="currentPage === 1"
+      class="btn-nav-arrow"
+      title="Página anterior"
+    >
+      ‹
+    </button>
+    <div class="dots-list">
+      @for (page of pagesArray; track page) {
+        <button
+          type="button"
+          (click)="selectPage(page)"
+          [class.dot-active]="currentPage === page"
+          class="dot-bullet-btn"
+          [title]="'Página ' + page"
+        >
+          {{ page }}
+        </button>
+      }
+    </div>
+    <button
+      type="button"
+      (click)="selectPage(currentPage + 1)"
+      [disabled]="currentPage === totalPages"
+      class="btn-nav-arrow"
+      title="Página siguiente"
+    >
+      ›
+    </button>
+  </div>
+}

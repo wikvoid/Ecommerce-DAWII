@@ -1,0 +1,210 @@
+<header class="main-header" (mouseleave)="openMegamenu = null">
+  <div class="header-container">
+    <!-- Logo -->
+    <button (click)="goHome()" class="logo-btn">
+      <div class="logo-badge">
+        <span class="logo-letter">F</span>
+      </div>
+      <span class="logo-title">FERREMAS</span>
+    </button>
+
+    <!-- Barra de búsqueda principal -->
+    <div class="desktop-search-container">
+      <div class="search-input-wrapper">
+        <input
+          #searchInput
+          type="text"
+          placeholder="Buscar productos, marcas…"
+          class="search-input"
+          (keyup.enter)="onSubcatClick('', searchInput.value)"
+        />
+        <button (click)="onSubcatClick('', searchInput.value)" class="search-submit-btn">
+          <svg
+            class="search-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="M21 21l-4.35-4.35"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="header-actions">
+      <!-- === VISTA SI ESTÁ LOGUEADO === -->
+      @if (isLogged()) {
+        <div class="user-pill">
+          <svg class="user-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span class="user-email">Hola, {{ userFullName() }}</span>
+        </div>
+        <!-- Botón exclusivo para Administradores -->
+        @if (isAdmin()) {
+          <button (click)="goAdmin()" class="admin-panel-btn">
+            Panel Admin
+          </button>
+        }
+
+        <!-- NUEVO BOTÓN DE MIS COMPRAS -->
+        <button (click)="goMyOrders()" class="my-orders-btn">Mis Compras</button>
+
+        <button (click)="onLogout()" class="logout-btn">Cerrar sesión</button>
+      }
+
+      <!-- === VISTA SI ES VISITANTE (No logueado) === -->
+      @if (!isLogged()) {
+        <button (click)="router.navigate(['/login'])" class="btn-login-nav">Ingresar</button>
+        <button (click)="router.navigate(['/register'])" class="btn-register-nav">Crear cuenta</button>
+      }
+
+      <!-- Botón del Carrito (Este siempre se ve) -->
+      <button (click)="goCart()" class="cart-btn">
+        <svg
+          class="cart-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 01-8 0"></path>
+        </svg>
+        <span class="cart-label">Carrito</span>
+        <!-- Aquí está la magia reactiva -->
+        @if (cartService.cartCount() > 0) {
+          <span class="cart-badge">{{ cartService.cartCount() }}</span>
+        }
+      </button>
+
+      <!-- Toggle Móvil -->
+      <button (click)="mobileOpen = !mobileOpen" class="mobile-menu-toggle">
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M3 12h18M3 6h18M3 18h18" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Navegación -->
+  <nav class="categories-nav">
+    <div class="categories-container">
+      <!-- Botón Inicio -->
+      <button (click)="goHome()" class="btn-home-nav">
+        <span>Inicio</span>
+      </button>
+
+      <!-- Categorías -->
+      <div class="nav-category-items">
+        @for (cat of navCategories; track cat) {
+          <button
+            (mouseenter)="onHoverCategory(cat)"
+            (click)="onCategoryClick(cat)"
+            [class.cat-active]="openMegamenu === cat.name"
+            [class.cat-nav-promo]="cat.name === 'Liquidacion'"
+            class="cat-nav-link"
+          >
+            <span class="cat-nav-icon">{{ cat.icon }}</span>
+            <span>{{ cat.name }}</span>
+            <!-- Flechita solo si tiene despliegue -->
+            @if (cat.hasDropdown) {
+              <svg
+                class="chevron-icon"
+                [class.rotate-up]="openMegamenu === cat.name"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <path d="M6 9l6 6 6-6"></path>
+              </svg>
+            }
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- ── Desplegable  ── -->
+    @if (openMegamenu && activeCatData) {
+      <div class="megamenu-panel">
+        <div class="megamenu-content-grid">
+          <!-- Lista de Subcategorías -->
+          <div class="megamenu-subcats-box">
+            <div class="megamenu-cat-title">
+              <span class="title-icon">{{ activeCatData.icon }}</span>
+              <h3>{{ activeCatData.name }}</h3>
+            </div>
+            <div class="subcats-grid">
+              @for (sub of activeCatData.subcats; track sub) {
+                <button (click)="onSubcatClick(activeCatData.name, sub)" class="subcat-item-btn">
+                  <span>{{ sub }}</span>
+                  <span class="subcat-arrow">→</span>
+                </button>
+              }
+            </div>
+            <div class="see-all-subcat-li">
+              <button (click)="onCategoryClick(activeCatData)" class="see-all-subcat-btn">
+                <span>Ver todo en {{ activeCatData.name }}</span>
+                <span class="bold-arrow">→</span>
+              </button>
+            </div>
+          </div>
+          <!-- Banner de Categoría Lateral -->
+          <div class="megamenu-col-banner">
+            <div class="category-banner-box">
+              <img
+                [src]="
+                  'https://images.unsplash.com/' +
+                  activeCatData.img +
+                  '?w=400&h=300&fit=crop&auto=format'
+                "
+                [alt]="activeCatData.name"
+                class="category-banner-img"
+              />
+              <div class="category-banner-overlay">
+                <h4 class="banner-title">{{ activeCatData.name }}</h4>
+                <p class="banner-count">
+                  {{ getCategoryTotalCount(activeCatData.name) }} productos
+                </p>
+              </div>
+            </div>
+            <button (click)="onCategoryClick(activeCatData)" class="btn-catalog-action">
+              <span>Ver categoría completa</span>
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </nav>
+
+  <!-- Menú Móvil -->
+  @if (mobileOpen) {
+    <div class="mobile-dropdown-menu">
+      <button (click)="goHome()" class="mobile-link">🏠 Inicio</button>
+      @for (cat of navCategories; track cat) {
+        <div class="mobile-cat-group">
+          <button (click)="onCategoryClick(cat)" class="mobile-cat-header-btn">
+            <span>{{ cat.icon }} {{ cat.name }}</span>
+            <span>→</span>
+          </button>
+        </div>
+      }
+    </div>
+  }
+</header>

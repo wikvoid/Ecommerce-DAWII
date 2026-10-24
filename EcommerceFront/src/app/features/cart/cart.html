@@ -1,0 +1,186 @@
+<app-navbar></app-navbar>
+
+<main class="cart-page-wrapper">
+  <div class="cart-container">
+    <div class="cart-header-row">
+      <h1 class="cart-main-title">Carrito de compra</h1>
+      <button (click)="goCatalog()" class="btn-continue-shopping">
+        <svg
+          class="arrow-left-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span>Seguir comprando</span>
+      </button>
+    </div>
+
+    <!-- Vista si el carrito está vacío -->
+    @if (cartService.cartItems().length === 0) {
+      <div class="empty-cart-card">
+        <div class="empty-cart-icon">🛒</div>
+        <h2 class="empty-cart-title">Tu carrito está vacío</h2>
+        <p class="empty-cart-desc">Agregá productos desde el catálogo para visualizarlos acá.</p>
+        <button (click)="goCatalog()" class="btn-back-catalog">Ir al catálogo</button>
+      </div>
+    }
+
+    <!-- Vista de productos y resumen de pedido -->
+    @if (cartService.cartItems().length > 0) {
+      <div class="cart-layout-grid">
+        <!-- Columna Izquierda: Lista de productos -->
+        <section class="cart-items-column">
+          @for (item of cartService.cartItems(); track item) {
+            <div class="cart-product-item">
+              <!-- Miniatura -->
+              <div class="item-thumbnail-box">
+                <img [src]="item.img" [alt]="item.name" class="item-img" />
+              </div>
+              <!-- Información -->
+              <div class="item-details-box">
+                <h3 class="item-name">{{ item.name }}</h3>
+                <p class="item-unit-price">{{ formatPrice(item.price) }}</p>
+              </div>
+              <!-- Selector de cantidad -->
+              <div class="quantity-controller">
+                <button
+                  type="button"
+                  (click)="cartService.updateQuantity(item.id, item.qty - 1)"
+                  class="qty-btn"
+                >
+                  −
+                </button>
+                <span class="qty-counter">{{ item.qty }}</span>
+                <button
+                  type="button"
+                  (click)="cartService.updateQuantity(item.id, item.qty + 1)"
+                  class="qty-btn"
+                >
+                  +
+                </button>
+              </div>
+              <!-- Total de la fila -->
+              <div class="item-total-col">
+                <span class="item-total-text">{{ formatPrice(item.price * item.qty) }}</span>
+              </div>
+              <!-- Botón Eliminar -->
+              <button
+                type="button"
+                (click)="cartService.removeItem(item.id)"
+                class="item-remove-btn"
+                title="Eliminar producto"
+              >
+                <svg
+                  class="trash-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path
+                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                  ></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+              </button>
+            </div>
+          }
+          <!-- Botón secundario para volver a comprar debajo de la lista -->
+          <div class="bottom-actions-row">
+            <button (click)="goCatalog()" class="btn-continue-secondary">
+              ← Ver más productos
+            </button>
+          </div>
+        </section>
+        <!-- Columna Derecha: Sidebar Sticky con Resumen y Métodos de Pago -->
+        <aside class="order-summary-sidebar">
+          <!-- Tarjeta 1: Resumen y Nota -->
+          <div class="summary-card">
+            <!-- Bloque: Agregar nota de pedido -->
+            <div class="order-note-block">
+              <label class="order-note-title">Agregar nota de pedido</label>
+              <textarea
+                [(ngModel)]="orderNote"
+                rows="3"
+                placeholder="Instrucciones especiales para el recojo de tu compra..."
+                class="order-note-input"
+              ></textarea>
+            </div>
+            <h2 class="summary-card-title">Resumen del pedido</h2>
+            <div class="summary-calc-rows">
+              <div class="summary-row">
+                <span class="summary-row-label"
+                  >Subtotal ({{ cartService.cartCount() }} artículos)</span
+                >
+                <span class="summary-row-val">{{ formatPrice(cartService.subtotal()) }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-row-label">Entrega</span>
+                <span class="pickup-free">Recojo en tienda (Gratis)</span>
+              </div>
+              <div class="summary-separator"></div>
+              <div class="summary-total-row">
+                <span class="total-label">Total</span>
+                <span class="total-val">{{ formatPrice(cartService.total()) }}</span>
+              </div>
+            </div>
+            <!-- Botón de Compra -->
+            <button (click)="onCheckout()" class="btn-checkout">
+              <span>Finalizar compra</span>
+              <svg
+                class="checkout-arrow-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
+          <!-- Tarjeta 2: Métodos de Pago -->
+          <div class="payment-card">
+            <h4 class="payment-heading">Métodos de pago</h4>
+            <div class="payment-badges-row">
+              <!-- Visa -->
+              <div class="card-chip">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg"
+                  alt="Visa"
+                />
+              </div>
+              <!-- Mastercard -->
+              <div class="card-chip">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
+                  alt="Mastercard"
+                />
+              </div>
+              <!-- American Express -->
+              <div class="card-chip">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg"
+                  alt="Amex"
+                />
+              </div>
+              <!-- Diners Club -->
+              <div class="card-chip">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Diners_Club_Logo3.svg"
+                  alt="Diners Club"
+                />
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    }
+  </div>
+</main>
+
+<app-footer></app-footer>

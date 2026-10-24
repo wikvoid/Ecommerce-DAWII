@@ -1,0 +1,192 @@
+.print-document-container {
+  display: none;
+  width: 800px;
+  background-color: #ffffff;
+  padding: 24px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #000000;
+  box-sizing: border-box;
+}
+
+.print-doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 22px;
+  border-bottom: 2px solid #000000;
+  padding-bottom: 14px;
+}
+
+.print-brand-name {
+  font-size: 26px;
+  font-weight: 900;
+  margin: 0 0 4px 0;
+  color: #000000;
+  letter-spacing: -0.5px;
+}
+
+.print-company-legal {
+  font-size: 13px;
+  font-weight: bold;
+  margin: 0 0 3px 0;
+  color: #000000;
+}
+
+.print-company-sub {
+  font-size: 11px;
+  color: #333333;
+  margin: 2px 0;
+}
+
+/* Recuadro RUC */
+.print-fiscal-box {
+  border: 2px solid #000000;
+  border-radius: 6px;
+  padding: 12px 18px;
+  text-align: center;
+  width: 260px;
+  box-sizing: border-box;
+}
+
+.print-ruc-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0 0 5px 0;
+  color: #000000;
+}
+
+.print-doc-badge {
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 6px;
+  margin: 4px 0;
+  letter-spacing: 0.05em;
+}
+
+.print-series-number {
+  font-size: 15px;
+  font-weight: bold;
+  margin: 5px 0 0 0;
+  font-family: 'Courier New', Courier, monospace;
+  color: #000000;
+}
+
+/* Ficha del Cliente */
+.print-client-grid {
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin-bottom: 18px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #000000;
+}
+
+.print-client-row {
+  display: flex;
+  gap: 10px;
+}
+
+.print-label {
+  width: 140px;
+  font-weight: bold;
+  color: #333333;
+}
+
+.print-value-bold {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Tabla de Productos */
+.print-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  font-size: 11px;
+  color: #000000;
+}
+
+.print-items-table th {
+  background-color: #f2f2f2;
+  border: 1px solid #000000;
+  padding: 7px 8px;
+  font-weight: bold;
+  text-transform: uppercase;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.print-items-table td {
+  border: 1px solid #cccccc;
+  padding: 7px 8px;
+}
+
+.col-cant { width: 10%; }
+.col-desc { width: 55%; }
+.col-price { width: 17%; }
+.col-total { width: 18%; }
+
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.font-bold { font-weight: bold; }
+
+/* Totales e IGV */
+.print-totals-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 25px;
+}
+
+.print-totals-box {
+  width: 240px;
+  border: 1px solid #000000;
+  padding: 8px 12px;
+  font-size: 11px;
+  color: #000000;
+  box-sizing: border-box;
+}
+
+.print-total-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+}
+
+.total-highlight {
+  border-top: 1px solid #000000;
+  margin-top: 4px;
+  padding-top: 4px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.print-legal-footer {
+  text-align: center;
+  border-top: 1px dashed #999999;
+  padding-top: 12px;
+  font-size: 10px;
+  color: #555555;
+}
+
+/* Reglas al imprimir en papel */
+@media print {
+  .print-document-container {
+    display: block !important;
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    z-index: 9999999 !important;
+    padding: 20mm !important;
+    background: #ffffff !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+}

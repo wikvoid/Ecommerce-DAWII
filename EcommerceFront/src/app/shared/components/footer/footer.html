@@ -1,0 +1,64 @@
+<footer class="footer-wrapper">
+  <div class="footer-grid">
+    <!-- Columna 1 -->
+    <div class="footer-brand-col">
+      <div class="footer-logo">
+        <div class="footer-logo-badge">
+          <span class="footer-logo-letter">F</span>
+        </div>
+        <span class="footer-logo-title">FERREMAS</span>
+      </div>
+      <p class="footer-desc">Tu ferretería de confianza desde 2009. Materiales y herramientas para toda obra.</p>
+      <div class="social-links">
+        <button class="social-btn">FB</button>
+        <button class="social-btn">IG</button>
+        <button class="social-btn">WA</button>
+      </div>
+    </div>
+
+    <!-- Columna 2: Categorías -->
+    <div>
+      <h4 class="footer-heading">Categorías</h4>
+      <ul class="footer-list">
+        <li (click)="goCategory('Herramientas')">Herramientas Eléctricas</li>
+        <li (click)="goCategory('Pinturas')">Pinturas y Revestimientos</li>
+        <li (click)="goCategory('Plomería')">Plomería</li>
+        <li (click)="goCategory('Electricidad')">Electricidad</li>
+        <li (click)="goCategory('Construcción')">Construcción</li>
+      </ul>
+    </div>
+
+    <!-- Columna 3: Información -->
+    <div>
+      <h4 class="footer-heading">Información</h4>
+      <ul class="footer-list">
+        <li (click)="goInfo('/about_us')">Sobre nosotros</li>
+        <li (click)="goInfo('/how_to_buy')">Cómo comprar</li>
+        <li (click)="goInfo('/pickup_returns')">Recojo y devoluciones</li>
+        <li (click)="goInfo('/faq')">Preguntas frecuentes</li>
+        <li (click)="goInfo('/careers')">Trabaja con nosotros</li>
+      </ul>
+    </div>
+
+    <!-- Columna 4 -->
+    <div>
+      <h4 class="footer-heading">Contacto</h4>
+      <ul class="footer-contact">
+        <li>📍 Av. Corrientes 1234, Buenos Aires</li>
+        <li>📞 (011) 4523-8800</li>
+        <li>✉️ ventas&#64;ferremas.com.ar</li>
+        <li>🕐 Lun–Sáb 8:00–20:00</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-bottom-inner">
+      <span>© 2026 Ferremas. Todos los derechos reservados.</span>
+      <div class="legal-links">
+        <button>Términos y condiciones</button>
+        <button>Privacidad</button>
+      </div>
+    </div>
+  </div>
+</footer>

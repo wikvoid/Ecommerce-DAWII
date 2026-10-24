@@ -1,0 +1,157 @@
+<div class="login-wrapper">
+  <div class="hero-panel">
+    <div class="circles-pattern">
+      @for (size of circles; track size) {
+        <div class="circle-ring" [style.width.px]="size" [style.height.px]="size"></div>
+      }
+    </div>
+
+    <!-- Contenido principal izquierdo -->
+    <div class="hero-content">
+      <div class="brand-header">
+        <div class="brand-badge">
+          <span class="brand-badge-letter">F</span>
+        </div>
+        <span class="brand-name">FERREMAS</span>
+      </div>
+
+      <h1 class="hero-title">
+        TODO PARA<br />
+        <span class="hero-title-accent">TU OBRA.</span>
+      </h1>
+
+      <p class="hero-description">
+        Más de 5.000 productos para construcción, electricidad, plomería y jardín. Siempre al mejor
+        precio.
+      </p>
+    </div>
+
+    <!-- Tarjetas de estadísticas -->
+    <div class="stats-grid">
+      @for (stat of stats; track stat) {
+        <div class="stat-card">
+          <p class="stat-value">{{ stat.val }}</p>
+          <p class="stat-label">{{ stat.label }}</p>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Panel Derecho (Formulario) -->
+  <div class="form-panel">
+    <div class="form-container">
+      <!-- Logo visible solo en móviles -->
+      <div class="mobile-brand">
+        <div class="brand-badge">
+          <span class="brand-badge-letter">F</span>
+        </div>
+        <span class="brand-name-mobile">FERREMAS</span>
+      </div>
+
+      <h2 class="form-title">Iniciar sesión</h2>
+      <p class="form-subtitle">Bienvenido de nuevo. Ingresá con tu cuenta.</p>
+
+      <!-- Mensaje de error -->
+      @if (error()) {
+        <div class="popup-alert-toast toast-error">
+          <div class="toast-icon">!</div>
+          <div class="toast-body">
+            <p class="toast-title">Error de conexión</p>
+            <p class="toast-message">{{ error() }}</p>
+          </div>
+          <!-- Para limpiar el error usando la signal -->
+          <button type="button" (click)="error.set('')" class="toast-close-btn">×</button>
+        </div>
+      }
+
+      <form [formGroup]="loginForm" (ngSubmit)="handleSubmit()" class="login-form">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="usuario@correo.com"
+            class="form-input"
+          />
+        </div>
+
+        <div class="form-group">
+          <div class="password-label-row">
+            <label class="form-label">Contraseña</label>
+            <button type="button" class="forgot-pass-btn">¿Olvidaste la contraseña?</button>
+          </div>
+
+          <div class="password-input-wrapper">
+            <!-- Quitamos [(ngModel)] y name="pass", ponemos formControlName="password" -->
+            <input
+              [type]="showPass() ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="••••••••"
+              class="form-input form-input-pass"
+            />
+
+            <button type="button" (click)="toggleShowPass()" class="toggle-pass-btn">
+              @if (showPass()) {
+                <svg
+                  class="eye-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24M1 1l22 22"
+                  />
+                </svg>
+              }
+              @if (!showPass()) {
+                <svg
+                  class="eye-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              }
+            </button>
+          </div>
+        </div>
+
+        <!-- Botón Principal -->
+        <button type="submit" [disabled]="loading()" class="btn-primary">
+          @if (loading()) {
+            <svg class="spinner-icon" viewBox="0 0 24 24" fill="none">
+              <circle
+                class="spinner-track"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path class="spinner-path" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+            </svg>
+            <span>Ingresando...</span>
+          }
+          @if (!loading()) {
+            <span>Ingresar</span>
+          }
+        </button>
+      </form>
+
+      <p class="text-center text-sm text-[#5a6a7e] mt-8">
+        ¿No tenés cuenta?
+        <button
+          type="button"
+          (click)="goToRegister()"
+          class="text-[#1a3a6b] font-semibold hover:text-[#f5c800] transition-colors"
+        >
+          Registrate gratis
+        </button>
+      </p>
+    </div>
+  </div>
+</div>

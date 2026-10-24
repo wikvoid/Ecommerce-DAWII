@@ -1,0 +1,118 @@
+<app-navbar></app-navbar>
+
+<main class="careers-page-container">
+  <!-- Cabecera Hero con Foto y Gradiente Fusionado -->
+  <section class="careers-hero-banner">
+    <div class="careers-hero-bg-layer">
+      <img
+        src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1600&h=400&fit=crop&auto=format"
+        alt="Fondo Obra"
+        class="careers-hero-img"
+      />
+      <div class="careers-hero-gradient"></div>
+    </div>
+
+    <div class="careers-hero-content">
+      <button (click)="goBack()" class="btn-back-breadcrumb">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span>Volver</span>
+      </button>
+
+      <span class="hero-brand-subtitle">FERREMAS</span>
+      <h1 class="hero-page-title">Trabajá con nosotros</h1>
+      <p class="hero-page-tagline">
+        Sumate al equipo Ferremas. Buscamos personas apasionadas, comprometidas y con ganas de
+        crecer.
+      </p>
+    </div>
+  </section>
+
+  <!-- Contenido Central -->
+  <div class="careers-body-wrapper">
+    <!-- Bloque 1: Beneficios -->
+    <section class="benefits-section">
+      <span class="section-tag-gold">¿POR QUÉ FERREMAS?</span>
+      <h2 class="section-main-title">Un buen lugar para trabajar</h2>
+
+      <div class="benefits-grid">
+        @for (b of benefits; track b) {
+          <div class="benefit-card">
+            <span class="benefit-card-icon">{{ b.icon }}</span>
+            <h3 class="benefit-card-title">{{ b.title }}</h3>
+            <p class="benefit-card-desc">{{ b.desc }}</p>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Bloque 2: Vacantes Disponibles -->
+    <section class="positions-section">
+      <span class="section-tag-gold">BÚSQUEDAS ACTIVAS</span>
+      <h2 class="section-main-title">Posiciones abiertas</h2>
+
+      <div class="positions-list">
+        @for (p of positions; track p) {
+          <div class="position-item-card">
+            <div class="position-info-col">
+              <div class="position-header-row">
+                <h3 class="position-title">{{ p.title }}</h3>
+                <span class="position-badge" [class.badge-full]="p.type === 'Full-time'">{{
+                  p.type
+                }}</span>
+              </div>
+              <div class="position-tags-row">
+                <span>📁 {{ p.area }}</span>
+                <span>📍 {{ p.loc }}</span>
+              </div>
+              <p class="position-desc">{{ p.desc }}</p>
+            </div>
+            <!-- Botón de postulación -->
+            <a
+              [href]="
+                'mailto:talento@ferremas.com.ar?subject=Postulación: ' + p.title + ' - Ferremas'
+              "
+              class="btn-apply-position"
+            >
+              Postularme
+            </a>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Bloque 3: Envío Espontáneo de CV vía Correo -->
+    <section class="spontaneous-box">
+      <div class="spontaneous-content">
+        <div class="spontaneous-icon">✉️</div>
+        <div>
+          <h3 class="spontaneous-title">¿No encontraste un puesto afín a tu perfil?</h3>
+          <p class="spontaneous-desc">
+            Envianos tu Currículum Vitae (CV) indicando en el asunto tu área de especialidad
+            (Ventas, Logística, Mantenimiento o Administración) a nuestro departamento de Selección:
+          </p>
+          <div class="mail-highlight-pill">
+            <span>talento&#64;ferremas.com.ar</span>
+          </div>
+        </div>
+      </div>
+      <a
+        href="mailto:talento@ferremas.com.ar?subject=Postulación Espontánea - Ferremas"
+        class="btn-send-cv-mail"
+      >
+        <span>Enviar CV por correo</span>
+        <span>→</span>
+      </a>
+    </section>
+  </div>
+</main>
+
+<app-footer></app-footer>

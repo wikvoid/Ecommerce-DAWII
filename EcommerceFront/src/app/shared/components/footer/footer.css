@@ -1,0 +1,129 @@
+.footer-wrapper {
+  background-color: #0f1c2e;
+  color: #a8c4e0;
+  margin-top: 2rem;
+}
+
+.footer-grid {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.footer-logo-badge {
+  width: 2rem;
+  height: 2rem;
+  background-color: #f5c800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-logo-letter {
+  font-weight: 900;
+  color: #0f1c2e;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+.footer-logo-title {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: #ffffff;
+  letter-spacing: 0.1em;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+.footer-desc {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.social-links {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.social-btn {
+  width: 2.25rem;
+  height: 2.25rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.25rem;
+  border: none;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  cursor: pointer;
+}
+
+.social-btn:hover {
+  background-color: #f5c800;
+  color: #0f1c2e;
+}
+
+.footer-heading {
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+.footer-list, .footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.footer-list li {
+  cursor: pointer;
+}
+
+.footer-list li:hover {
+  color: #f5c800;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem 1.5rem;
+}
+
+.footer-bottom-inner {
+  max-width: 80rem;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #5a6a7e;
+}
+
+.legal-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.legal-links button {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+.legal-links button:hover {
+  color: #f5c800;
+}

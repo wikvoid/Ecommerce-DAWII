@@ -1,0 +1,402 @@
+.about-page-container {
+  background-color: #f4f6f8;
+  min-height: 100vh;
+}
+
+/* Hero Superior */
+.about-hero-banner {
+  background-color: #1a3a6b;
+  position: relative;
+  overflow: hidden;
+  padding: 3.5rem 1.5rem;
+}
+
+.about-hero-bg-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.about-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.50;
+  filter: contrast(1.15) brightness(0.9);
+}
+
+.about-hero-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(26, 58, 107, 0.92) 40%,
+    rgba(26, 58, 107, 0.92) 40%,
+    rgba(26, 58, 107, 0.45) 100%
+  );
+}
+
+.about-hero-content {
+  max-width: 65rem;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+.btn-back-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: #a8c4e0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.btn-back-breadcrumb:hover {
+  color: #f5c800;
+}
+
+.hero-brand-subtitle {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f5c800;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.5rem;
+}
+
+.hero-page-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2.75rem, 5vw, 4rem);
+  color: #ffffff;
+  line-height: 1;
+  margin: 0 0 1rem 0;
+}
+
+.hero-page-tagline {
+  color: #a8c4e0;
+  font-size: 1.125rem;
+  max-width: 36rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/*  Contenedor del Cuerpo  */
+.about-body-wrapper {
+  max-width: 65rem;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 6rem 1.5rem;
+}
+
+/* Tags de sección */
+.section-tag-gold {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f5c800;
+  letter-spacing: 0.15em;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.section-main-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 2.25rem;
+  color: #0f1c2e;
+  margin-bottom: 2rem;
+}
+
+/* Historia */
+.history-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+  margin-bottom: 5rem;
+}
+
+@media (min-width: 768px) {
+  .history-grid {
+    grid-template-columns: 1.15fr 0.85fr;
+  }
+}
+
+.history-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2rem, 3.5vw, 2.5rem);
+  color: #0f1c2e;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.history-p {
+  color: #5a6a7e;
+  line-height: 1.7;
+  font-size: 0.95rem;
+  margin-bottom: 1.25rem;
+}
+
+.history-media-col {
+  position: relative;
+}
+
+.history-img-box {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 1rem;
+  overflow: visible;
+}
+
+.history-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.foundation-badge {
+  position: absolute;
+  bottom: -1rem;
+  left: -1rem;
+  background-color: #f5c800;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.foundation-year {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 2.25rem;
+  color: #0f1c2e;
+  line-height: 1;
+}
+
+.foundation-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #0f1c2e;
+  letter-spacing: 0.05em;
+  margin-top: 0.25rem;
+}
+
+/* Estadísticas */
+.stats-grid-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 5rem;
+}
+
+@media (min-width: 768px) {
+  .stats-grid-row {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.stat-box-card {
+  background-color: #ffffff;
+  border: 1px solid #e8edf4;
+  border-radius: 1rem;
+  padding: 1.75rem 1rem;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-box-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+}
+
+.stat-box-icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.stat-box-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 2.25rem;
+  color: #1a3a6b;
+  display: block;
+  line-height: 1.1;
+}
+
+.stat-box-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #5a6a7e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.35rem;
+  display: block;
+}
+
+/* Valores  */
+.values-section {
+  margin-bottom: 5rem;
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .values-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.value-item-card {
+  background-color: #ffffff;
+  border: 1px solid #e8edf4;
+  border-radius: 1rem;
+  padding: 1.75rem;
+  transition: border-color 0.2s;
+}
+
+.value-item-card:hover {
+  border-color: #f5c800;
+}
+
+.value-card-icon {
+  font-size: 2.25rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.value-card-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #0f1c2e;
+  margin-bottom: 0.5rem;
+}
+
+.value-card-desc {
+  font-size: 0.875rem;
+  color: #5a6a7e;
+  line-height: 1.6;
+}
+
+/* Equipo */
+.team-section {
+  margin-bottom: 5rem;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .team-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.team-card {
+  background-color: #ffffff;
+  border: 1px solid #e8edf4;
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.team-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.team-img-box {
+  height: 13rem;
+  background-color: #e8edf4;
+}
+
+.team-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.team-info {
+  padding: 1.25rem;
+}
+
+.team-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: #0f1c2e;
+  margin-bottom: 0.25rem;
+}
+
+.team-role {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #1a3a6b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Banner CTA Inferior */
+.about-cta-banner {
+  background-color: #1a3a6b;
+  border-radius: 1rem;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.cta-banner-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 2.25rem;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.cta-banner-desc {
+  color: #a8c4e0;
+  font-size: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.btn-cta-catalog {
+  background-color: #f5c800;
+  color: #0f1c2e;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.875rem 2.25rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.btn-cta-catalog:hover {
+  background-color: #e0b500;
+}
+
+.btn-cta-catalog:active {
+  transform: scale(0.98);
+}

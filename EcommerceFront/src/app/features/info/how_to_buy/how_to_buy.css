@@ -1,0 +1,389 @@
+.buy-page-container {
+  background-color: #f4f6f8;
+  min-height: 100vh;
+}
+
+/* Hero Superior */
+.buy-hero-banner {
+  background-color: #1a3a6b;
+  position: relative;
+  overflow: hidden;
+  padding: 3.5rem 1.5rem;
+}
+
+.buy-hero-bg-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.buy-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.38;
+  filter: contrast(1.15) brightness(0.9);
+}
+
+.buy-hero-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    #1a3a6b 0%,
+    rgba(26, 58, 107, 0.82) 40%,
+    rgba(26, 58, 107, 0.25) 100%
+  );
+}
+
+.buy-hero-content {
+  max-width: 65rem;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+.btn-back-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: #a8c4e0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.btn-back-breadcrumb:hover {
+  color: #f5c800;
+}
+
+.hero-brand-subtitle {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f5c800;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.5rem;
+}
+
+.hero-page-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2.75rem, 5vw, 4rem);
+  color: #ffffff;
+  line-height: 1;
+  margin: 0 0 1rem 0;
+}
+
+.hero-page-tagline {
+  color: #a8c4e0;
+  font-size: 1.125rem;
+  max-width: 36rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Contenedor del Cuerpo */
+.buy-body-wrapper {
+  max-width: 65rem;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 6rem 1.5rem;
+}
+
+.section-tag-gold {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f5c800;
+  letter-spacing: 0.15em;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.section-main-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 2.25rem;
+  color: #0f1c2e;
+  margin-bottom: 2.5rem;
+}
+
+/* Pasos y Timeline */
+.steps-section {
+  margin-bottom: 5rem;
+}
+
+.steps-timeline {
+  position: relative;
+}
+
+.timeline-line {
+  display: none;
+  position: absolute;
+  left: 2rem;
+  top: 2rem;
+  bottom: 2rem;
+  width: 2px;
+  background-color: #e8edf4;
+}
+
+@media (min-width: 768px) {
+  .timeline-line {
+    display: block;
+  }
+}
+
+.steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.step-card-row {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.step-icon-bubble {
+  width: 4rem;
+  height: 4rem;
+  background-color: #1a3a6b;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 10px 15px -3px rgba(26, 58, 107, 0.2);
+  position: relative;
+  z-index: 2;
+}
+
+.step-icon-symbol {
+  font-size: 1.75rem;
+}
+
+.step-card-box {
+  background-color: #ffffff;
+  border: 1px solid #e8edf4;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  flex: 1;
+  transition: all 0.2s ease-in-out;
+}
+
+.step-card-box:hover {
+  border-color: #f5c800;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.step-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.step-badge-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0f1c2e;
+  background-color: #fef08a;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.step-card-heading {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: #0f1c2e;
+  margin: 0;
+}
+
+.step-card-text {
+  font-size: 0.9375rem;
+  color: #5a6a7e;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Medios de Pago */
+.payment-methods-section {
+  margin-bottom: 5rem;
+}
+
+.payment-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .payment-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .payment-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.pay-item-card {
+  background-color: #ffffff;
+  border: 1px solid #e8edf4;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.pay-item-card:hover {
+  border-color: #1a3a6b;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.pay-card-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.pay-card-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #0f1c2e;
+  margin-bottom: 0.35rem;
+}
+
+.pay-card-desc {
+  font-size: 0.875rem;
+  color: #5a6a7e;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Tarjetas Informativas Destacadas */
+.highlights-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+
+@media (min-width: 768px) {
+  .highlights-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.highlight-card {
+  border-radius: 1rem;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.highlight-yellow {
+  background-color: #f5c800;
+}
+
+.highlight-blue {
+  background-color: #1a3a6b;
+}
+
+.highlight-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 1.75rem;
+  color: #0f1c2e;
+  margin-bottom: 0.75rem;
+}
+
+.highlight-desc {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: rgba(15, 28, 46, 0.8);
+  margin-bottom: 1.5rem;
+}
+
+.text-blue-100 {
+  color: #bfdbfe !important;
+}
+
+.btn-highlight-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #1a3a6b;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  width: fit-content;
+  transition: background-color 0.2s;
+}
+
+.btn-highlight-action:hover {
+  background-color: #0f2a52;
+}
+
+.ssl-shield-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #f5c800;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  width: fit-content;
+}
+
+/* Botón Final de Compra */
+.action-footer-box {
+  text-align: center;
+}
+
+.btn-start-shopping {
+  background-color: #1a3a6b;
+  color: #ffffff;
+  border: none;
+  padding: 1rem 2.5rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-start-shopping:hover {
+  background-color: #0f2a52;
+  box-shadow: 0 10px 15px -3px rgba(26, 58, 107, 0.25);
+  transform: translateY(-2px);
+}
+
+.btn-start-shopping:active {
+  transform: scale(0.98);
+}

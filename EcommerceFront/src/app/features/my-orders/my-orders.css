@@ -1,0 +1,230 @@
+.orders-container {
+  background-color: #f4f6f8;
+  min-height: calc(100vh - 4rem - 300px); /* Ajusta según el alto de tu footer/nav */
+  padding: 3rem 1rem;
+}
+
+.orders-inner {
+  max-width: 70rem;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.orders-header {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e8edf4;
+  padding-bottom: 1rem;
+}
+
+.orders-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #0f1c2e;
+  margin: 0;
+}
+
+.orders-subtitle {
+  color: #5a6a7e;
+  margin-top: 0.5rem;
+}
+
+/* Tabla */
+.table-responsive {
+  overflow-x: auto;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.orders-table th {
+  background-color: #1a3a6b;
+  color: #ffffff;
+  padding: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.orders-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e8edf4;
+  color: #0f1c2e;
+  font-size: 0.95rem;
+}
+
+.orders-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+/* Tipografía útil */
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+.font-bold { font-weight: 700; }
+.text-blue { color: #1a3a6b; }
+
+/* Badges de Estado */
+.status-badge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.status-pending { background-color: #fef08a; color: #854d0e; }
+.status-completed { background-color: #bbf7d0; color: #166534; }
+.status-cancelled { background-color: #fecaca; color: #991b1b; }
+
+/* Botones */
+.btn-primary {
+  background-color: #f5c800;
+  color: #0f1c2e;
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: #1a3a6b;
+  border: 1px solid #1a3a6b;
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: #1a3a6b;
+  color: #ffffff;
+}
+
+/* Empty & Loading States */
+.empty-state {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: #5a6a7e;
+}
+
+.empty-icon {
+  width: 4rem;
+  height: 4rem;
+  color: #cbd5e1;
+  margin-bottom: 1rem;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 3rem;
+  color: #1a3a6b;
+  font-weight: 600;
+}
+
+/* --- Modal Styles --- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(15, 28, 46, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.3s ease-out;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e8edf4;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-family: 'Barlow Condensed', sans-serif;
+  color: #0f1c2e;
+  font-size: 1.5rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: #5a6a7e;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #ef4444;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+.details-table th, .details-table td {
+  border-bottom: 1px solid #e8edf4;
+  padding: 0.75rem 0.5rem;
+  text-align: left;
+  font-size: 0.875rem;
+  color: #0f1c2e;
+}
+
+.details-table th {
+  background-color: #f4f6f8;
+  color: #1a3a6b;
+  font-weight: 600;
+}
+
+.modal-footer {
+  border-top: 2px dashed #e8edf4;
+  padding-top: 1rem;
+  text-align: right;
+}
+
+.total-text {
+  color: #1a3a6b;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.5rem;
+  margin: 0;
+  font-weight: 900;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
