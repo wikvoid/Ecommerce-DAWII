@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: ferremas-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+
+  backend:
+    build: 
+      context: ./HardwareStore
+    container_name: ferremas-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - rabbitmq
+    environment:
+      # Sobrescribimos el application.properties para que apunte al contenedor de RabbitMQ en lugar de localhost
+      - spring.rabbitmq.host=rabbitmq
+      - spring.rabbitmq.username=admin
+      - spring.rabbitmq.password=admin123
+
+  frontend:
+    build: 
+      context: ./EcommerceFront
+    container_name: ferremas-frontend
+    ports:
+      - "80:80" # Tu app web estará disponible directamente en http://localhost
+    depends_on:
+      - backend
