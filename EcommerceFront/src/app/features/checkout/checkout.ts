@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Necesario para Pipes o directivas
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -18,26 +18,21 @@ import Swal from 'sweetalert2';
   styleUrls: ['./checkout.css'],
 })
 export class CheckoutComponent implements OnInit {
-  // Estado Reactivo
-  pickupOption = signal<'self' | 'other'>('self');
-  authorizedPerson = signal('');
-  paymentMethod = signal<'card' | 'transfer' | 'store'>('card');
-
+  // 1. Eliminamos 'transfer' de las opciones válidas
+  paymentMethod = signal<'card' | 'yape'>('card');
   cardData = signal({ number: '', name: '', expiry: '', cvv: '' });
+  yapeData = signal({ phone: '', approvalCode: '' });
   isProcessing = signal(false);
 
-  // Inyección de dependencias
   public cartService = inject(CartService);
-  public tokenService = inject(TokenService); // Público para usarlo en la vista
+  public tokenService = inject(TokenService);
   private orderService = inject(OrderService);
   private router = inject(Router);
 
-  // Computed: Información del usuario logueado extraída del Token
   userProfile = computed(() => {
     return {
       fullName: this.tokenService.getUserName() || 'Usuario Ferremas',
       email: this.tokenService.getUserEmail() || 'correo@registrado.com',
-      // Simula el DNI o Teléfono, si el token los trae, reemplázalos por los métodos reales
       dni: 'DNI registrado',
       phone: 'Teléfono registrado',
     };
@@ -61,9 +56,14 @@ export class CheckoutComponent implements OnInit {
     this.cardData.update((data) => ({ ...data, [field]: value }));
   }
 
+  updateYapeField(field: string, value: string): void {
+    this.yapeData.update((data) => ({ ...data, [field]: value }));
+  }
+
   onSubmitOrder(): void {
     const method = this.paymentMethod();
     const card = this.cardData();
+    const yape = this.yapeData();
 
     // Validaciones
     if (method === 'card' && (!card.number || !card.cvv || !card.name || !card.expiry)) {
@@ -75,12 +75,8 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
-    if (this.pickupOption() === 'other' && !this.authorizedPerson().trim()) {
-      Swal.fire(
-        'Datos Incompletos',
-        'Ingresa el nombre y DNI de la persona autorizada a retirar.',
-        'warning',
-      );
+    if (method === 'yape' && (!yape.phone || !yape.approvalCode)) {
+      Swal.fire('Datos Incompletos', 'Ingresa tu celular y el código de aprobación (OTP) de 6 dígitos para autorizar el cargo.', 'warning');
       return;
     }
 
@@ -103,12 +99,8 @@ export class CheckoutComponent implements OnInit {
         cantidad: item.qty,
       })),
       canal: 'Web (Online)',
-      metodoPago:
-        this.paymentMethod() === 'card'
-          ? 'Tarjeta Débito/Crédito'
-          : this.paymentMethod() === 'transfer'
-            ? 'Transferencia Bancaria'
-            : 'Pago en Mostrador',
+      // 2. Simplificamos la asignación del método de pago
+      metodoPago: this.paymentMethod() === 'card' ? 'Tarjeta Débito/Crédito' : 'Yape',
     };
 
     this.orderService.crearOrden(dto).subscribe({
@@ -116,7 +108,6 @@ export class CheckoutComponent implements OnInit {
         sessionStorage.setItem('lastOrderTotal', this.cartService.total().toString());
         this.cartService.clearCart();
 
-        // SweetAlert de éxito breve antes de navegar
         Swal.fire({
           icon: 'success',
           title: '¡Compra exitosa!',

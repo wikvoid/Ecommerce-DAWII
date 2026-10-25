@@ -6,6 +6,7 @@ import hardware.store.pe.services.OrdenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.List;
 public class OrdenController {
 
     private final OrdenService ordenService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     // CLIENTE / VENDEDOR: El botón de "Pagar" o "Cobrar" en Angular enviará el carrito aquí
     @PreAuthorize("hasRole('CLIENTE') or hasRole('VENDEDOR') or hasRole('ADMIN')")
@@ -43,11 +45,17 @@ public class OrdenController {
         return new ResponseEntity<>(ordenService.listarOrdenesPendientes(), HttpStatus.OK);
     }
 
-    // VENDEDOR: Actualizar el pedido de "PENDIENTE" a "LISTO_PARA_RECOJO" o "ENTREGADO"
     @PreAuthorize("hasRole('VENDEDOR') or hasRole('ADMIN')")
     @PutMapping("/{id}/estado")
     public ResponseEntity<Orden> cambiarEstadoPedido(@PathVariable Integer id, @RequestParam String estado) {
-        return new ResponseEntity<>(ordenService.actualizarEstado(id, estado), HttpStatus.OK);
+        // 1. Actualizamos en la base de datos a través de tu servicio
+        Orden ordenActualizada = ordenService.actualizarEstado(id, estado);
+
+        // 2. DISPARAMOS EL EVENTO EN TIEMPO REAL
+        // Lo enviamos a un canal único para esta orden específica (ej. /topic/ordenes/105)
+        messagingTemplate.convertAndSend("/topic/ordenes/" + id, ordenActualizada);
+
+        return new ResponseEntity<>(ordenActualizada, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('CLIENTE') or hasRole('VENDEDOR') or hasRole('ADMIN')")

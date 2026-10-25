@@ -40,11 +40,12 @@
                   <td class="font-bold text-blue">{{ formatPrice(order.total) }}</td>
                   <td>
                     <span class="status-badge" [ngClass]="{
-                      'status-pending': order.estado === 'PENDIENTE',
-                      'status-completed': order.estado === 'COMPLETADO',
-                      'status-cancelled': order.estado === 'CANCELADO'
+                      'status-pending': order.estado === 'EN_PROCESAMIENTO' || order.estado === 'PENDIENTE',
+                      'status-blue': order.estado === 'PREPARANDO',
+                      'status-completed': order.estado === 'LISTO_PARA_RECOJO' || order.estado === 'ENTREGADO',
+                      'status-cancelled': order.estado === 'RECHAZADA_POR_STOCK' || order.estado === 'CANCELADO'
                     }">
-                      {{ order.estado }}
+                      {{ order.estado.replace('_', ' ') }}
                     </span>
                   </td>
                   <td>
@@ -72,12 +73,15 @@
         <div class="modal-body">
           <p><strong>Fecha:</strong> {{ formatDate(selectedOrder().fechaOrden) }}</p>
           <p><strong>Estado:</strong>
+            <!-- Estados corregidos para igualar los de la tabla principal -->
             <span class="status-badge" [ngClass]="{
-            'status-pending': selectedOrder().estado === 'PENDIENTE',
-            'status-completed': selectedOrder().estado === 'COMPLETADO'
-          }">
-            {{ selectedOrder().estado }}
-          </span>
+              'status-pending': selectedOrder().estado === 'EN_PROCESAMIENTO' || selectedOrder().estado === 'PENDIENTE',
+              'status-blue': selectedOrder().estado === 'PREPARANDO',
+              'status-completed': selectedOrder().estado === 'LISTO_PARA_RECOJO' || selectedOrder().estado === 'ENTREGADO',
+              'status-cancelled': selectedOrder().estado === 'RECHAZADA_POR_STOCK' || selectedOrder().estado === 'CANCELADO'
+            }">
+              {{ selectedOrder().estado.replace('_', ' ') }}
+            </span>
           </p>
 
           <table class="details-table">
@@ -90,7 +94,6 @@
             </tr>
             </thead>
             <tbody>
-            <!-- NOTA: Revisa que 'detalles' coincida con la lista de items que envía tu JSON de Spring Boot -->
               @for (item of selectedOrder().detalles; track item.id) {
                 <tr>
                   <td>{{ item.producto?.nombre || 'Producto no especificado' }}</td>
@@ -102,7 +105,10 @@
             </tbody>
           </table>
 
-          <div class="modal-footer">
+          <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+            <button class="btn-primary" style="margin-top: 0;" (click)="verSeguimiento(selectedOrder().id)">
+              Ver seguimiento en vivo
+            </button>
             <h3 class="total-text">Total Pagado: {{ formatPrice(selectedOrder().total) }}</h3>
           </div>
         </div>

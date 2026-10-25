@@ -4,6 +4,7 @@ import hardware.store.pe.config.RabbitMQConfig;
 import hardware.store.pe.dtos.ItemCarritoDTO;
 import hardware.store.pe.dtos.NuevaOrdenDTO;
 import hardware.store.pe.models.Orden;
+import hardware.store.pe.models.OrdenDetalle;
 import hardware.store.pe.models.Usuario;
 import hardware.store.pe.repositories.OrdenRepository;
 import hardware.store.pe.repositories.ProductoRepository;
@@ -11,6 +12,7 @@ import hardware.store.pe.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -25,12 +27,23 @@ public class OrdenServiceImpl implements OrdenService {
     private final RabbitTemplate rabbitTemplate;
 
     @Override
+    @Transactional // IMPORTANTE: Garantiza que la orden y los detalles se guarden juntos o fallen juntos
     public Orden crearOrden(NuevaOrdenDTO dto) {
         Usuario cliente = usuarioRepository.findById(dto.getUsuarioId())
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
-        // 1. Calculamos el total
+        Orden ordenEnProceso = new Orden();
+        ordenEnProceso.setUsuario(cliente);
+        ordenEnProceso.setEstado("EN_PROCESAMIENTO");
+        ordenEnProceso.setTipoComprobante(dto.getTipoComprobante() != null ? dto.getTipoComprobante() : "Boleta");
+        ordenEnProceso.setNombreCliente(dto.getNombreCliente());
+        ordenEnProceso.setDocumentoCliente(dto.getDocumentoCliente());
+        ordenEnProceso.setCanal(dto.getCanal() != null ? dto.getCanal() : "Web (Online)");
+        ordenEnProceso.setMetodoPago(dto.getMetodoPago() != null ? dto.getMetodoPago() : "Pasarela Online");
+
         BigDecimal totalCalculado = BigDecimal.ZERO;
+
+        // 1. Calculamos el total Y CREAMOS LOS DETALLES
         for (ItemCarritoDTO item : dto.getItems()) {
             var producto = productoRepository.findById(item.getProductoId())
                     .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
@@ -38,32 +51,26 @@ public class OrdenServiceImpl implements OrdenService {
             BigDecimal cantidadItem = BigDecimal.valueOf(item.getCantidad());
             BigDecimal subtotalItem = producto.getPrecio().multiply(cantidadItem);
             totalCalculado = totalCalculado.add(subtotalItem);
+
+            // CORRECCIÓN: Agregamos el detalle físico a la orden usando tu método de Orden.java
+            OrdenDetalle detalle = new OrdenDetalle();
+            detalle.setProducto(producto);
+            detalle.setCantidad(item.getCantidad());
+            detalle.setPrecioUnitario(producto.getPrecio());
+            ordenEnProceso.addDetalle(detalle);
         }
 
-        // 2. Guardamos la orden con su canal y método de pago extraídos del DTO
-        Orden ordenEnProceso = new Orden();
-        ordenEnProceso.setUsuario(cliente);
-        ordenEnProceso.setEstado("EN_PROCESAMIENTO");
         ordenEnProceso.setTotal(totalCalculado);
 
-        ordenEnProceso.setTipoComprobante(dto.getTipoComprobante() != null ? dto.getTipoComprobante() : "Boleta");
-        ordenEnProceso.setNombreCliente(dto.getNombreCliente());
-        ordenEnProceso.setDocumentoCliente(dto.getDocumentoCliente());
-        ordenEnProceso.setCanal(dto.getCanal() != null ? dto.getCanal() : "Web (Online)");
-        ordenEnProceso.setMetodoPago(dto.getMetodoPago() != null ? dto.getMetodoPago() : "Pasarela Online");
-
-        // AQUÍ SE GUARDA LA ORDEN REAL (Ej. ORD-000013)
+        // 2. GUARDADO SÍNCRONO: PostgreSQL crea el ID oficialmente
         ordenEnProceso = ordenRepository.save(ordenEnProceso);
 
-        // 3. ANULAMOS EL ENVÍO DEL DTO A RABBITMQ
-        // Al comentar esto, el "Consumer" ya no recibe el paquete ni vuelve a crear la orden duplicada (Ej. ORD-000014)
-        /*
+        // 3. RABBITMQ REACTIVADO: Enviamos SOLO EL ID (Integer), ya no el DTO completo
         rabbitTemplate.convertAndSend(
                 RabbitMQConfig.EXCHANGE_ORDERS,
                 RabbitMQConfig.ROUTING_KEY_ORDERS,
-                dto
+                ordenEnProceso.getId()
         );
-        */
 
         return ordenEnProceso;
     }

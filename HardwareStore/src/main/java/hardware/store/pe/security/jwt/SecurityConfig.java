@@ -65,12 +65,10 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // Configuramos las reglas de las URLs
                 .authorizeHttpRequests(auth -> auth
-                        // Rutas públicas (Login, Registro y Swagger para ver la documentación)
                         .requestMatchers("/api/auth/**").permitAll()
-                        // NUEVA REGLA: Permitir a cualquiera VER los productos Y las categorías
                         .requestMatchers(HttpMethod.GET, "/api/productos/**", "/api/categorias/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        // Cualquier otra ruta requiere estar logueado
+                        .requestMatchers("/ws-ferreteria/**").permitAll()
                         .anyRequest().authenticated()
                 );
 

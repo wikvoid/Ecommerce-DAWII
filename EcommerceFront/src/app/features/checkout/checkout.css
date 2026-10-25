@@ -445,3 +445,73 @@
     transform: translateY(0);
   }
 }
+
+/* --- Nuevos estilos para la nota de recojo universal --- */
+.pickup-note {
+  background-color: #eff6ff;
+  color: #1e3a8a;
+  font-size: 0.875rem;
+  padding: 1rem;
+  border-radius: 0.375rem;
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  border: 1px solid #bfdbfe;
+}
+
+.pickup-note p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* --- Estilos para Pasarela Yape Automatizada --- */
+.wallet-pay-box {
+  background-color: #f8fafc;
+  border: 1px solid #e8edf4;
+  border-radius: 0.5rem;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.yape-gateway-info {
+  text-align: center;
+  max-width: 400px;
+  margin-bottom: 1.5rem;
+}
+
+.yape-api-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #740a64; /* Color corporativo Yape */
+  margin: 0 0 0.5rem 0;
+}
+
+.yape-api-desc {
+  font-size: 0.875rem;
+  color: #5a6a7e;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.yape-form-centered {
+  width: 100%;
+  max-width: 320px;
+  background-color: #ffffff;
+  border: 1px solid #d0d9e6;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.tracking-widest {
+  letter-spacing: 0.25em;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.text-center {
+  text-align: center;
+}

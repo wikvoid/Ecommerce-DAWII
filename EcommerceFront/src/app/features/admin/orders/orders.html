@@ -160,17 +160,24 @@
           <p class="pickup-banner-address">Av. Corrientes 1234 · Mostrador de retiros</p>
         </div>
 
-        <div class="payment-info-box">
-          <svg class="pay-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-            <line x1="2" y1="10" x2="22" y2="10"></line>
-          </svg>
+        <!-- CAJA DE PAGO MEJORADA PARA YAPE -->
+        <div class="payment-info-box" [ngClass]="{'yape-box': selectedOrder()?.payment === 'Yape'}">
+          <div class="pay-icon-wrapper">
+            <span *ngIf="selectedOrder()?.payment === 'Yape'" class="yape-letter">Y</span>
+            <svg *ngIf="selectedOrder()?.payment !== 'Yape'" class="pay-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+              <line x1="2" y1="10" x2="22" y2="10"></line>
+            </svg>
+          </div>
+
           <div class="payment-text-group">
-            <span class="pay-main-title">{{ selectedOrder()?.payment }}</span>
+            <span class="pay-main-title">
+              {{ selectedOrder()?.payment === 'Yape' ? 'Pago vía Yape' : selectedOrder()?.payment }}
+            </span>
             <div class="pay-sub-meta">
-              <span>{{ selectedOrder()?.paymentMethod }}</span>
+              <span>Cel: <strong>{{ selectedOrder()?.phone }}</strong></span>
               <span class="pay-meta-dot">·</span>
-              <span class="pay-op-code">{{ selectedOrder()?.opCode }}</span>
+              <span>Aprobación: <strong class="code-highlight">{{ selectedOrder()?.opCode }}</strong></span>
             </div>
           </div>
         </div>
@@ -179,39 +186,41 @@
         <div class="invoice-selector-group">
           <span class="section-micro-title">TIPO DE COMPROBANTE</span>
           <div class="invoice-toggle-container">
-            <button
-              type="button"
-              class="invoice-toggle-btn"
-              [class.active]="selectedOrder()?.invoiceType === 'Boleta electrónica'"
-              (click)="changeInvoiceType('Boleta electrónica')"
-            >
-              Boleta
-            </button>
-            <button
-              type="button"
-              class="invoice-toggle-btn"
-              [class.active]="selectedOrder()?.invoiceType === 'Factura electrónica'"
-              (click)="changeInvoiceType('Factura electrónica')"
-            >
-              Factura
-            </button>
+            <button type="button" class="invoice-toggle-btn" [class.active]="selectedOrder()?.invoiceType === 'Boleta electrónica'" (click)="changeInvoiceType('Boleta electrónica')">Boleta</button>
+            <button type="button" class="invoice-toggle-btn" [class.active]="selectedOrder()?.invoiceType === 'Factura electrónica'" (click)="changeInvoiceType('Factura electrónica')">Factura</button>
           </div>
         </div>
 
-        <!-- Selector de Actualizar Estado -->
+        <!-- ACCIONES RÁPIDAS (REEMPLAZA AL SELECT DROPDOWN) -->
         <div class="update-status-group">
-          <label class="section-micro-title">ACTUALIZAR ESTADO</label>
-          <select
-            [ngModel]="selectedOrder()?.status"
-            (ngModelChange)="updateOrderStatus($event)"
-            class="status-dropdown-select"
-          >
-            <option value="Nuevo">Nuevo</option>
-            <option value="Preparando">Preparando</option>
-            <option value="Listo para retirar">Listo para retirar</option>
-            <option value="Entregado">Entregado</option>
-            <option value="Cancelado">Cancelado</option>
-          </select>
+          <label class="section-micro-title">PRÓXIMA ACCIÓN DE TIENDA</label>
+
+          <div class="action-buttons-row">
+            <!-- Si es Nuevo -->
+            <button *ngIf="selectedOrder()?.status === 'Nuevo'" (click)="updateOrderStatus('Preparando')" class="btn-action-primary">
+              📦 Empezar a Preparar
+            </button>
+
+            <!-- Si está Preparando -->
+            <button *ngIf="selectedOrder()?.status === 'Preparando'" (click)="updateOrderStatus('Listo para retirar')" class="btn-action-warning">
+              ✅ Marcar como Listo
+            </button>
+
+            <!-- Si está Listo -->
+            <button *ngIf="selectedOrder()?.status === 'Listo para retirar'" (click)="updateOrderStatus('Entregado')" class="btn-action-success">
+              🤝 Entregar Pedido
+            </button>
+
+            <!-- Botón de cancelar siempre visible a menos que ya esté entregado/cancelado -->
+            <button *ngIf="!['Entregado', 'Cancelado'].includes(selectedOrder()?.status || '')" (click)="updateOrderStatus('Cancelado')" class="btn-action-danger">
+              Cancelar
+            </button>
+
+            <!-- Si ya terminó el ciclo -->
+            <div *ngIf="['Entregado', 'Cancelado'].includes(selectedOrder()?.status || '')" class="status-completed-notice">
+              Este pedido ya ha finalizado su ciclo.
+            </div>
+          </div>
         </div>
 
         <button type="button" (click)="printReceipt()" class="btn-print-receipt">

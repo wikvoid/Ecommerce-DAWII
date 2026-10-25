@@ -5,6 +5,7 @@ import { Subscription, interval } from 'rxjs';
 import { InvoiceSheetComponent } from '../../../shared/components/invoice-sheet/invoice-sheet';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination';
 import { OrderService } from '../../../core/services/order.service';
+import { WebsocketService } from '../../../services/websocket.service';
 
 export type OrderStatus = 'Nuevo' | 'Preparando' | 'Listo para retirar' | 'Entregado' | 'Cancelado';
 export type InvoiceType = 'Boleta electrónica' | 'Factura electrónica';
@@ -36,7 +37,6 @@ export interface AdminOrder {
   styleUrls: ['./orders.css'],
 })
 export class OrdersComponent implements OnInit, OnDestroy {
-  // 1. Estado reactivo con Signals
   filterStatus = signal<string>('Todos');
   searchQuery = signal<string>('');
   selectedOrder = signal<AdminOrder | null>(null);
@@ -47,7 +47,6 @@ export class OrdersComponent implements OnInit, OnDestroy {
   statuses = ['Todos', 'Nuevo', 'Preparando', 'Listo para retirar', 'Entregado'];
   orders = signal<AdminOrder[]>([]);
 
-  // 2. Computed Signals (Se recalcula automáticamente y de forma óptima)
   filteredOrders = computed(() => {
     const search = this.searchQuery().trim().toLowerCase();
     const currentFilter = this.filterStatus();
@@ -67,21 +66,36 @@ export class OrdersComponent implements OnInit, OnDestroy {
     return this.filteredOrders().slice(startIndex, startIndex + this.pageSize());
   });
 
-  totalPages = computed(() => {
-    return Math.ceil(this.filteredOrders().length / this.pageSize()) || 1;
-  });
+  totalPages = computed(() => Math.ceil(this.filteredOrders().length / this.pageSize()) || 1);
 
   private orderService = inject(OrderService);
-  private autoSyncSub?: Subscription;
+  private wsService = inject(WebsocketService); // 2. INSTANCIA DE WS
 
   ngOnInit(): void {
     this.cargarOrdenes();
-    // Auto-sincronización silenciosa en segundo plano
-    this.autoSyncSub = interval(5000).subscribe(() => this.cargarOrdenes());
+
+    // 3. REEMPLAZO DEL INTERVAL(5000) POR WEBSOCKETS EN TIEMPO REAL
+    this.wsService.ordenUpdates$.subscribe((ordenActualizada) => {
+      const newStatus = this.mapStatusToFrontend(ordenActualizada.estado);
+
+      this.orders.update((currentOrders) => {
+        const idx = currentOrders.findIndex((o) => o.rawId === ordenActualizada.id);
+        if (idx !== -1) {
+          const newOrders = [...currentOrders];
+          newOrders[idx].status = newStatus;
+          return newOrders;
+        }
+        return currentOrders; // Si es una orden totalmente nueva, requeriría recargar o hacer push
+      });
+
+      if (this.selectedOrder()?.rawId === ordenActualizada.id) {
+        this.selectedOrder.update((o) => (o ? { ...o, status: newStatus } : null));
+      }
+    });
   }
 
   ngOnDestroy(): void {
-    if (this.autoSyncSub) this.autoSyncSub.unsubscribe();
+    // Ya no hay subscripción de interval que destruir
   }
 
   cargarOrdenes(): void {
@@ -95,7 +109,9 @@ export class OrdersComponent implements OnInit, OnDestroy {
               ? `${o.usuario.nombre} ${o.usuario.apellido}`
               : o.nombreCliente || 'Cliente General',
           initials: this.getInitials(o.nombreCliente || o.usuario?.nombre || 'CG'),
-          phone: o.usuario?.telefono || 'No registrado',
+          // Extraemos el teléfono y código de Yape (ajusta los nombres de variables según tu backend)
+          phone: o.celularPago || o.usuario?.telefono || 'No registrado',
+          opCode: o.codigoAprobacion || o.codigoOperacion || 'Sin código',
           createdAt: new Date(o.fechaOrden || o.fechaRegistro || new Date()).toLocaleString(
             'es-PE',
           ),
@@ -105,7 +121,6 @@ export class OrdersComponent implements OnInit, OnDestroy {
           items: o.detalles?.length || 0,
           payment: o.metodoPago || 'Efectivo / Tarjeta',
           paymentMethod: 'PAGADO',
-          opCode: o.codigoOperacion || 'N/A',
           invoiceType:
             ((o.tipoComprobante + ' electrónica') as InvoiceType) || 'Boleta electrónica',
           docNumber: o.documentoCliente || o.usuario?.dni || 'No registrado',
@@ -116,9 +131,16 @@ export class OrdersComponent implements OnInit, OnDestroy {
               unitPrice: d.precioUnitario,
             })) || [],
         }));
-        // Ordenamos del más reciente al más antiguo por seguridad
+
         mappedOrders.sort((a, b) => b.rawId - a.rawId);
         this.orders.set(mappedOrders);
+
+        // Suscribimos el admin a todas las ordenes activas
+        mappedOrders.forEach((o) => {
+          if (!['Entregado', 'Cancelado'].includes(o.status)) {
+            this.wsService.suscribirAOrden(o.rawId);
+          }
+        });
       },
       error: (err) => console.error('Error al cargar órdenes:', err),
     });
@@ -128,31 +150,40 @@ export class OrdersComponent implements OnInit, OnDestroy {
     this.searchQuery.set(query);
     this.currentPage.set(1);
   }
-
   setFilter(status: string): void {
     this.filterStatus.set(status);
     this.currentPage.set(1);
   }
-
   onPageChange(newPage: number): void {
     this.currentPage.set(newPage);
   }
-
   openOrderDetails(order: AdminOrder): void {
     this.selectedOrder.set({ ...order });
   }
-
   closeOrderDetails(): void {
     this.selectedOrder.set(null);
   }
-
   changeInvoiceType(type: InvoiceType): void {
     const currentOrder = this.selectedOrder();
-    if (currentOrder) {
-      this.selectedOrder.set({ ...currentOrder, invoiceType: type });
-    }
+    if (currentOrder) this.selectedOrder.set({ ...currentOrder, invoiceType: type });
   }
-
+  printReceipt(): void {
+    window.print();
+  }
+  formatPrice(val: number): string {
+    return (
+      'S/ ' +
+      (val || 0).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    );
+  }
+  private getInitials(name: string): string {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .substring(0, 2)
+      .toUpperCase();
+  }
   updateOrderStatus(newStatus: OrderStatus): void {
     const currentOrder = this.selectedOrder();
     if (!currentOrder) return;
@@ -162,45 +193,14 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
     this.orderService.actualizarEstadoOrden(rawId, backendStatus).subscribe({
       next: () => {
-        // Actualizamos la Signal del Drawer
-        this.selectedOrder.set({ ...currentOrder, status: newStatus });
-
-        // Actualizamos la Signal principal de órdenes inmutando el array
-        this.orders.update((currentOrders) => {
-          const idx = currentOrders.findIndex((o) => o.rawId === rawId);
-          if (idx !== -1) {
-            const newOrders = [...currentOrders];
-            newOrders[idx].status = newStatus;
-            return newOrders;
-          }
-          return currentOrders;
-        });
+        // La actualización de los Signals ahora se maneja sola a través del WebSocket que configuramos en el ngOnInit
+        console.log(`Orden ${rawId} actualizada a ${newStatus}`);
       },
       error: (err) => {
         console.error('Error al actualizar estado:', err);
         alert('Hubo un error al actualizar el pedido en la base de datos.');
       },
     });
-  }
-
-  printReceipt(): void {
-    window.print();
-  }
-
-  formatPrice(val: number): string {
-    return (
-      'S/ ' +
-      (val || 0).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-    );
-  }
-
-  private getInitials(name: string): string {
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .substring(0, 2)
-      .toUpperCase();
   }
 
   private mapStatusToFrontend(backendStatus: string): OrderStatus {

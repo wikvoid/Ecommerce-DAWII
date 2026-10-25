@@ -31,7 +31,7 @@ export class FaqComponent {
       items: [
         {
           q: '¿Necesito crear una cuenta para comprar?',
-          a: 'No es obligatorio. Podés ingresar y comprar como invitado. Sin embargo, registrarte te permite tener acceso a tus órdenes y agilizar tus futuras compras.',
+          a: 'Sí, es necesario iniciar sesión o registrarte para completar una compra. Puedes explorar todo el catálogo libremente, pero para confirmar tu pedido con recojo en tienda te solicitaremos tus datos para coordinar la entrega y emitir tu comprobante.',
         },
         {
           q: '¿Cómo sé si un producto tiene stock?',
@@ -73,7 +73,7 @@ export class FaqComponent {
       items: [
         {
           q: '¿Qué medios de pago aceptan?',
-          a: 'Aceptamos tarjetas de crédito y débito (Visa, Mastercard, American Express, Diners Club), transferencias bancarias y pago en caja al retirar.',
+          a: 'Aceptamos tarjetas de crédito y débito, y transferencias bancarias.',
         },
         {
           q: '¿Puedo solicitar factura electrónica?',

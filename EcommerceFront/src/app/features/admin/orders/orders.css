@@ -544,6 +544,99 @@
   background-color: #0f2a52;
 }
 
+/* --- Mejoras para Caja de Pago Yape --- */
+.yape-box {
+  background-color: #fcf6fa !important;
+  border-color: #e9cce0 !important;
+}
 
+.pay-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.yape-letter {
+  background-color: #740a64;
+  color: white;
+  width: 1.8rem;
+  height: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 1.2rem;
+}
+
+.code-highlight {
+  color: #740a64;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
+
+/* --- Mejoras para Botones de Acción de Estado --- */
+.action-buttons-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.btn-action-primary, .btn-action-warning, .btn-action-success, .btn-action-danger {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.btn-action-primary:hover, .btn-action-warning:hover, .btn-action-success:hover, .btn-action-danger:hover {
+  opacity: 0.9;
+}
+
+.btn-action-primary {
+  background-color: #1a3a6b;
+  color: white;
+}
+
+.btn-action-warning {
+  background-color: #f5c800;
+  color: #0f1c2e;
+}
+
+.btn-action-success {
+  background-color: #10b981;
+  color: white;
+}
+
+.btn-action-danger {
+  flex: 0;
+  min-width: max-content;
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.status-completed-notice {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 0.5rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: #64748b;
+  font-style: italic;
+}
 
 

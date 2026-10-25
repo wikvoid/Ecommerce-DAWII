@@ -716,3 +716,87 @@
   background-color: #e2e8f0;
   border-color: #94a3b8;
 }
+
+/* --- Bloque Yape / Plin --- */
+.yape-plin-group, .pos-terminal-group, .cash-input-group {
+  width: 100%;
+}
+
+.qr-display-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.qr-placeholder-box {
+  width: 5.5rem;
+  height: 5.5rem;
+  background-color: #f1f5f9;
+  border: 2px dashed #94a3b8;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.qr-icon { font-size: 1.5rem; }
+.qr-text { font-size: 0.65rem; font-weight: 700; color: #64748b; }
+
+.qr-instructions { flex: 1; }
+.qr-title { font-weight: 700; color: #0f1c2e; margin: 0 0 0.25rem 0; font-size: 0.95rem; }
+.qr-monto { font-size: 0.875rem; color: #475569; margin: 0 0 0.25rem 0; }
+.qr-monto strong { color: #1a3a6b; font-size: 1.1rem; }
+.qr-help { font-size: 0.75rem; color: #64748b; margin: 0; line-height: 1.4; }
+
+/* --- Bloque Tarjeta POS Físico --- */
+.terminal-instruction-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: #eff6ff;
+  border: 1px dashed #3b82f6;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.terminal-icon-pulse {
+  width: 3rem;
+  height: 3rem;
+  background-color: #dbeafe;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  animation: pulseLight 2s infinite;
+}
+
+@keyframes pulseLight {
+  0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+}
+
+.terminal-title { font-weight: 700; color: #1e3a8a; margin: 0 0 0.25rem 0; font-size: 0.95rem; }
+.terminal-monto { font-size: 0.875rem; color: #1e40af; margin: 0; }
+.terminal-monto strong { font-size: 1.1rem; }
+
+/* Comunes */
+.validation-input-box {
+  background-color: #ffffff;
+  padding: 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  border-top: none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.mt-3 { margin-top: 0; } /* Reseteamos margen porque lo unimos visualmente */
+.fade-in { animation: fadeIn 0.25s ease-in-out; }

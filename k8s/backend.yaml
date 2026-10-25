@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: spring-backend
+          image: tu-usuario-dockerhub/hardwarestore-backend:latest
+          ports:
+            - containerPort: 8080
+          env:
+            # 1. Conexión externa hacia tu proyecto de Supabase
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://aws-0-us-east-1.pooler.supabase.com:6543/postgres" # Reemplaza con tu Host de Supabase
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "postgres.tu_id_de_proyecto" # Reemplaza con tu usuario de Supabase
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "tu_password_real" # Reemplaza con el password de tu BD
+
+            # 2. Conexión interna hacia el RabbitMQ del clúster
+            - name: SPRING_RABBITMQ_HOST
+              value: "rabbitmq-service"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP

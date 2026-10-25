@@ -24,8 +24,10 @@
           type="text"
           [ngModel]="searchQuery()"
           (ngModelChange)="searchQuery.set($event)"
-          placeholder="Escanear código de barras o escribir producto / SKU..."
+          (keyup.enter)="onBarcodeScanned()"
+          placeholder="Escanear código de barras o escribir SKU..."
           class="input-pos-search"
+          #searchInput
         />
       </div>
       <button type="button" class="btn-scan-barcode" title="Lector de código">📷</button>
@@ -76,14 +78,32 @@
       </button>
     </div>
 
-    <div class="pos-client-row">
-      <div class="client-meta-info">
-        <span class="client-label-micro">{{ docType() === 'Factura' ? 'EMPRESA / RUC:' : 'CLIENTE:' }}</span>
-        <strong class="client-current-name">{{ customerName() }} ({{ customerDoc() }})</strong>
+    <div class="pos-client-row" style="flex-direction: column; align-items: stretch; gap: 0.5rem;">
+      <!-- Buscador directo en el panel -->
+      <div class="search-doc-wrapper">
+        <input
+          type="text"
+          [ngModel]="customerDoc()"
+          (ngModelChange)="customerDoc.set($event)"
+          [placeholder]="docType() === 'Factura' ? 'RUC (11 dígitos)' : 'DNI / CE (Opcional)'"
+          class="pos-field-input font-mono"
+          (keyup.enter)="buscarClienteRapido()"
+          [maxlength]="docType() === 'Factura' ? 11 : 15"
+        />
+        <button type="button" (click)="buscarClienteRapido()" class="btn-search-doc" title="Buscar">
+          🔍
+        </button>
       </div>
-      <button type="button" (click)="openCustomerModal()" class="btn-new-client-link">
-        {{ customerDoc() === '00000000' ? '+ Nuevo Cliente' : 'Cambiar' }}
-      </button>
+
+      <!-- Nombre del cliente en modo texto editable rápido -->
+      <input
+        type="text"
+        [ngModel]="customerName()"
+        (ngModelChange)="customerName.set($event)"
+        placeholder="Nombre / Razón Social"
+        class="pos-field-input client-current-name"
+        style="border: none; background: transparent; padding: 0.25rem 0; font-weight: 600;"
+      />
     </div>
 
     <div class="pos-cart-items-container">
@@ -199,7 +219,8 @@
       </div>
 
       <div class="payment-dynamic-box">
-        <div *ngIf="selectedPaymentMethod() === 'EFECTIVO'" class="cash-input-group">
+        <!-- 1. EFECTIVO -->
+        <div *ngIf="selectedPaymentMethod() === 'EFECTIVO'" class="cash-input-group fade-in">
           <label class="pos-field-label">Monto recibido del cliente (S/)</label>
           <input type="number" [ngModel]="cashGiven()" (ngModelChange)="cashGiven.set($event)" class="input-cash-big font-mono" placeholder="0.00" />
           <div class="quick-cash-tags">
@@ -215,13 +236,40 @@
           </div>
         </div>
 
-        <div *ngIf="selectedPaymentMethod() !== 'EFECTIVO'" class="digital-payment-group">
-          <div class="digital-confirm-banner">
-            <span>Se cobrará el total exacto de:</span>
-            <strong>{{ formatPrice(totalAmount()) }}</strong>
+        <!-- 2. YAPE / PLIN (Muestra QR y pide Operación) -->
+        <div *ngIf="selectedPaymentMethod() === 'YAPE'" class="yape-plin-group fade-in">
+          <div class="qr-display-row">
+            <div class="qr-placeholder-box">
+              <span class="qr-icon">📱</span>
+              <span class="qr-text">QR TIENDA</span>
+            </div>
+            <div class="qr-instructions">
+              <p class="qr-title">Cobro con Billetera Digital</p>
+              <p class="qr-monto">A cobrar: <strong>{{ formatPrice(totalAmount()) }}</strong></p>
+              <p class="qr-help">Pide al cliente que escanee el QR o envíe al <strong>987 654 321</strong>.</p>
+            </div>
           </div>
-          <label class="pos-field-label mt-2">N° de Operación / Voucher (Opcional)</label>
-          <input type="text" [ngModel]="operationRef()" (ngModelChange)="operationRef.set($event)" placeholder="Ej. OP-773812" class="pos-field-input font-mono" />
+          <div class="validation-input-box mt-3">
+            <label class="pos-field-label">N° de Operación (Obligatorio)</label>
+            <input type="text" [ngModel]="operationRef()" (ngModelChange)="operationRef.set($event)" placeholder="Ej. 012345" class="pos-field-input font-mono" />
+          </div>
+        </div>
+
+        <!-- 3. TARJETA POS FÍSICO (Instrucciones y Voucher) -->
+        <div *ngIf="selectedPaymentMethod() === 'TARJETA'" class="pos-terminal-group fade-in">
+          <div class="terminal-instruction-box">
+            <div class="terminal-icon-pulse">
+              <span>💳</span>
+            </div>
+            <div class="terminal-text">
+              <p class="terminal-title">Procesa el pago en el POS Físico</p>
+              <p class="terminal-monto">Monto exacto: <strong>{{ formatPrice(totalAmount()) }}</strong></p>
+            </div>
+          </div>
+          <div class="validation-input-box mt-3">
+            <label class="pos-field-label">N° de Referencia / Voucher (Obligatorio)</label>
+            <input type="text" [ngModel]="operationRef()" (ngModelChange)="operationRef.set($event)" placeholder="Ej. REF-883719" class="pos-field-input font-mono" />
+          </div>
         </div>
       </div>
 

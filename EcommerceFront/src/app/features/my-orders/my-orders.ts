@@ -1,9 +1,11 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router'; // 1. IMPORTAR ROUTER
 import { NavbarComponent } from '../../shared/components/navbar/navbar';
 import { FooterComponent } from '../../shared/components/footer/footer';
 import { TokenService } from '../../core/services/token.service';
+import { WebsocketService } from '../../services/websocket.service';
 
 @Component({
   selector: 'app-my-orders',
@@ -19,28 +21,33 @@ export class MyOrdersComponent implements OnInit {
 
   private tokenService = inject(TokenService);
   private http = inject(HttpClient);
-  // Ajusta esta URL según tu controlador en Spring Boot
-  private apiUrl = 'http://localhost/api/ordenes';
+  private wsService = inject(WebsocketService);
+  private router = inject(Router); // 2. INYECTAR ROUTER
 
   ngOnInit(): void {
     this.fetchMyOrders();
+
+    this.wsService.ordenUpdates$.subscribe((ordenActualizada) => {
+      this.orders.update((ordersList) =>
+        ordersList.map((o) => (o.id === ordenActualizada.id ? ordenActualizada : o)),
+      );
+
+      if (this.selectedOrder()?.id === ordenActualizada.id) {
+        this.selectedOrder.set(ordenActualizada);
+      }
+    });
   }
 
   fetchMyOrders(): void {
-    const usuarioId = this.tokenService.getUserId(); // Ajusta según el método real de tu TokenService
-    const token = this.tokenService.getToken(); // Ajusta según el método real de tu TokenService
+    const usuarioId = this.tokenService.getUserId();
+    const token = this.tokenService.getToken();
 
     if (!usuarioId || !token) {
       this.isLoading.set(false);
       return;
     }
 
-    // 1. Configuramos el Token JWT en las cabeceras
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-
-    // 2. Apuntamos al puerto 8080 (cámbialo si tu backend usa otro)
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     const url = `http://localhost:8080/api/ordenes/mis-pedidos/${usuarioId}`;
 
     this.http.get<any[]>(url, { headers }).subscribe({
@@ -50,6 +57,12 @@ export class MyOrdersComponent implements OnInit {
         );
         this.orders.set(ordenadas);
         this.isLoading.set(false);
+
+        ordenadas.forEach((orden) => {
+          if (!['ENTREGADO', 'RECHAZADA_POR_STOCK', 'CANCELADO'].includes(orden.estado)) {
+            this.wsService.suscribirAOrden(orden.id);
+          }
+        });
       },
       error: (err) => {
         console.error('Error cargando las órdenes:', err);
@@ -79,5 +92,10 @@ export class MyOrdersComponent implements OnInit {
 
   closeDetail(): void {
     this.selectedOrder.set(null);
+  }
+
+  // 3. NUEVO MÉTODO PARA NAVEGAR AL SEGUIMIENTO
+  verSeguimiento(orderId: number): void {
+    this.router.navigate(['/order-confirmation'], { queryParams: { orderId } });
   }
 }

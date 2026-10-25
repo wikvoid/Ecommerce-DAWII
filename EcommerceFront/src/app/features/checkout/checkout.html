@@ -13,17 +13,14 @@
     </div>
 
     <div class="checkout-grid-layout">
-      <!-- Columna Izquierda -->
       <div class="checkout-forms-col">
 
-        <!-- 1. Datos del Cliente (MODO LECTURA COMPACTO) -->
+        <!-- 1. Datos del Cliente -->
         <section class="checkout-card">
           <div class="card-step-header">
             <span class="step-circle">✓</span>
             <h2 class="card-step-title">Datos del titular de la compra</h2>
           </div>
-
-          <!-- Diseño simplificado como "Tarjeta de presentación" -->
           <div class="user-profile-box">
             <div class="user-avatar-placeholder">
               {{ userProfile().fullName.charAt(0) | uppercase }}
@@ -38,59 +35,26 @@
           </p>
         </section>
 
-        <!-- 2. Información de Retiro en Tienda -->
+        <!-- 2. Información de Retiro en Tienda (SIMPLIFICADO) -->
         <section class="checkout-card">
           <div class="card-step-header">
             <span class="step-circle">2</span>
             <h2 class="card-step-title">Punto y modalidad de entrega</h2>
           </div>
-
           <div class="pickup-store-box">
             <div class="store-badge">🏬 LOCAL CENTRAL</div>
             <p class="store-address-text">
-              <strong>Av. Corrientes 1234, Almagro</strong> — Buenos Aires
+              <strong>Av. La Marina 2450, San Miguel, Lima </strong> - Perú
             </p>
             <p class="store-schedule-hint">
               Horario de retiro: Lun a Sáb 8:00 a.m. a 7:00 p.m. (Costo: S/0.00 Gratis)
             </p>
-          </div>
 
-          <div class="pickup-person-toggle">
-            <label class="radio-option">
-              <input
-                type="radio"
-                name="pickupOpt"
-                [ngModel]="pickupOption()"
-                (ngModelChange)="pickupOption.set($event)"
-                value="self"
-              />
-              <span>Retiraré yo mismo con mi documento</span>
-            </label>
-
-            <label class="radio-option">
-              <input
-                type="radio"
-                name="pickupOpt"
-                [ngModel]="pickupOption()"
-                (ngModelChange)="pickupOption.set($event)"
-                value="other"
-              />
-              <span>Autorizo a otra persona a retirar</span>
-            </label>
-          </div>
-
-          @if (pickupOption() === 'other') {
-            <div class="form-group mt-3 fade-in">
-              <label class="form-label">Nombre completo y DNI de la persona autorizada:</label>
-              <input
-                type="text"
-                [ngModel]="authorizedPerson()"
-                (ngModelChange)="authorizedPerson.set($event)"
-                placeholder="Ej. María Gómez - DNI 44556677"
-                class="form-control"
-              />
+            <div class="pickup-note fade-in">
+              <span>ℹ️</span>
+              <p>Presentando el comprobante de compra digital, tú o una persona de tu confianza podrán acercarse a retirar el pedido por mostrador.</p>
             </div>
-          }
+          </div>
         </section>
 
         <!-- 3. Medio de Pago -->
@@ -101,103 +65,63 @@
           </div>
 
           <div class="payment-tabs-group">
-            <button
-              type="button"
-              (click)="paymentMethod.set('card')"
-              [class.tab-pay-active]="paymentMethod() === 'card'"
-              class="tab-pay-btn"
-            >
+            <button type="button" (click)="paymentMethod.set('card')" [class.tab-pay-active]="paymentMethod() === 'card'" class="tab-pay-btn">
               💳 Tarjeta Débito / Crédito
             </button>
-
-            <button
-              type="button"
-              (click)="paymentMethod.set('transfer')"
-              [class.tab-pay-active]="paymentMethod() === 'transfer'"
-              class="tab-pay-btn"
-            >
-              🏦 Transferencia Bancaria
-            </button>
-
-            <button
-              type="button"
-              (click)="paymentMethod.set('store')"
-              [class.tab-pay-active]="paymentMethod() === 'store'"
-              class="tab-pay-btn"
-            >
-              💵 Pago en mostrador
+            <!-- Transferencia eliminada -->
+            <button type="button" (click)="paymentMethod.set('yape')" [class.tab-pay-active]="paymentMethod() === 'yape'" class="tab-pay-btn">
+              📱 Yape
             </button>
           </div>
 
           <!-- Inputs Tarjeta -->
           @if (paymentMethod() === 'card') {
             <div class="card-inputs-panel fade-in">
+              <!-- (Tus campos de tarjeta se mantienen igual) -->
               <div class="form-group">
                 <label class="form-label">Número de tarjeta</label>
-                <input
-                  type="text"
-                  [ngModel]="cardData().number"
-                  (ngModelChange)="updateCardField('number', $event)"
-                  placeholder="4557 •••• •••• 1234"
-                  maxlength="19"
-                  class="form-control"
-                />
+                <input type="text" [ngModel]="cardData().number" (ngModelChange)="updateCardField('number', $event)" placeholder="4557 •••• •••• 1234" maxlength="19" class="form-control" />
               </div>
               <div class="form-group">
                 <label class="form-label">Nombre impreso en la tarjeta</label>
-                <input
-                  type="text"
-                  [ngModel]="cardData().name"
-                  (ngModelChange)="updateCardField('name', $event)"
-                  placeholder="Como figura en la tarjeta"
-                  class="form-control"
-                />
+                <input type="text" [ngModel]="cardData().name" (ngModelChange)="updateCardField('name', $event)" placeholder="Como figura en la tarjeta" class="form-control" />
               </div>
               <div class="form-grid-two">
                 <div class="form-group">
                   <label class="form-label">Vencimiento</label>
-                  <input
-                    type="text"
-                    [ngModel]="cardData().expiry"
-                    (ngModelChange)="updateCardField('expiry', $event)"
-                    placeholder="MM/AA"
-                    maxlength="5"
-                    class="form-control"
-                  />
+                  <input type="text" [ngModel]="cardData().expiry" (ngModelChange)="updateCardField('expiry', $event)" placeholder="MM/AA" maxlength="5" class="form-control" />
                 </div>
                 <div class="form-group">
                   <label class="form-label">Código CVV</label>
-                  <input
-                    type="password"
-                    [ngModel]="cardData().cvv"
-                    (ngModelChange)="updateCardField('cvv', $event)"
-                    placeholder="•••"
-                    maxlength="4"
-                    class="form-control"
-                  />
+                  <input type="password" [ngModel]="cardData().cvv" (ngModelChange)="updateCardField('cvv', $event)" placeholder="•••" maxlength="4" class="form-control" />
                 </div>
               </div>
             </div>
           }
 
-          <!-- Transferencia -->
-          @if (paymentMethod() === 'transfer') {
-            <div class="info-pay-box fade-in">
-              <p>
-                <strong>CBU / Alias para transferir:</strong> <code>FERREMAS.ONLINE.PAGOS</code>
-              </p>
-              <p class="text-muted-sm">
-                Envía tu constancia por WhatsApp con tu número de orden una vez finalizada la reserva.
-              </p>
-            </div>
-          }
+          <!-- Yape Automatizado (Vía API Pasarela) -->
+          @if (paymentMethod() === 'yape') {
+            <div class="wallet-pay-box fade-in">
+              <div class="yape-gateway-info">
+                <h3 class="yape-api-title">Pago Automático con Yape</h3>
+                <p class="yape-api-desc">
+                  El cobro se procesará de forma segura e instantánea. No necesitas hacer transferencias manuales.
+                </p>
+              </div>
 
-          <!-- Pago en mostrador -->
-          @if (paymentMethod() === 'store') {
-            <div class="info-pay-box fade-in">
-              <p>
-                <strong>Pago al retirar:</strong> Abonarás directamente en la caja de nuestra tienda física en efectivo o POS.
-              </p>
+              <div class="yape-form-centered">
+                <div class="form-group mb-3">
+                  <label class="form-label">Número de celular Yape</label>
+                  <input type="text" [ngModel]="yapeData().phone" (ngModelChange)="updateYapeField('phone', $event)" placeholder="Ej. 912345678" maxlength="9" class="form-control" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Código de Aprobación (OTP)</label>
+                  <input type="password" [ngModel]="yapeData().approvalCode" (ngModelChange)="updateYapeField('approvalCode', $event)" placeholder="Ej. 123456" maxlength="6" class="form-control text-center tracking-widest" />
+                </div>
+                <p class="info-note-micro mt-3 text-center">
+                  * Ve a tu app Yape > Menú principal > <strong>Código de Aprobación</strong> y obtén tu clave dinámica de 6 dígitos.
+                </p>
+              </div>
             </div>
           }
         </section>
@@ -205,17 +129,13 @@
 
       <!-- Columna Derecha: Resumen Flotante -->
       <aside class="checkout-summary-col">
+        <!-- El bloque del resumen (aside) se mantiene exactamente igual que tu versión original -->
         <div class="order-summary-card">
           <h3 class="summary-title">Resumen de tu pedido</h3>
-
           <div class="summary-items-scroll">
             @for (item of cartService.cartItems(); track item) {
               <div class="mini-order-item">
-                <img
-                  [src]="item.img"
-                  [alt]="item.name"
-                  class="mini-item-img"
-                />
+                <img [src]="item.img" [alt]="item.name" class="mini-item-img" />
                 <div class="mini-item-info">
                   <p class="mini-item-name">{{ item.name }}</p>
                   <p class="mini-item-qty">Cant: {{ item.qty }}</p>
@@ -224,7 +144,6 @@
               </div>
             }
           </div>
-
           <div class="summary-calc-list">
             <div class="calc-row">
               <span>Subtotal ({{ cartService.cartCount() }} arts.)</span>
@@ -240,21 +159,13 @@
               <span class="total-big-price">{{ formatPrice(cartService.total()) }}</span>
             </div>
           </div>
-
-          <button
-            type="button"
-            (click)="onSubmitOrder()"
-            [disabled]="isProcessing()"
-            class="btn-confirm-pay"
-          >
+          <button type="button" (click)="onSubmitOrder()" [disabled]="isProcessing()" class="btn-confirm-pay">
             {{ isProcessing() ? 'Procesando orden...' : 'Confirmar y pagar' }}
           </button>
-
           <p class="security-lock-hint">🔒 Transacción cifrada con seguridad SSL</p>
         </div>
       </aside>
     </div>
   </div>
 </main>
-
 <app-footer></app-footer>

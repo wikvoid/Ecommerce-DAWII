@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "ordenes")
@@ -20,6 +21,9 @@ public class Orden {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(name = "codigo_operacion", unique = true, updatable = false, nullable = false)
+    private String codigoOperacion = UUID.randomUUID().toString();
 
     // Quién hizo la compra
     @ManyToOne(fetch = FetchType.LAZY)

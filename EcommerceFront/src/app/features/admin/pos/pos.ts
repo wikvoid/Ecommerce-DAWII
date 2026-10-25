@@ -1,4 +1,12 @@
-import { Component, OnInit, ChangeDetectorRef, inject, signal, computed } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject,
+  signal,
+  computed,
+  HostListener,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PosTicketComponent } from '../../../shared/components/pos-ticket/pos-ticket';
@@ -222,6 +230,25 @@ export class PosComponent implements OnInit {
     this.docType.set(type);
   }
 
+  onBarcodeScanned(): void {
+    const query = this.searchQuery().trim().toLowerCase();
+    if (!query) return;
+
+    // Busca coincidencia exacta por SKU o Código de Barras
+    const match = this.products().find((p) => p.sku.toLowerCase() === query);
+
+    if (match) {
+      this.addToCart(match);
+      this.searchQuery.set(''); // Limpia para el siguiente escaneo
+    } else {
+      this.showToast(
+        'error',
+        'No encontrado',
+        'El código escaneado no coincide con ningún producto.',
+      );
+    }
+  }
+
   // --- MODAL CLIENTE ---
   openCustomerModal(): void {
     this.newCustomer.set({
@@ -293,6 +320,36 @@ export class PosComponent implements OnInit {
       this.showToast('error', 'Carrito vacío', 'Agrega productos a la orden.');
       return;
     }
+
+    // REGLA 1: Factura exige RUC válido de 11 dígitos
+    if (this.docType() === 'Factura') {
+      const ruc = this.customerDoc().trim();
+      if (ruc.length !== 11 || (!ruc.startsWith('10') && !ruc.startsWith('20'))) {
+        this.showToast('error', 'RUC Inválido', 'La Factura requiere un RUC válido de 11 dígitos.');
+        return;
+      }
+      if (!this.customerName().trim() || this.customerName() === 'Público General') {
+        this.showToast(
+          'error',
+          'Razón Social',
+          'La Factura requiere la Razón Social de la empresa.',
+        );
+        return;
+      }
+    }
+
+    // REGLA 2: Boletas mayores a S/ 700 exigen DNI obligatorio por SUNAT
+    if (this.docType() === 'Boleta' && this.totalAmount() >= 700) {
+      if (!this.customerDoc() || this.customerDoc() === '00000000') {
+        this.showToast(
+          'error',
+          'Identificación Obligatoria',
+          'Ventas mayores a S/ 700 requieren DNI obligatoriamente.',
+        );
+        return;
+      }
+    }
+
     this.selectedPaymentMethod.set('EFECTIVO');
     this.cashGiven.set(this.totalAmount());
     this.operationRef.set('');
@@ -326,9 +383,54 @@ export class PosComponent implements OnInit {
     }, 3200);
   }
 
+  buscarClienteRapido(): void {
+    const doc = this.customerDoc().trim();
+
+    if (!doc) {
+      this.showToast('error', 'Campo Vacío', 'Ingresa un número de documento para buscar.');
+      return;
+    }
+
+    // Llamada a tu API en Spring Boot
+    this.http.get<any>(`http://localhost:8080/api/usuarios/buscar-dni/${doc}`).subscribe({
+      next: (data) => {
+        // Extraemos el nombre según cómo lo devuelva tu backend
+        const nombreEncontrado =
+          data.nombreCompleto || data.nombre || data.email || 'Cliente Encontrado';
+
+        // Actualizamos directamente el input de la cabecera
+        this.customerName.set(nombreEncontrado);
+        this.showToast('success', 'Cliente Encontrado', 'Datos cargados correctamente.');
+      },
+      error: () => {
+        this.showToast(
+          'error',
+          'No Encontrado',
+          'El documento no existe en la base de datos. Puedes escribir el nombre manualmente abajo.',
+        );
+        // Dejamos el foco libre para que el cajero simplemente escriba el nombre en el input
+      },
+    });
+  }
+
   confirmSale(): void {
-    if (this.selectedPaymentMethod() === 'EFECTIVO' && this.cashGiven() < this.totalAmount()) {
-      this.showToast('error', 'Monto insuficiente', `El efectivo entregado no cubre el total.`);
+    const method = this.selectedPaymentMethod();
+
+    // Validación Efectivo
+    if (method === 'EFECTIVO' && this.cashGiven() < this.totalAmount()) {
+      this.showToast('error', 'Monto insuficiente', 'El efectivo entregado no cubre el total.');
+      return;
+    }
+
+    // Validación Pagos Digitales (Obliga a ingresar el voucher)
+    if ((method === 'YAPE' || method === 'TARJETA') && !this.operationRef().trim()) {
+      const fieldName =
+        method === 'YAPE' ? 'N° de Operación de Yape/Plin' : 'N° de Referencia del POS';
+      this.showToast(
+        'error',
+        'Falta validación',
+        `Ingresa el ${fieldName} para registrar el pago.`,
+      );
       return;
     }
 
@@ -410,5 +512,24 @@ export class PosComponent implements OnInit {
         );
       },
     });
+  }
+  // Al presionar F12 en cualquier lugar de la pantalla, abre la caja
+  @HostListener('window:keydown.f12', ['$event'])
+  handleF12(event: Event) {
+    // <-- Cambiado de KeyboardEvent a Event
+    event.preventDefault();
+    if (!this.isPaymentModalOpen()) {
+      this.openPaymentModal();
+    }
+  }
+
+  // Al presionar Enter mientras el modal de pago está abierto, confirma la venta
+  @HostListener('window:keydown.enter', ['$event'])
+  handleEnter(event: Event) {
+    // <-- Cambiado de KeyboardEvent a Event
+    if (this.isPaymentModalOpen()) {
+      event.preventDefault();
+      this.confirmSale();
+    }
   }
 }

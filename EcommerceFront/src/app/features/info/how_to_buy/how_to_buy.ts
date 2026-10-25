@@ -36,7 +36,7 @@ export class HowToBuyComponent {
       n: '04',
       icon: '💳',
       title: 'Elegí tu medio de pago',
-      desc: 'Aceptamos tarjetas de crédito, débito, transferencia bancaria y pagos digitales mediante pasarelas seguras con cifrado SSL.',
+      desc: 'Aceptamos tarjetas de crédito, débito, transferencia bancaria y pagos digitales mediante pasarelas seguras.',
     },
     {
       n: '05',
