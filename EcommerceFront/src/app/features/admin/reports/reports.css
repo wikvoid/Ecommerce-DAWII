@@ -268,3 +268,8 @@
   font-size: 0.75rem;
   font-weight: 900;
 }
+
+.text-trend-red {
+  color: #ef4444; /* Rojo para tendencias negativas */
+  font-weight: 600;
+}

@@ -162,23 +162,40 @@ export class InventoryComponent implements OnInit {
   }
 
   toggleStatus(p: ProductItem): void {
-    // Aquí podrías agregar la llamada al backend para actualizar el estado 'activo'
-    this.items.update((current) => {
-      const idx = current.findIndex((item) => item.id === p.id);
-      if (idx !== -1) {
-        const updated = [...current];
-        updated[idx].active = !updated[idx].active;
-        return updated;
-      }
-      return current;
-    });
+    const newState = !p.active;
 
-    const newState = !p.active; // El estado fue invertido
-    this.showToast(
-      'success',
-      newState ? 'Producto Activado' : 'Producto Pausado',
-      `"${p.name}" ahora está ${newState ? 'visible' : 'oculto'}.`,
-    );
+    // 1. Armar el objeto para actualizar SOLO el estado.
+    // Asumiendo que tu ProductService usa FormData o un JSON completo.
+    // Si tu backend requiere todos los campos, debes enviarlos.
+    const formUpdate = new FormData();
+    formUpdate.append('nombre', p.name);
+    formUpdate.append('precio', p.price.toString());
+    formUpdate.append('stock', p.stock.toString());
+    formUpdate.append('activo', newState.toString());
+    // Añade el resto de campos que exija tu backend para no borrarlos
+
+    this.productService.actualizarProducto(p.id, formUpdate).subscribe({
+      next: () => {
+        this.items.update((current) => {
+          const idx = current.findIndex((item) => item.id === p.id);
+          if (idx !== -1) {
+            const updated = [...current];
+            updated[idx].active = newState;
+            return updated;
+          }
+          return current;
+        });
+
+        this.showToast(
+          'success',
+          newState ? 'Producto Activado' : 'Producto Pausado',
+          `"${p.name}" ahora está ${newState ? 'visible' : 'oculto'}.`,
+        );
+      },
+      error: () => {
+        this.showToast('error', 'Error del servidor', 'No se pudo actualizar el estado.');
+      },
+    });
   }
 
   editProduct(p: ProductItem): void {
@@ -206,14 +223,23 @@ export class InventoryComponent implements OnInit {
         this.itemToDelete.set(null);
         this.showToast('success', 'Producto Eliminado', `"${name}" fue removido.`);
 
-        // Ajuste de página si borramos el último ítem de la vista actual
         if (this.paginatedItems().length === 0 && this.currentPage() > 1) {
           this.currentPage.update((p) => p - 1);
         }
       },
-      error: () => {
-        this.showToast('error', 'Error', `No se pudo eliminar "${name}".`);
+      error: (err) => {
         this.itemToDelete.set(null);
+
+        // Manejo Inteligente del Error de Integridad (Foreign Key Constraint)
+        if (err.status === 409 || err.status === 500) {
+          this.showToast(
+            'error',
+            'No se puede eliminar',
+            `"${name}" tiene historial de ventas. Utiliza el botón de Pausar (Toggle) para ocultarlo.`,
+          );
+        } else {
+          this.showToast('error', 'Error', `No se pudo eliminar "${name}".`);
+        }
       },
     });
   }

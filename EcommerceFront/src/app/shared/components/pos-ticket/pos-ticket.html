@@ -1,74 +1,78 @@
-<div *ngIf="sale" class="print-pos-ticket">
-  <div class="ticket-inner-wrap">
-    <div class="ticket-header">
-      <h2 class="ticket-brand">FERREMAS</h2>
-      <p class="ticket-sub">FERREMAS S.A.C.</p>
-      <p class="ticket-sub">R.U.C. 20608945123</p>
-      <p class="ticket-sub">Av. Corrientes 1234 · Lima</p>
-      <p class="ticket-sub">Telf: (01) 4523-8800</p>
+@if (sale) {
+  <div class="print-pos-ticket">
+    <div class="ticket-inner-wrap">
+      <div class="ticket-header">
+        <h2 class="ticket-brand">FERREMAS</h2>
+        <p class="ticket-sub">FERREMAS S.A.C.</p>
+        <p class="ticket-sub">R.U.C. 20608945123</p>
+        <p class="ticket-sub">Av. Corrientes 1234 · Lima</p>
+        <p class="ticket-sub">Telf: (01) 4523-8800</p>
+        <div class="ticket-divider">--------------------------------</div>
+        <p class="ticket-doc-title">
+          {{ sale.docType === 'Factura' ? 'FACTURA ELECTRÓNICA' : 'BOLETA ELECTRÓNICA' }}
+        </p>
+        <p class="ticket-series">{{ sale.series }}</p>
+        <div class="ticket-divider">--------------------------------</div>
+      </div>
+      <div class="ticket-info">
+        <p>FECHA: {{ sale.date }}</p>
+        <p>CLIENTE: {{ sale.customer }}</p>
+        <p>{{ sale.docType === 'Factura' ? 'RUC' : 'DNI' }}: {{ sale.docNumber }}</p>
+        <p>
+          PAGO: {{ sale.paymentMethod }}
+          {{ sale.operationRef ? '(' + sale.operationRef + ')' : '' }}
+        </p>
+      </div>
       <div class="ticket-divider">--------------------------------</div>
-      <p class="ticket-doc-title">
-        {{ sale.docType === 'Factura' ? 'FACTURA ELECTRÓNICA' : 'BOLETA ELECTRÓNICA' }}
-      </p>
-      <p class="ticket-series">{{ sale.series }}</p>
+      <table class="ticket-table">
+        <thead>
+          <tr>
+            <th>CANT</th>
+            <th>DESCRIPCIÓN</th>
+            <th class="text-right">TOTAL</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (it of sale.items; track it) {
+            <tr>
+              <td>{{ it.qty }}</td>
+              <td>{{ it.product.name }}</td>
+              <td class="text-right">{{ formatPrice(it.subtotal) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
       <div class="ticket-divider">--------------------------------</div>
-    </div>
-
-    <div class="ticket-info">
-      <p>FECHA: {{ sale.date }}</p>
-      <p>CLIENTE: {{ sale.customer }}</p>
-      <p>{{ sale.docType === 'Factura' ? 'RUC' : 'DNI' }}: {{ sale.docNumber }}</p>
-      <p>PAGO: {{ sale.paymentMethod }} {{ sale.operationRef ? '(' + sale.operationRef + ')' : '' }}</p>
-    </div>
-
-    <div class="ticket-divider">--------------------------------</div>
-
-    <table class="ticket-table">
-      <thead>
-      <tr>
-        <th>CANT</th>
-        <th>DESCRIPCIÓN</th>
-        <th class="text-right">TOTAL</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let it of sale.items">
-        <td>{{ it.qty }}</td>
-        <td>{{ it.product.name }}</td>
-        <td class="text-right">{{ formatPrice(it.subtotal) }}</td>
-      </tr>
-      </tbody>
-    </table>
-
-    <div class="ticket-divider">--------------------------------</div>
-
-    <div class="ticket-totals">
-      <div class="ticket-line">
-        <span>OP. GRAVADA:</span>
-        <span>{{ formatPrice(ticketSubtotal) }}</span>
+      <div class="ticket-totals">
+        <div class="ticket-line">
+          <span>OP. GRAVADA:</span>
+          <span>{{ formatPrice(ticketSubtotal) }}</span>
+        </div>
+        <div class="ticket-line">
+          <span>I.G.V. (18%):</span>
+          <span>{{ formatPrice(ticketIgv) }}</span>
+        </div>
+        <div class="ticket-line ticket-total-bold">
+          <span>TOTAL:</span>
+          <span>{{ formatPrice(sale.total) }}</span>
+        </div>
+        @if (sale.paymentMethod === 'Efectivo') {
+          <div class="ticket-line">
+            <span>RECIBIDO:</span>
+            <span>{{ formatPrice(sale.cashGiven) }}</span>
+          </div>
+        }
+        @if (sale.paymentMethod === 'Efectivo') {
+          <div class="ticket-line">
+            <span>VUELTO:</span>
+            <span>{{ formatPrice(sale.change) }}</span>
+          </div>
+        }
       </div>
-      <div class="ticket-line">
-        <span>I.G.V. (18%):</span>
-        <span>{{ formatPrice(ticketIgv) }}</span>
+      <div class="ticket-footer">
+        <p>¡Gracias por su compra!</p>
+        <p>Consulte su comprobante en www.ferremas.pe</p>
       </div>
-      <div class="ticket-line ticket-total-bold">
-        <span>TOTAL:</span>
-        <span>{{ formatPrice(sale.total) }}</span>
-      </div>
-
-      <div *ngIf="sale.paymentMethod === 'Efectivo'" class="ticket-line">
-        <span>RECIBIDO:</span>
-        <span>{{ formatPrice(sale.cashGiven) }}</span>
-      </div>
-      <div *ngIf="sale.paymentMethod === 'Efectivo'" class="ticket-line">
-        <span>VUELTO:</span>
-        <span>{{ formatPrice(sale.change) }}</span>
-      </div>
-    </div>
-
-    <div class="ticket-footer">
-      <p>¡Gracias por su compra!</p>
-      <p>Consulte su comprobante en www.ferremas.pe</p>
     </div>
   </div>
-</div>
+}

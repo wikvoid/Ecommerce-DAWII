@@ -17,7 +17,7 @@ import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
-public class UsuarioServiceImpl {
+public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final OrdenRepository ordenRepository;

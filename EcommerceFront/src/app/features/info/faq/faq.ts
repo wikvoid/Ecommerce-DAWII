@@ -73,7 +73,7 @@ export class FaqComponent {
       items: [
         {
           q: '¿Qué medios de pago aceptan?',
-          a: 'Aceptamos tarjetas de crédito y débito, y transferencias bancarias.',
+          a: 'Aceptamos tarjetas de crédito y débito.',
         },
         {
           q: '¿Puedo solicitar factura electrónica?',

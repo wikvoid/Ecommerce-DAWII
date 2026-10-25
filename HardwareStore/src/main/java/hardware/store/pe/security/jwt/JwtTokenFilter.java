@@ -1,6 +1,6 @@
 package hardware.store.pe.security.jwt;
 
-import hardware.store.pe.services.UserDetailsServiceImpl;
+import hardware.store.pe.services.UserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +22,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
 
-    private final UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

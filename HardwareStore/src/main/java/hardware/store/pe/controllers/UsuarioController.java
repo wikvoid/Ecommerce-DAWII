@@ -2,7 +2,7 @@ package hardware.store.pe.controllers;
 
 import hardware.store.pe.dtos.ClienteDTO;
 import hardware.store.pe.repositories.UsuarioRepository;
-import hardware.store.pe.services.UsuarioServiceImpl; // O UsuarioService si usas la interfaz
+import hardware.store.pe.services.UsuarioService; // O UsuarioService si usas la interfaz
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UsuarioController {
 
-    private final UsuarioServiceImpl usuarioService;
+    private final UsuarioService usuarioService;
     private final UsuarioRepository usuarioRepository;
 
     // Solo los administradores (o vendedores) pueden ver la lista general de clientes

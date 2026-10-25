@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -32,7 +32,7 @@ export interface SaleRecord {
 @Component({
   selector: 'app-sales',
   standalone: true,
-  imports: [CommonModule, FormsModule, InvoiceSheetComponent, PaginationComponent],
+  imports: [FormsModule, InvoiceSheetComponent, PaginationComponent],
   templateUrl: './sales.html',
   styleUrls: ['./sales.css'],
 })

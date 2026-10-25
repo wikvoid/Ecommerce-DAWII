@@ -1,8 +1,10 @@
 import { Component, OnInit, signal, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as XLSX from 'xlsx';
+import { forkJoin } from 'rxjs'; // <-- NUEVA IMPORTACIÓN
 
-import { OrderService } from '../../../core/services/order.service'; // Inyectamos el servicio
+import { OrderService } from '../../../core/services/order.service';
+import { CategoriaService } from '../../../core/services/categoria.service'; // <-- IMPORTA EL SERVICIO
 
 export interface CategorySalesMetric {
   name: string;
@@ -24,18 +26,14 @@ export interface DownloadableReport {
   styleUrls: ['./reports.css'],
 })
 export class ReportsComponent implements OnInit {
-  // ── ESTADO REACTIVO (Signals) ──
-
-  // Guardamos la data cruda del backend
   realOrders = signal<any[]>([]);
 
-  // KPIs Dinámicos
   monthlyRevenue = signal<number>(0);
-  revenueGrowth = signal<number>(18.2); // Fijo por ahora (requeriría historial de meses pasados)
-  marginRate = signal<number>(31.4); // Fijo referencial
-  marginGrowth = signal<number>(2.1); // Fijo referencial
+  revenueGrowth = signal<number>(0);
+  marginRate = signal<number>(0);
+  marginGrowth = signal<number>(0);
   completedOrders = signal<number>(0);
-  pickupRate = signal<number>(97.2); // Fijo referencial
+  pickupRate = signal<number>(0);
 
   categoryMetrics = signal<CategorySalesMetric[]>([]);
 
@@ -50,6 +48,7 @@ export class ReportsComponent implements OnInit {
   private toastTimer: any = null;
 
   private orderService = inject(OrderService);
+  private categoriaService = inject(CategoriaService); // <-- INYECTAR SERVICIO DE CATEGORÍAS
   private cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
@@ -57,46 +56,106 @@ export class ReportsComponent implements OnInit {
   }
 
   cargarMeticasReales(): void {
-    this.orderService.obtenerTodasLasOrdenes().subscribe({
-      next: (data) => {
-        this.realOrders.set(data);
+    // forkJoin ejecuta ambas peticiones al mismo tiempo y espera a que ambas terminen
+    forkJoin({
+      categorias: this.categoriaService.obtenerCategorias(),
+      ordenes: this.orderService.obtenerTodasLasOrdenes()
+    }).subscribe({
+      next: ({ categorias, ordenes }) => {
+        this.realOrders.set(ordenes);
 
-        // 1. Calcular KPIs Principales
-        const total = data.reduce((sum, orden) => sum + (orden.total || 0), 0);
-        this.monthlyRevenue.set(total);
-        this.completedOrders.set(data.length);
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+        const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+        const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
 
-        // 2. Calcular Ventas por Categoría dinámicamente
+        let thisMonthRevenue = 0;
+        let lastMonthRevenue = 0;
+        let thisMonthMargin = 0;
+        let lastMonthMargin = 0;
+        let pickedUpCount = 0;
+
+        // 1. INICIALIZAMOS EL MAPA CON TODAS LAS CATEGORÍAS REALES EN CERO
         const catMap = new Map<string, number>();
-        data.forEach((orden) => {
+        categorias.forEach(cat => {
+          if (cat.activo !== false) { // Incluimos solo las activas
+            catMap.set(cat.nombre, 0);
+          }
+        });
+
+        // 2. PROCESAMOS LAS ÓRDENES Y CALCULAMOS KPIs
+        ordenes.forEach((orden) => {
+          const total = orden.total || 0;
+          const fecha = new Date(orden.fechaRegistro || orden.fechaOrden || new Date());
+          const isThisMonth = fecha.getMonth() === currentMonth && fecha.getFullYear() === currentYear;
+          const isLastMonth = fecha.getMonth() === lastMonth && fecha.getFullYear() === lastMonthYear;
+
+          const mockCost = total * 0.68;
+          const margin = total - mockCost;
+
+          if (isThisMonth) {
+            thisMonthRevenue += total;
+            thisMonthMargin += margin;
+          } else if (isLastMonth) {
+            lastMonthRevenue += total;
+            lastMonthMargin += margin;
+          }
+
+          if (['ENTREGADO', 'LISTO_PARA_RECOJO'].includes(orden.estado) || orden.canal === 'Tienda (POS)') {
+            pickedUpCount++;
+          }
+
+          // Sumamos los ingresos al mapa de categorías
           if (orden.detalles) {
             orden.detalles.forEach((det: any) => {
-              // Si tu backend no manda categoría en detalles, agrupamos como 'General'
               const catName = det.producto?.categoria?.nombre || 'General';
               const subtotal = (det.cantidad || 1) * (det.precioUnitario || 0);
 
+              // Sumamos al valor existente (si la categoría no existía en la BD, la añade)
               const current = catMap.get(catName) || 0;
               catMap.set(catName, current + subtotal);
             });
           }
         });
 
-        // Convertir el Map a array y calcular porcentajes
+        // 3. ASIGNACIÓN DE KPIs AL ESTADO REACTIVO
+        const revenueToDisplay = thisMonthRevenue > 0 ? thisMonthRevenue : ordenes.reduce((s, o) => s + (o.total || 0), 0);
+        this.monthlyRevenue.set(revenueToDisplay);
+        this.completedOrders.set(ordenes.length);
+
+        if (lastMonthRevenue > 0) {
+          const growth = ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100;
+          this.revenueGrowth.set(Math.round(growth * 10) / 10);
+        } else {
+          this.revenueGrowth.set(thisMonthRevenue > 0 ? 100 : 0);
+        }
+
+        const rate = revenueToDisplay > 0 ? (thisMonthMargin / thisMonthRevenue) * 100 : 0;
+        this.marginRate.set(Math.round(rate * 10) / 10);
+        const lastRate = lastMonthRevenue > 0 ? (lastMonthMargin / lastMonthRevenue) * 100 : 0;
+        this.marginGrowth.set(Math.round((this.marginRate() - lastRate) * 10) / 10);
+
+        const pickupPct = ordenes.length > 0 ? (pickedUpCount / ordenes.length) * 100 : 0;
+        this.pickupRate.set(Math.round(pickupPct * 10) / 10);
+
+        // 4. CREACIÓN DEL ARRAY FINAL DE CATEGORÍAS (Convertimos a %)
+        const totalAllTime = ordenes.reduce((sum, o) => sum + (o.total || 0), 0);
         const catArray: CategorySalesMetric[] = [];
+
         catMap.forEach((monto, nombre) => {
-          const pct = total > 0 ? Math.round((monto / total) * 100) : 0;
+          const pct = totalAllTime > 0 ? Math.round((monto / totalAllTime) * 100) : 0;
           catArray.push({ name: nombre, amount: monto, percentage: pct });
         });
 
-        // Ordenar de mayor a menor ventas
-        catArray.sort((a, b) => b.amount - a.amount);
+        // Ordenamos: Primero por monto de ventas (mayor a menor), y luego alfabéticamente si ambas tienen 0
+        catArray.sort((a, b) => b.amount - a.amount || a.name.localeCompare(b.name));
         this.categoryMetrics.set(catArray);
       },
-      error: (err) => console.error('Error al cargar reportes', err),
+      error: (err) => console.error('Error al cruzar reportes con categorías', err),
     });
   }
 
-  // Formateadores para la vista
   formatCurrency(val: number): string {
     return 'S/ ' + val.toLocaleString('es-PE', { maximumFractionDigits: 0 });
   }

@@ -4,7 +4,6 @@
   gap: 1.5rem;
 }
 
-/* 2. TABLA */
 .categories-table-card {
   background-color: #ffffff;
   border: 1px solid #e2e8f0;
@@ -130,17 +129,6 @@
   gap: 0.75rem;
 }
 
-.cat-icon-badge {
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 0.5rem;
-  background-color: #f1f5f9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.15rem;
-}
-
 .category-name-bold {
   font-size: 0.875rem;
   font-weight: 700;
@@ -173,10 +161,11 @@
 }
 
 /* Switch Activo / Inactivo */
-.toggle-status-cell {
+.actions-buttons-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: flex-end;
+  gap: 0.75rem;
 }
 
 .status-switch {
@@ -209,25 +198,6 @@
 
 .switch-on .switch-handle {
   transform: translateX(1rem);
-}
-
-.status-state-text {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #94a3b8;
-  white-space: nowrap;
-}
-
-.text-online {
-  color: #059669 !important;
-}
-
-/* Botón Editar */
-.actions-buttons-row {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.45rem;
 }
 
 .btn-action-icon {
@@ -314,38 +284,6 @@
   cursor: pointer;
 }
 
-.icon-selector-grid {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 1rem;
-}
-
-.btn-icon-choice {
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
-  background-color: #f8fafc;
-  font-size: 1.15rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-}
-
-.btn-icon-choice:hover {
-  background-color: #ffffff;
-  border-color: #1a3a6b;
-}
-
-.icon-selected {
-  background-color: #fff8d6 !important;
-  border-color: #f5c800 !important;
-  box-shadow: 0 0 0 2px rgba(245, 200, 0, 0.25);
-}
-
 .form-group-item {
   display: flex;
   flex-direction: column;
@@ -406,77 +344,3 @@
 
 .mt-3 { margin-top: 0.75rem; }
 .mt-4 { margin-top: 1rem; }
-
-/* TOAST */
-.toast-popup-card {
-  position: fixed;
-  top: 1.5rem;
-  right: 1.5rem;
-  z-index: 120;
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  min-width: 300px;
-  max-width: 420px;
-  padding: 0.9rem 1.15rem;
-  background-color: #ffffff;
-  border-radius: 0.65rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  animation: slideToastIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes slideToastIn {
-  from { opacity: 0; transform: translateY(-16px) scale(0.96); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.toast-ok { border-left: 4px solid #10b981; }
-.toast-err { border-left: 4px solid #ef4444; }
-
-.toast-icon-badge {
-  width: 1.85rem;
-  height: 1.85rem;
-  border-radius: 9999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  font-size: 0.875rem;
-  flex-shrink: 0;
-}
-
-.toast-ok .toast-icon-badge {
-  background-color: #d1fae5;
-  color: #10b981;
-}
-
-.toast-err .toast-icon-badge {
-  background-color: #fee2e2;
-  color: #ef4444;
-}
-
-.toast-text-area { flex: 1; }
-
-.toast-title-text {
-  font-weight: 700;
-  font-size: 0.9375rem;
-  color: #0f1c2e;
-  margin: 0 0 0.15rem 0;
-  font-family: 'Barlow Condensed', sans-serif;
-}
-
-.toast-desc-text {
-  font-size: 0.8125rem;
-  color: #5a6a7e;
-  margin: 0;
-  line-height: 1.35;
-}
-
-.btn-toast-dismiss {
-  background: none;
-  border: none;
-  font-size: 1.25rem;
-  color: #a0aab8;
-  cursor: pointer;
-  padding: 0;
-}

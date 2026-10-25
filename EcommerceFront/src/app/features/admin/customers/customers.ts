@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination';
@@ -19,7 +19,7 @@ export interface CustomerItem {
 @Component({
   selector: 'app-customers',
   standalone: true,
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [FormsModule, PaginationComponent],
   templateUrl: './customers.html',
   styleUrls: ['./customers.css'],
 })

@@ -1,10 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-invoice-sheet',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './invoice-sheet.html',
   styleUrls: ['./invoice-sheet.css'],
 })

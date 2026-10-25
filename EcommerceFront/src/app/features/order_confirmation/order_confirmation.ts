@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { NavbarComponent } from '../../shared/components/navbar/navbar';
@@ -10,7 +10,7 @@ import { WebsocketService } from '../../services/websocket.service'; // Inyecci√
 @Component({
   selector: 'app-order-confirmation',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, FooterComponent],
+  imports: [NavbarComponent, FooterComponent],
   templateUrl: './order_confirmation.html',
   styleUrls: ['./order_confirmation.css'],
 })

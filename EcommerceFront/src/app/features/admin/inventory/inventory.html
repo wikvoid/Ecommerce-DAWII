@@ -1,23 +1,35 @@
 <div class="inventory-view-container">
   <!-- Toast -->
-  <div *ngIf="toast()" class="toast-popup-card" [ngClass]="toast()?.type === 'error' ? 'toast-err' : 'toast-ok'">
-    <div class="toast-icon-badge">
-      <span *ngIf="toast()?.type === 'success'">✓</span>
-      <span *ngIf="toast()?.type === 'error'">✕</span>
+  @if (toast()) {
+    <div class="toast-popup-card" [ngClass]="toast()?.type === 'error' ? 'toast-err' : 'toast-ok'">
+      <div class="toast-icon-badge">
+        @if (toast()?.type === 'success') {
+          <span>✓</span>
+        }
+        @if (toast()?.type === 'error') {
+          <span>✕</span>
+        }
+      </div>
+      <div class="toast-text-area">
+        <h4 class="toast-title-text">{{ toast()?.title }}</h4>
+        <p class="toast-desc-text">{{ toast()?.message }}</p>
+      </div>
+      <button type="button" (click)="toast.set(null)" class="btn-toast-dismiss">×</button>
     </div>
-    <div class="toast-text-area">
-      <h4 class="toast-title-text">{{ toast()?.title }}</h4>
-      <p class="toast-desc-text">{{ toast()?.message }}</p>
-    </div>
-    <button type="button" (click)="toast.set(null)" class="btn-toast-dismiss">×</button>
-  </div>
+  }
 
   <!-- Contenedor Tabla -->
   <div class="inventory-table-card">
     <div class="inventory-toolbar">
       <div class="filters-left-group">
         <div class="search-input-box">
-          <svg class="search-lens-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg
+            class="search-lens-svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <circle cx="11" cy="11" r="8"></circle>
             <path d="M21 21l-4.35-4.35"></path>
           </svg>
@@ -30,8 +42,14 @@
           />
         </div>
 
-        <select [ngModel]="selectedCategory()" (ngModelChange)="setCategory($event)" class="select-category">
-          <option *ngFor="let cat of dynamicCategories()" [value]="cat">{{ cat }}</option>
+        <select
+          [ngModel]="selectedCategory()"
+          (ngModelChange)="setCategory($event)"
+          class="select-category"
+        >
+          @for (cat of dynamicCategories(); track cat) {
+            <option [value]="cat">{{ cat }}</option>
+          }
         </select>
 
         <button
@@ -54,108 +72,126 @@
     <div class="table-responsive">
       <table class="inventory-table">
         <thead>
-        <tr>
-          <th>PRODUCTO</th>
-          <th>CATEGORÍA</th>
-          <th>UBICACIÓN</th>
-          <th>PRECIO UNITARIO</th>
-          <th>STOCK</th>
-          <th class="text-right">ACCIONES</th>
-        </tr>
+          <tr>
+            <th>PRODUCTO</th>
+            <th>CATEGORÍA</th>
+            <th>UBICACIÓN</th>
+            <th>PRECIO UNITARIO</th>
+            <th>STOCK</th>
+            <th class="text-right">ACCIONES</th>
+          </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let p of paginatedItems()" [class.row-inactive]="!p.active">
-          <td>
-            <div class="product-cell-group">
-              <img
-                [src]="p.img"
-                [alt]="p.name"
-                class="product-thumb-img"
-              />
-              <div>
-                <p class="product-name-title">{{ p.name }}</p>
-                <p class="product-sku-meta">{{ p.sku }} · {{ p.brand }}</p>
-              </div>
-            </div>
-          </td>
-
-          <td class="category-text">{{ p.category }}</td>
-
-          <td>
-            <span class="location-badge">{{ p.location }}</span>
-          </td>
-
-          <td class="price-retail-text">{{ formatPrice(p.price) }}</td>
-
-          <td>
-            <div class="stock-indicator-row">
-                <span
-                  class="stock-bullet-dot"
-                  [ngClass]="{
-                    'dot-red': p.stock === 0,
-                    'dot-amber': p.stock > 0 && p.stock <= p.minimum,
-                    'dot-green': p.stock > p.minimum
-                  }"
-                ></span>
-              <span class="stock-amount-bold">{{ p.stock }}</span>
-              <span class="stock-min-hint">/ mín. {{ p.minimum }}</span>
-            </div>
-          </td>
-
-          <!-- Acciones -->
-          <td class="text-right">
-            <div class="actions-buttons-row">
-              <button
-                type="button"
-                (click)="toggleStatus(p)"
-                class="status-switch"
-                [class.switch-on]="p.active"
-                [title]="p.active ? 'Desactivar producto' : 'Activar producto'"
-              >
-                <span class="switch-handle"></span>
-              </button>
-
-              <button
-                type="button"
-                (click)="openDetailModal(p)"
-                class="btn-action-icon btn-view"
-                title="Ver detalle del producto"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </button>
-
-              <button
-                type="button"
-                (click)="editProduct(p)"
-                class="btn-action-icon btn-edit"
-                title="Editar producto"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                </svg>
-              </button>
-
-              <button type="button" (click)="promptDelete(p)" class="btn-action-icon btn-delete" title="Eliminar producto">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M3 6h18"></path>
-                  <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                  <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                  <line x1="10" y1="11" x2="10" y2="17"></line>
-                  <line x1="14" y1="11" x2="14" y2="17"></line>
-                </svg>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <tr *ngIf="filteredItems().length === 0">
-          <td colspan="6" class="empty-results-cell" style="text-align: center; padding: 2rem;">
-            No se encontraron productos coincidentes.
-          </td>
-        </tr>
+          @for (p of paginatedItems(); track p) {
+            <tr [class.row-inactive]="!p.active">
+              <td>
+                <div class="product-cell-group">
+                  <img [src]="p.img" [alt]="p.name" class="product-thumb-img" />
+                  <div>
+                    <p class="product-name-title">{{ p.name }}</p>
+                    <p class="product-sku-meta">{{ p.sku }} · {{ p.brand }}</p>
+                  </div>
+                </div>
+              </td>
+              <td class="category-text">{{ p.category }}</td>
+              <td>
+                <span class="location-badge">{{ p.location }}</span>
+              </td>
+              <td class="price-retail-text">{{ formatPrice(p.price) }}</td>
+              <td>
+                <div class="stock-indicator-row">
+                  <span
+                    class="stock-bullet-dot"
+                    [ngClass]="{
+                      'dot-red': p.stock === 0,
+                      'dot-amber': p.stock > 0 && p.stock <= p.minimum,
+                      'dot-green': p.stock > p.minimum,
+                    }"
+                  ></span>
+                  <span class="stock-amount-bold">{{ p.stock }}</span>
+                  <span class="stock-min-hint">/ mín. {{ p.minimum }}</span>
+                </div>
+              </td>
+              <!-- Acciones -->
+              <td class="text-right">
+                <div class="actions-buttons-row">
+                  <button
+                    type="button"
+                    (click)="toggleStatus(p)"
+                    class="status-switch"
+                    [class.switch-on]="p.active"
+                    [title]="p.active ? 'Desactivar producto' : 'Activar producto'"
+                  >
+                    <span class="switch-handle"></span>
+                  </button>
+                  <button
+                    type="button"
+                    (click)="openDetailModal(p)"
+                    class="btn-action-icon btn-view"
+                    title="Ver detalle del producto"
+                  >
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    (click)="editProduct(p)"
+                    class="btn-action-icon btn-edit"
+                    title="Editar producto"
+                  >
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    (click)="promptDelete(p)"
+                    class="btn-action-icon btn-delete"
+                    title="Eliminar producto"
+                  >
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path d="M3 6h18"></path>
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                      <line x1="10" y1="11" x2="10" y2="17"></line>
+                      <line x1="14" y1="11" x2="14" y2="17"></line>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+          @if (filteredItems().length === 0) {
+            <tr>
+              <td colspan="6" class="empty-results-cell" style="text-align: center; padding: 2rem">
+                No se encontraron productos coincidentes.
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>
@@ -167,87 +203,90 @@
   </div>
 
   <!-- MODAL 1: VER DETALLE -->
-  <div *ngIf="selectedProductDetail()" class="modal-backdrop" (click)="closeDetailModal()">
-    <div class="modal-box-card modal-detail-view" (click)="$event.stopPropagation()">
-      <div class="modal-header-row">
-        <div>
-          <span class="modal-meta-label">FICHA TÉCNICA</span>
-          <h3 class="modal-main-title">{{ selectedProductDetail()?.name }}</h3>
+  @if (selectedProductDetail()) {
+    <div class="modal-backdrop" (click)="closeDetailModal()">
+      <div class="modal-box-card modal-detail-view" (click)="$event.stopPropagation()">
+        <div class="modal-header-row">
+          <div>
+            <span class="modal-meta-label">FICHA TÉCNICA</span>
+            <h3 class="modal-main-title">{{ selectedProductDetail()?.name }}</h3>
+          </div>
+          <button type="button" (click)="closeDetailModal()" class="btn-modal-close">✕</button>
         </div>
-        <button type="button" (click)="closeDetailModal()" class="btn-modal-close">✕</button>
-      </div>
-
-      <div class="detail-modal-body">
-        <div class="detail-media-banner">
-          <img
-            [src]="selectedProductDetail()?.img"
-            [alt]="selectedProductDetail()?.name"
-            class="detail-hero-img"
-          />
-          <span class="detail-badge-sku">{{ selectedProductDetail()?.sku }}</span>
-        </div>
-
-        <div class="detail-specs-grid">
-          <div class="detail-data-box">
-            <span class="data-box-label">CATEGORÍA</span>
-            <span class="data-box-val">{{ selectedProductDetail()?.category }}</span>
+        <div class="detail-modal-body">
+          <div class="detail-media-banner">
+            <img
+              [src]="selectedProductDetail()?.img"
+              [alt]="selectedProductDetail()?.name"
+              class="detail-hero-img"
+            />
+            <span class="detail-badge-sku">{{ selectedProductDetail()?.sku }}</span>
           </div>
-          <div class="detail-data-box">
-            <span class="data-box-label">MARCA</span>
-            <span class="data-box-val">{{ selectedProductDetail()?.brand }}</span>
+          <div class="detail-specs-grid">
+            <div class="detail-data-box">
+              <span class="data-box-label">CATEGORÍA</span>
+              <span class="data-box-val">{{ selectedProductDetail()?.category }}</span>
+            </div>
+            <div class="detail-data-box">
+              <span class="data-box-label">MARCA</span>
+              <span class="data-box-val">{{ selectedProductDetail()?.brand }}</span>
+            </div>
+            <div class="detail-data-box">
+              <span class="data-box-label">PRECIO VENTA</span>
+              <span class="data-box-val text-navy">{{
+                formatPrice(selectedProductDetail()?.price || 0)
+              }}</span>
+            </div>
+            <div class="detail-data-box">
+              <span class="data-box-label">UBICACIÓN</span>
+              <span class="data-box-val">{{ selectedProductDetail()?.location }}</span>
+            </div>
           </div>
-          <div class="detail-data-box">
-            <span class="data-box-label">PRECIO VENTA</span>
-            <span class="data-box-val text-navy">{{ formatPrice(selectedProductDetail()?.price || 0) }}</span>
+          <div class="detail-stock-summary">
+            <div class="stock-info-col">
+              <span class="stock-summary-label">EXISTENCIAS ACTUALES</span>
+              <p class="stock-summary-number">{{ selectedProductDetail()?.stock }} unidades</p>
+            </div>
+            <span class="stock-min-tag"
+              >Stock mínimo de alerta: {{ selectedProductDetail()?.minimum }} u.</span
+            >
           </div>
-          <div class="detail-data-box">
-            <span class="data-box-label">UBICACIÓN</span>
-            <span class="data-box-val">{{ selectedProductDetail()?.location }}</span>
+          <p class="detail-description-text">{{ selectedProductDetail()?.description }}</p>
+          <div class="detail-modal-actions">
+            <button type="button" (click)="closeDetailModal()" class="btn-cancel-modal">
+              Cerrar
+            </button>
+            <button
+              type="button"
+              (click)="editProduct(selectedProductDetail()!); closeDetailModal()"
+              class="btn-edit-from-modal"
+            >
+              Editar producto
+            </button>
           </div>
-        </div>
-
-        <div class="detail-stock-summary">
-          <div class="stock-info-col">
-            <span class="stock-summary-label">EXISTENCIAS ACTUALES</span>
-            <p class="stock-summary-number">{{ selectedProductDetail()?.stock }} unidades</p>
-          </div>
-          <span class="stock-min-tag">Stock mínimo de alerta: {{ selectedProductDetail()?.minimum }} u.</span>
-        </div>
-
-        <p class="detail-description-text">{{ selectedProductDetail()?.description }}</p>
-
-        <div class="detail-modal-actions">
-          <button type="button" (click)="closeDetailModal()" class="btn-cancel-modal">
-            Cerrar
-          </button>
-          <button
-            type="button"
-            (click)="editProduct(selectedProductDetail()!); closeDetailModal()"
-            class="btn-edit-from-modal"
-          >
-            Editar producto
-          </button>
         </div>
       </div>
     </div>
-  </div>
+  }
 
   <!-- MODAL 2: ELIMINAR -->
-  <div *ngIf="itemToDelete()" class="modal-backdrop" (click)="cancelDelete()">
-    <div class="modal-box-card modal-delete" (click)="$event.stopPropagation()">
-      <h3 class="modal-main-title text-center">¿Eliminar este producto?</h3>
-      <p class="modal-delete-desc">
-        Estás a punto de eliminar permanentemente <strong>"{{ itemToDelete()?.name }}"</strong> (SKU: {{ itemToDelete()?.sku }}). Esta acción no se puede deshacer.
-      </p>
-
-      <div class="modal-delete-actions">
-        <button type="button" (click)="cancelDelete()" class="btn-cancel-modal">
-          Cancelar
-        </button>
-        <button type="button" (click)="confirmDelete()" class="btn-confirm-delete">
-          Sí, eliminar
-        </button>
+  @if (itemToDelete()) {
+    <div class="modal-backdrop" (click)="cancelDelete()">
+      <div class="modal-box-card modal-delete" (click)="$event.stopPropagation()">
+        <h3 class="modal-main-title text-center">¿Eliminar este producto?</h3>
+        <p class="modal-delete-desc">
+          Estás a punto de eliminar <strong>"{{ itemToDelete()?.name }}"</strong> (SKU:
+          {{ itemToDelete()?.sku }}). Si este producto ya tiene un historial de ventas registrado,
+          el sistema rechazará la eliminación por motivos contables. En ese caso, te recomendamos
+          simplemente <strong>pausarlo</strong>.
+        </p>
+        <div class="modal-delete-actions">
+          <button type="button" (click)="cancelDelete()" class="btn-cancel-modal">Cancelar</button>
+          <button type="button" (click)="confirmDelete()" class="btn-confirm-delete">
+            Sí, eliminar
+          </button>
+        </div>
       </div>
     </div>
-  </div>
+  }
 </div>

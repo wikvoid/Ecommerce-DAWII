@@ -18,8 +18,12 @@ public class Categoria {
     @Column(nullable = false, unique = true, length = 100)
     private String nombre;
 
+    @Column(length = 20)
+    private String codigo;
+
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
+    // Por defecto, toda categoría nace activa
     private Boolean activo = true;
 }

@@ -1,6 +1,6 @@
 package hardware.store.pe.security.jwt;
 
-import hardware.store.pe.services.UserDetailsServiceImpl;
+import hardware.store.pe.services.UserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +29,7 @@ import java.util.List;
 public class SecurityConfig {
 
     // Dependencias inyectadas por constructor (estándar profesional)
-    private final UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsService userDetailsService;
     private final JwtEntryPoint jwtEntryPoint;
     private final JwtProvider jwtProvider;
 

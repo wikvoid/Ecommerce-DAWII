@@ -58,19 +58,9 @@ export class HowToBuyComponent {
       icon: '🏦',
     },
     {
-      name: 'Transferencia bancaria',
-      detail: 'Abono directo por banca por internet con confirmación rápida.',
-      icon: '📲',
-    },
-    {
       name: 'Billeteras digitales',
       detail: 'Pagos mediante códigos QR y aplicaciones móviles.',
       icon: '📱',
-    },
-    {
-      name: 'Pago contra entrega en tienda',
-      detail: 'Aboná en caja al momento de retirar tu pedido en mostrador.',
-      icon: '💵',
     },
   ];
 

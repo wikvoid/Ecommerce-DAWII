@@ -1,13 +1,14 @@
-import { Component, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, HostListener, OnInit, inject } from '@angular/core';
+
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { TokenService } from '../../../core/services/token.service';
+import { WebsocketService } from '../../../services/websocket.service';
 
 export interface SubNavItem {
   label: string;
   route: string;
 }
-
 export interface NavItem {
   id: string;
   label: string;
@@ -17,8 +18,7 @@ export interface NavItem {
   children?: SubNavItem[];
   isOpen?: boolean;
 }
-
-interface NotificationItem {
+export interface NotificationItem {
   text: string;
   time: string;
   type: 'blue' | 'amber';
@@ -27,11 +27,11 @@ interface NotificationItem {
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule],
   templateUrl: './layout.html',
   styleUrls: ['./layout.css'],
 })
-export class LayoutComponent {
+export class LayoutComponent implements OnInit {
   mobileOpen: boolean = false;
   notificationsOpen: boolean = false;
   toastMessage: string | null = null;
@@ -39,6 +39,15 @@ export class LayoutComponent {
 
   currentTitle: string = 'Resumen general';
   currentSubtitle: string = 'Todo lo que pasa hoy en Ferremas';
+
+  // Datos de usuario dinámicos
+  adminName: string = 'Administrador';
+  adminInitials: string = 'AD';
+  unreadCount: number = 0;
+
+  private router = inject(Router);
+  private tokenService = inject(TokenService);
+  private wsService = inject(WebsocketService);
 
   titles: Record<string, [string, string]> = {
     orders: ['Pedidos y retiros', 'Gestioná los pedidos que llegan a la tienda'],
@@ -51,7 +60,7 @@ export class LayoutComponent {
   };
 
   navigation: NavItem[] = [
-    { id: 'orders', label: 'Pedidos', route: '/admin/orders', icon: 'orders', badge: 1 },
+    { id: 'orders', label: 'Pedidos', route: '/admin/orders', icon: 'orders' },
     { id: 'pos', label: 'Venta POS', route: '/admin/pos', icon: 'pos' },
     {
       id: 'warehouse',
@@ -68,21 +77,51 @@ export class LayoutComponent {
     { id: 'reports', label: 'Reportes', route: '/admin/reports', icon: 'reports' },
   ];
 
-  notifications: NotificationItem[] = [
-    { text: 'Nuevo pedido FM-1048 recibido', time: 'Hace 10 min', type: 'blue' },
-    { text: '2 productos necesitan reposición', time: 'Hace 20 min', type: 'amber' },
-    { text: 'Pedido FM-1046 listo para retirar', time: 'Hace 30 min', type: 'blue' },
-  ];
+  notifications: NotificationItem[] = [];
 
-  constructor(private router: Router) {
+  constructor() {
     this.updateHeaderTitles(this.router.url);
-
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event) => {
         this.updateHeaderTitles(event.urlAfterRedirects);
         this.mobileOpen = false;
       });
+  }
+
+  ngOnInit(): void {
+    // 1. Cargar datos del usuario real
+    const fullName = this.tokenService.getUserName() || 'Administrador Sistema';
+    this.adminName = fullName;
+    this.adminInitials = fullName
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .substring(0, 2)
+      .toUpperCase();
+
+    // 2. Escucha global de WebSockets para Notificaciones
+    this.wsService.ordenUpdates$.subscribe((orden) => {
+      // Si la orden es nueva, alertamos con azul; si es actualización, con amarillo
+      const isNew = orden.estado === 'PENDIENTE' || orden.estado === 'EN_PROCESAMIENTO';
+      const msg = isNew
+        ? `Nuevo pedido FM-${orden.id} recibido`
+        : `Pedido FM-${orden.id} pasó a ${orden.estado.replace('_', ' ')}`;
+
+      this.triggerToast(msg);
+
+      this.notifications.unshift({
+        text: msg,
+        time: 'Justo ahora',
+        type: isNew ? 'blue' : 'amber',
+      });
+
+      this.unreadCount++;
+
+      // Actualizar el badge del menú lateral de órdenes
+      const ordersNav = this.navigation.find((n) => n.id === 'orders');
+      if (ordersNav) ordersNav.badge = (ordersNav.badge || 0) + (isNew ? 1 : 0);
+    });
   }
 
   private updateHeaderTitles(url: string): void {
@@ -96,24 +135,19 @@ export class LayoutComponent {
   toggleMobile(): void {
     this.mobileOpen = !this.mobileOpen;
   }
-
   closeMobile(): void {
     this.mobileOpen = false;
   }
-
   toggleNotifications(): void {
     this.notificationsOpen = !this.notificationsOpen;
+    if (this.notificationsOpen) this.unreadCount = 0; // Limpiar contador al abrir
   }
-
   toggleSubmenu(item: NavItem): void {
     item.isOpen = !item.isOpen;
   }
-
   isSubmenuActive(item: NavItem): boolean {
-    if (!item.children) return false;
-    return item.children.some((sub) => this.router.url.startsWith(sub.route));
+    return !!item.children?.some((sub) => this.router.url.startsWith(sub.route));
   }
-
   closeNotifications(): void {
     this.notificationsOpen = false;
   }
@@ -123,10 +157,11 @@ export class LayoutComponent {
     if (this.toastTimer) clearTimeout(this.toastTimer);
     this.toastTimer = setTimeout(() => {
       this.toastMessage = null;
-    }, 2800);
+    }, 3500);
   }
 
   logout(): void {
+    sessionStorage.clear(); // O el método que uses en tokenService.logOut()
     this.router.navigate(['/login']);
   }
 

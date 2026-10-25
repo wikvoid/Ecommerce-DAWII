@@ -3,20 +3,29 @@
     <!-- Filtros y Buscador -->
     <div class="orders-toolbar">
       <div class="status-filters-group">
-        <button
-          *ngFor="let s of statuses"
-          type="button"
-          (click)="setFilter(s)"
-          [class.btn-filter-active]="filterStatus() === s"
-          class="btn-status-filter"
-        >
-          <span>{{ s }}</span>
-          <span *ngIf="s === 'Todos'" class="filter-count">({{ orders().length }})</span>
-        </button>
+        @for (s of statuses; track s) {
+          <button
+            type="button"
+            (click)="setFilter(s)"
+            [class.btn-filter-active]="filterStatus() === s"
+            class="btn-status-filter"
+          >
+            <span>{{ s }}</span>
+            @if (s === 'Todos') {
+              <span class="filter-count">({{ orders().length }})</span>
+            }
+          </button>
+        }
       </div>
 
       <div class="search-box-wrapper">
-        <svg class="search-lens" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg
+          class="search-lens"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <circle cx="11" cy="11" r="8"></circle>
           <path d="M21 21l-4.35-4.35"></path>
         </svg>
@@ -34,67 +43,62 @@
     <div class="table-scroll-container">
       <table class="orders-table">
         <thead>
-        <tr>
-          <th>PEDIDO</th>
-          <th>CLIENTE</th>
-          <th>HORARIO DE RETIRO</th>
-          <th>ESTADO</th>
-          <th class="text-right">TOTAL</th>
-          <th></th>
-        </tr>
+          <tr>
+            <th>PEDIDO</th>
+            <th>CLIENTE</th>
+            <th>HORARIO DE RETIRO</th>
+            <th>ESTADO</th>
+            <th class="text-right">TOTAL</th>
+            <th></th>
+          </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let o of paginatedOrders()">
-          <td>
-            <p class="order-id-label">{{ o.id }}</p>
-            <p class="order-subdate">{{ o.createdAt }}</p>
-          </td>
-
-          <td>
-            <p class="customer-name-label">{{ o.customer }}</p>
-            <p class="customer-items-sub">{{ o.items }} productos</p>
-          </td>
-
-          <td>
-            <p class="pickup-time-label">{{ o.pickup }}</p>
-            <p class="pickup-sublabel">Recojo en tienda</p>
-          </td>
-
-          <td>
-              <span
-                class="status-pill"
-                [ngClass]="{
-                  'status-nuevo': o.status === 'Nuevo',
-                  'status-preparando': o.status === 'Preparando',
-                  'status-listo': o.status === 'Listo para retirar',
-                  'status-entregado': o.status === 'Entregado'
-                }"
-              >
-                <span class="status-bullet"></span>
-                <span>{{ o.status }}</span>
-              </span>
-          </td>
-
-          <td class="text-right">
-            <span class="order-total-price">{{ formatPrice(o.total) }}</span>
-          </td>
-
-          <!-- Botón Gestionar -->
-          <td class="text-right">
-            <button
-              type="button"
-              (click)="openOrderDetails(o)"
-              class="btn-manage-order"
-            >
-              Gestionar
-            </button>
-          </td>
-        </tr>
-        <tr *ngIf="filteredOrders().length === 0">
-          <td colspan="6" style="text-align: center; padding: 2rem; color: #94a3b8;">
-            No se encontraron pedidos coincidentes.
-          </td>
-        </tr>
+          @for (o of paginatedOrders(); track o) {
+            <tr>
+              <td>
+                <p class="order-id-label">{{ o.id }}</p>
+                <p class="order-subdate">{{ o.createdAt }}</p>
+              </td>
+              <td>
+                <p class="customer-name-label">{{ o.customer }}</p>
+                <p class="customer-items-sub">{{ o.items }} productos</p>
+              </td>
+              <td>
+                <p class="pickup-time-label">{{ o.pickup }}</p>
+                <p class="pickup-sublabel">Recojo en tienda</p>
+              </td>
+              <td>
+                <span
+                  class="status-pill"
+                  [ngClass]="{
+                    'status-nuevo': o.status === 'Nuevo',
+                    'status-preparando': o.status === 'Preparando',
+                    'status-listo': o.status === 'Listo para retirar',
+                    'status-entregado': o.status === 'Entregado',
+                  }"
+                >
+                  <span class="status-bullet"></span>
+                  <span>{{ o.status }}</span>
+                </span>
+              </td>
+              <td class="text-right">
+                <span class="order-total-price">{{ formatPrice(o.total) }}</span>
+              </td>
+              <!-- Botón Gestionar -->
+              <td class="text-right">
+                <button type="button" (click)="openOrderDetails(o)" class="btn-manage-order">
+                  Gestionar
+                </button>
+              </td>
+            </tr>
+          }
+          @if (filteredOrders().length === 0) {
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 2rem; color: #94a3b8">
+                No se encontraron pedidos coincidentes.
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>
@@ -106,128 +110,164 @@
   </div>
 
   <!-- DRAWER DE DETALLE ── -->
-  <div *ngIf="selectedOrder()" class="drawer-backdrop" (click)="closeOrderDetails()">
-    <aside class="order-drawer-panel" (click)="$event.stopPropagation()">
-      <div class="drawer-header">
-        <div>
-          <span class="drawer-meta-title">DETALLE DEL PEDIDO</span>
-          <h2 class="drawer-order-id">{{ selectedOrder()?.id }}</h2>
-        </div>
-        <button type="button" (click)="closeOrderDetails()" class="btn-close-drawer">✕</button>
-      </div>
-
-      <div class="drawer-body">
-        <div class="drawer-status-row">
-          <span
-            class="status-pill"
-            [ngClass]="{
-              'status-nuevo': selectedOrder()?.status === 'Nuevo',
-              'status-preparando': selectedOrder()?.status === 'Preparando',
-              'status-listo': selectedOrder()?.status === 'Listo para retirar',
-              'status-entregado': selectedOrder()?.status === 'Entregado'
-            }"
-          >
-            <span class="status-bullet"></span>
-            <span>{{ selectedOrder()?.status }}</span>
-          </span>
-          <span class="drawer-date-sub">{{ selectedOrder()?.createdAt }}</span>
-        </div>
-
-        <div class="drawer-client-card">
-          <p class="client-name">{{ selectedOrder()?.customer }}</p>
-          <p class="client-sub">{{ selectedOrder()?.phone }}</p>
-          <p class="client-sub">{{ selectedOrder()?.payment }}</p>
-        </div>
-
-        <div class="drawer-section">
-          <span class="section-micro-title">PRODUCTOS</span>
-          <div class="products-checkout-list">
-            <div *ngFor="let p of selectedOrder()?.products" class="product-item-row">
-              <span class="product-title">{{ p.name }}</span>
-              <span class="product-qty-tag">x{{ p.qty }}</span>
-            </div>
+  @if (selectedOrder()) {
+    <div class="drawer-backdrop" (click)="closeOrderDetails()">
+      <aside class="order-drawer-panel" (click)="$event.stopPropagation()">
+        <div class="drawer-header">
+          <div>
+            <span class="drawer-meta-title">DETALLE DEL PEDIDO</span>
+            <h2 class="drawer-order-id">{{ selectedOrder()?.id }}</h2>
           </div>
+          <button type="button" (click)="closeOrderDetails()" class="btn-close-drawer">✕</button>
         </div>
-
-        <div class="drawer-total-row">
-          <span>Total cobrado</span>
-          <span class="drawer-total-amount">{{ formatPrice(selectedOrder()?.total || 0) }}</span>
-        </div>
-
-        <div class="pickup-highlight-banner">
-          <p class="pickup-banner-label">HORARIO DE RECOJO</p>
-          <p class="pickup-banner-time">{{ selectedOrder()?.pickup }}</p>
-          <p class="pickup-banner-address">Av. Corrientes 1234 · Mostrador de retiros</p>
-        </div>
-
-        <!-- CAJA DE PAGO MEJORADA PARA YAPE -->
-        <div class="payment-info-box" [ngClass]="{'yape-box': selectedOrder()?.payment === 'Yape'}">
-          <div class="pay-icon-wrapper">
-            <span *ngIf="selectedOrder()?.payment === 'Yape'" class="yape-letter">Y</span>
-            <svg *ngIf="selectedOrder()?.payment !== 'Yape'" class="pay-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-              <line x1="2" y1="10" x2="22" y2="10"></line>
-            </svg>
-          </div>
-
-          <div class="payment-text-group">
-            <span class="pay-main-title">
-              {{ selectedOrder()?.payment === 'Yape' ? 'Pago vía Yape' : selectedOrder()?.payment }}
+        <div class="drawer-body">
+          <div class="drawer-status-row">
+            <span
+              class="status-pill"
+              [ngClass]="{
+                'status-nuevo': selectedOrder()?.status === 'Nuevo',
+                'status-preparando': selectedOrder()?.status === 'Preparando',
+                'status-listo': selectedOrder()?.status === 'Listo para retirar',
+                'status-entregado': selectedOrder()?.status === 'Entregado',
+              }"
+            >
+              <span class="status-bullet"></span>
+              <span>{{ selectedOrder()?.status }}</span>
             </span>
-            <div class="pay-sub-meta">
-              <span>Cel: <strong>{{ selectedOrder()?.phone }}</strong></span>
-              <span class="pay-meta-dot">·</span>
-              <span>Aprobación: <strong class="code-highlight">{{ selectedOrder()?.opCode }}</strong></span>
+            <span class="drawer-date-sub">{{ selectedOrder()?.createdAt }}</span>
+          </div>
+          <div class="drawer-client-card">
+            <p class="client-name">{{ selectedOrder()?.customer }}</p>
+            <p class="client-sub">{{ selectedOrder()?.phone }}</p>
+            <p class="client-sub">{{ selectedOrder()?.payment }}</p>
+          </div>
+          <div class="drawer-section">
+            <span class="section-micro-title">PRODUCTOS</span>
+            <div class="products-checkout-list">
+              @for (p of selectedOrder()?.products; track p) {
+                <div class="product-item-row">
+                  <span class="product-title">{{ p.name }}</span>
+                  <span class="product-qty-tag">x{{ p.qty }}</span>
+                </div>
+              }
             </div>
           </div>
-        </div>
-
-        <!-- Selector de Comprobante -->
-        <div class="invoice-selector-group">
-          <span class="section-micro-title">TIPO DE COMPROBANTE</span>
-          <div class="invoice-toggle-container">
-            <button type="button" class="invoice-toggle-btn" [class.active]="selectedOrder()?.invoiceType === 'Boleta electrónica'" (click)="changeInvoiceType('Boleta electrónica')">Boleta</button>
-            <button type="button" class="invoice-toggle-btn" [class.active]="selectedOrder()?.invoiceType === 'Factura electrónica'" (click)="changeInvoiceType('Factura electrónica')">Factura</button>
+          <div class="drawer-total-row">
+            <span>Total cobrado</span>
+            <span class="drawer-total-amount">{{ formatPrice(selectedOrder()?.total || 0) }}</span>
           </div>
-        </div>
-
-        <!-- ACCIONES RÁPIDAS (REEMPLAZA AL SELECT DROPDOWN) -->
-        <div class="update-status-group">
-          <label class="section-micro-title">PRÓXIMA ACCIÓN DE TIENDA</label>
-
-          <div class="action-buttons-row">
-            <!-- Si es Nuevo -->
-            <button *ngIf="selectedOrder()?.status === 'Nuevo'" (click)="updateOrderStatus('Preparando')" class="btn-action-primary">
-              📦 Empezar a Preparar
-            </button>
-
-            <!-- Si está Preparando -->
-            <button *ngIf="selectedOrder()?.status === 'Preparando'" (click)="updateOrderStatus('Listo para retirar')" class="btn-action-warning">
-              ✅ Marcar como Listo
-            </button>
-
-            <!-- Si está Listo -->
-            <button *ngIf="selectedOrder()?.status === 'Listo para retirar'" (click)="updateOrderStatus('Entregado')" class="btn-action-success">
-              🤝 Entregar Pedido
-            </button>
-
-            <!-- Botón de cancelar siempre visible a menos que ya esté entregado/cancelado -->
-            <button *ngIf="!['Entregado', 'Cancelado'].includes(selectedOrder()?.status || '')" (click)="updateOrderStatus('Cancelado')" class="btn-action-danger">
-              Cancelar
-            </button>
-
-            <!-- Si ya terminó el ciclo -->
-            <div *ngIf="['Entregado', 'Cancelado'].includes(selectedOrder()?.status || '')" class="status-completed-notice">
-              Este pedido ya ha finalizado su ciclo.
+          <div class="pickup-highlight-banner">
+            <p class="pickup-banner-label">HORARIO DE RECOJO</p>
+            <p class="pickup-banner-time">{{ selectedOrder()?.pickup }}</p>
+            <p class="pickup-banner-address">Av. Corrientes 1234 · Mostrador de retiros</p>
+          </div>
+          <!-- CAJA DE PAGO MEJORADA PARA YAPE -->
+          <div
+            class="payment-info-box"
+            [ngClass]="{ 'yape-box': selectedOrder()?.payment === 'Yape' }"
+          >
+            <div class="pay-icon-wrapper">
+              @if (selectedOrder()?.payment === 'Yape') {
+                <span class="yape-letter">Y</span>
+              }
+              @if (selectedOrder()?.payment !== 'Yape') {
+                <svg
+                  class="pay-card-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                  <line x1="2" y1="10" x2="22" y2="10"></line>
+                </svg>
+              }
+            </div>
+            <div class="payment-text-group">
+              <span class="pay-main-title">
+                {{
+                  selectedOrder()?.payment === 'Yape' ? 'Pago vía Yape' : selectedOrder()?.payment
+                }}
+              </span>
+              <div class="pay-sub-meta">
+                <span
+                  >Cel: <strong>{{ selectedOrder()?.phone }}</strong></span
+                >
+                <span class="pay-meta-dot">·</span>
+                <span
+                  >Aprobación:
+                  <strong class="code-highlight">{{ selectedOrder()?.opCode }}</strong></span
+                >
+              </div>
             </div>
           </div>
+          <!-- Selector de Comprobante -->
+          <div class="invoice-selector-group">
+            <span class="section-micro-title">TIPO DE COMPROBANTE</span>
+            <div class="invoice-toggle-container">
+              <button
+                type="button"
+                class="invoice-toggle-btn"
+                [class.active]="selectedOrder()?.invoiceType === 'Boleta electrónica'"
+                (click)="changeInvoiceType('Boleta electrónica')"
+              >
+                Boleta
+              </button>
+              <button
+                type="button"
+                class="invoice-toggle-btn"
+                [class.active]="selectedOrder()?.invoiceType === 'Factura electrónica'"
+                (click)="changeInvoiceType('Factura electrónica')"
+              >
+                Factura
+              </button>
+            </div>
+          </div>
+          <!-- ACCIONES RÁPIDAS (REEMPLAZA AL SELECT DROPDOWN) -->
+          <div class="update-status-group">
+            <label class="section-micro-title">PRÓXIMA ACCIÓN DE TIENDA</label>
+            <div class="action-buttons-row">
+              <!-- Si es Nuevo -->
+              @if (selectedOrder()?.status === 'Nuevo') {
+                <button (click)="updateOrderStatus('Preparando')" class="btn-action-primary">
+                  📦 Empezar a Preparar
+                </button>
+              }
+              <!-- Si está Preparando -->
+              @if (selectedOrder()?.status === 'Preparando') {
+                <button
+                  (click)="updateOrderStatus('Listo para retirar')"
+                  class="btn-action-warning"
+                >
+                  ✅ Marcar como Listo
+                </button>
+              }
+              <!-- Si está Listo -->
+              @if (selectedOrder()?.status === 'Listo para retirar') {
+                <button (click)="updateOrderStatus('Entregado')" class="btn-action-success">
+                  🤝 Entregar Pedido
+                </button>
+              }
+              <!-- Botón de cancelar siempre visible a menos que ya esté entregado/cancelado -->
+              @if (!['Entregado', 'Cancelado'].includes(selectedOrder()?.status || '')) {
+                <button (click)="updateOrderStatus('Cancelado')" class="btn-action-danger">
+                  Cancelar
+                </button>
+              }
+              <!-- Si ya terminó el ciclo -->
+              @if (['Entregado', 'Cancelado'].includes(selectedOrder()?.status || '')) {
+                <div class="status-completed-notice">Este pedido ya ha finalizado su ciclo.</div>
+              }
+            </div>
+          </div>
+          <button type="button" (click)="printReceipt()" class="btn-print-receipt">
+            Imprimir comprobante
+          </button>
         </div>
-
-        <button type="button" (click)="printReceipt()" class="btn-print-receipt">
-          Imprimir comprobante
-        </button>
-      </div>
-    </aside>
-  </div>
-  <app-invoice-sheet *ngIf="selectedOrder()" [data]="selectedOrder()"></app-invoice-sheet>
+      </aside>
+    </div>
+  }
+  @if (selectedOrder()) {
+    <app-invoice-sheet [data]="selectedOrder()"></app-invoice-sheet>
+  }
 </div>

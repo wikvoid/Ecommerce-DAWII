@@ -1,9 +1,15 @@
 <div class="categories-view-container">
-  <!-- 2. TABLA -->
+  <!-- TABLA -->
   <div class="categories-table-card">
     <div class="categories-toolbar">
       <div class="search-input-box">
-        <svg class="search-lens-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg
+          class="search-lens-svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <circle cx="11" cy="11" r="8"></circle>
           <path d="M21 21l-4.35-4.35"></path>
         </svg>
@@ -25,66 +31,72 @@
     <div class="table-responsive">
       <table class="categories-table">
         <thead>
-        <tr>
-          <th>CÓDIGO</th>
-          <th>CATEGORÍA</th>
-          <th>DESCRIPCIÓN</th>
-          <th>PRODUCTOS ASOCIADOS</th>
-          <th class="text-right">ACCIONES</th>
-        </tr>
+          <tr>
+            <th>CÓDIGO</th>
+            <th>CATEGORÍA</th>
+            <th>DESCRIPCIÓN</th>
+            <th>PRODUCTOS ASOCIADOS</th>
+            <th class="text-right">ACCIONES</th>
+          </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let cat of paginatedCategories()" [class.row-inactive]="!cat.active">
-          <td>
-            <span class="code-badge-font">{{ cat.code }}</span>
-          </td>
-
-          <td>
-            <div class="category-cell-group">
-              <div class="cat-icon-badge">{{ cat.icon }}</div>
-              <span class="category-name-bold">{{ cat.name }}</span>
-            </div>
-          </td>
-
-          <td class="desc-text-col">
-            {{ cat.description }}
-          </td>
-
-          <td>
-            <span class="count-pill">{{ cat.productCount }} productos</span>
-          </td>
-
-          <!-- Acciones: Editar -->
-          <td class="text-right">
-            <div class="actions-buttons-row">
-              <button
-                type="button"
-                (click)="toggleStatus(cat)"
-                class="status-switch"
-                [class.switch-on]="cat.active"
-                [title]="cat.active ? 'Pausar categoría' : 'Activar categoría'"
-              >
-                <span class="switch-handle"></span>
-              </button>
-              <button
-                type="button"
-                (click)="openEditModal(cat)"
-                class="btn-action-icon btn-edit"
-                title="Editar categoría"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                </svg>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <tr *ngIf="filteredCategories().length === 0">
-          <td colspan="5" style="text-align: center; padding: 2rem; color: #94a3b8;">
-            No se encontraron categorías coincidentes.
-          </td>
-        </tr>
+          @for (cat of paginatedCategories(); track cat) {
+            <tr [class.row-inactive]="!cat.active">
+              <td>
+                <span class="code-badge-font">{{ cat.code }}</span>
+              </td>
+              <td>
+                <div class="category-cell-group">
+                  <span class="category-name-bold">{{ cat.name }}</span>
+                </div>
+              </td>
+              <td class="desc-text-col">
+                {{ cat.description }}
+              </td>
+              <td>
+                <span class="count-pill">{{ cat.productCount }} productos</span>
+              </td>
+              <!-- Acciones -->
+              <td class="text-right">
+                <div class="actions-buttons-row">
+                  <button
+                    type="button"
+                    (click)="toggleStatus(cat)"
+                    class="status-switch"
+                    [class.switch-on]="cat.active"
+                    [title]="cat.active ? 'Pausar categoría' : 'Activar categoría'"
+                  >
+                    <span class="switch-handle"></span>
+                  </button>
+                  <button
+                    type="button"
+                    (click)="openEditModal(cat)"
+                    class="btn-action-icon btn-edit"
+                    title="Editar categoría"
+                  >
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+          @if (filteredCategories().length === 0) {
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 2rem; color: #94a3b8">
+                No se encontraron categorías coincidentes.
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>
@@ -95,68 +107,55 @@
     ></app-pagination>
   </div>
 
-  <!-- MODAL: NUEVA / EDITAR CATEGORÍA -->
-  <div *ngIf="isModalOpen()" class="modal-backdrop" (click)="closeModal()">
-    <div class="modal-box-card" (click)="$event.stopPropagation()">
-      <div class="modal-header-row">
-        <div>
-          <span class="modal-meta-label">ALMACÉN DE TIENDA</span>
-          <h3 class="modal-main-title">{{ isEditing() ? 'Editar Categoría' : 'Nueva Categoría' }}</h3>
+  <!-- MODAL -->
+  @if (isModalOpen()) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-box-card" (click)="$event.stopPropagation()">
+        <div class="modal-header-row">
+          <div>
+            <span class="modal-meta-label">ALMACÉN DE TIENDA</span>
+            <h3 class="modal-main-title">
+              {{ isEditing() ? 'Editar Categoría' : 'Nueva Categoría' }}
+            </h3>
+          </div>
+          <button type="button" (click)="closeModal()" class="btn-modal-close">✕</button>
         </div>
-        <button type="button" (click)="closeModal()" class="btn-modal-close">✕</button>
-      </div>
-
-      <div class="modal-body-content">
-        <label class="control-label-micro">ÍCONO REPRESENTATIVO</label>
-        <div class="icon-selector-grid">
-          <button
-            *ngFor="let ic of availableIcons"
-            type="button"
-            (click)="setIcon(ic)"
-            class="btn-icon-choice"
-            [class.icon-selected]="categoryForm().icon === ic"
-          >
-            {{ ic }}
+        <div class="modal-body-content">
+          <div class="form-group-item mt-3">
+            <label class="control-label-micro">NOMBRE DE CATEGORÍA *</label>
+            <input
+              type="text"
+              [ngModel]="categoryForm().name"
+              (ngModelChange)="updateForm('name', $event)"
+              placeholder="Ej. Herramientas Eléctricas"
+              class="form-modal-input"
+            />
+          </div>
+          <div class="form-group-item mt-3">
+            <label class="control-label-micro">CÓDIGO INTERNO (PREFIJO SKU) *</label>
+            <input
+              type="text"
+              [ngModel]="categoryForm().code"
+              (ngModelChange)="updateForm('code', $event)"
+              placeholder="Ej. CAT-HELEC"
+              class="form-modal-input font-mono"
+            />
+          </div>
+          <div class="form-group-item mt-3">
+            <label class="control-label-micro">DESCRIPCIÓN COMERCIAL</label>
+            <textarea
+              [ngModel]="categoryForm().description"
+              (ngModelChange)="updateForm('description', $event)"
+              rows="3"
+              placeholder="Describe qué tipos de artículos se agrupan en este rubro..."
+              class="form-modal-textarea"
+            ></textarea>
+          </div>
+          <button type="button" (click)="saveCategory()" class="btn-submit-action mt-4">
+            {{ isEditing() ? 'Guardar Cambios' : 'Registrar Categoría' }}
           </button>
         </div>
-
-        <div class="form-group-item mt-3">
-          <label class="control-label-micro">NOMBRE DE CATEGORÍA *</label>
-          <input
-            type="text"
-            [ngModel]="categoryForm().name"
-            (ngModelChange)="updateForm('name', $event)"
-            placeholder="Ej. Herramientas"
-            class="form-modal-input"
-          />
-        </div>
-
-        <div class="form-group-item mt-3">
-          <label class="control-label-micro">CÓDIGO INTERNO (PREFIJO SKU) *</label>
-          <input
-            type="text"
-            [ngModel]="categoryForm().code"
-            (ngModelChange)="updateForm('code', $event)"
-            placeholder="Ej. CAT-HERR"
-            class="form-modal-input font-mono"
-          />
-        </div>
-
-        <div class="form-group-item mt-3">
-          <label class="control-label-micro">DESCRIPCIÓN COMERCIAL</label>
-          <textarea
-            [ngModel]="categoryForm().description"
-            (ngModelChange)="updateForm('description', $event)"
-            rows="3"
-            placeholder="Describe qué tipos de artículos se agrupan en este rubro..."
-            class="form-modal-textarea"
-          ></textarea>
-        </div>
-
-        <button type="button" (click)="saveCategory()" class="btn-submit-action mt-4">
-          {{ isEditing() ? 'Guardar Cambios' : 'Registrar Categoría' }}
-        </button>
       </div>
     </div>
-  </div>
+  }
 </div>

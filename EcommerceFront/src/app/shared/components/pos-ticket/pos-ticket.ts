@@ -1,10 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-pos-ticket',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './pos-ticket.html',
   styleUrls: ['./pos-ticket.css'],
 })

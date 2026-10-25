@@ -1,22 +1,34 @@
 <div class="pos-layout-wrapper">
   <!-- Toast -->
-  <div *ngIf="toast" class="toast-popup-card" [ngClass]="toast.type === 'error' ? 'toast-err' : 'toast-ok'">
-    <div class="toast-icon-badge">
-      <span *ngIf="toast.type === 'success'">✓</span>
-      <span *ngIf="toast.type === 'error'">✕</span>
+  @if (toast) {
+    <div class="toast-popup-card" [ngClass]="toast.type === 'error' ? 'toast-err' : 'toast-ok'">
+      <div class="toast-icon-badge">
+        @if (toast.type === 'success') {
+          <span>✓</span>
+        }
+        @if (toast.type === 'error') {
+          <span>✕</span>
+        }
+      </div>
+      <div class="toast-text-area">
+        <h4 class="toast-title-text">{{ toast.title }}</h4>
+        <p class="toast-desc-text">{{ toast.message }}</p>
+      </div>
+      <button type="button" (click)="toast = null" class="btn-toast-dismiss">×</button>
     </div>
-    <div class="toast-text-area">
-      <h4 class="toast-title-text">{{ toast.title }}</h4>
-      <p class="toast-desc-text">{{ toast.message }}</p>
-    </div>
-    <button type="button" (click)="toast = null" class="btn-toast-dismiss">×</button>
-  </div>
+  }
 
   <!-- COLUMNA IZQUIERDA: CATÁLOGO -->
   <section class="pos-products-column">
     <div class="pos-search-bar-box">
       <div class="search-input-wrap">
-        <svg class="lens-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg
+          class="lens-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <circle cx="11" cy="11" r="8"></circle>
           <path d="M21 21l-4.35-4.35"></path>
         </svg>
@@ -34,51 +46,62 @@
     </div>
 
     <div class="category-pills-row">
-      <button
-        *ngFor="let cat of categories()"
-        type="button"
-        (click)="selectedCategory.set(cat)"
-        [class.cat-pill-active]="selectedCategory() === cat"
-        class="cat-pill-btn"
-      >
-        {{ cat }}
-      </button>
+      @for (cat of categories(); track cat) {
+        <button
+          type="button"
+          (click)="selectedCategory.set(cat)"
+          [class.cat-pill-active]="selectedCategory() === cat"
+          class="cat-pill-btn"
+        >
+          {{ cat }}
+        </button>
+      }
     </div>
 
     <!-- Grilla de Productos -->
     <div class="pos-grid-products">
-      <div *ngFor="let p of filteredProducts()" class="pos-item-card" (click)="addToCart(p)">
-        <div class="pos-card-img-wrap">
-          <!-- CORREGIDO: Uso de imagen desde base de datos / Supabase -->
-          <img [src]="p.img" [alt]="p.name" />
-          <span class="stock-badge" [class.badge-zero]="p.stock === 0">
-            {{ p.stock > 0 ? 'Stock: ' + p.stock : 'Sin Stock' }}
-          </span>
-        </div>
-        <div class="pos-card-info">
-          <span class="pos-card-brand">{{ p.brand }}</span>
-          <h4 class="pos-card-title">{{ p.name }}</h4>
-          <div class="pos-card-footer">
-            <span class="pos-card-price">{{ formatPrice(p.price) }}</span>
-            <button type="button" class="btn-add-mini" [disabled]="p.stock === 0">+</button>
+      @for (p of filteredProducts(); track p) {
+        <div class="pos-item-card" (click)="addToCart(p)">
+          <div class="pos-card-img-wrap">
+            <!-- CORREGIDO: Uso de imagen desde base de datos / Supabase -->
+            <img [src]="p.img" [alt]="p.name" />
+            <span class="stock-badge" [class.badge-zero]="p.stock === 0">
+              {{ p.stock > 0 ? 'Stock: ' + p.stock : 'Sin Stock' }}
+            </span>
+          </div>
+          <div class="pos-card-info">
+            <span class="pos-card-brand">{{ p.brand }}</span>
+            <h4 class="pos-card-title">{{ p.name }}</h4>
+            <div class="pos-card-footer">
+              <span class="pos-card-price">{{ formatPrice(p.price) }}</span>
+              <button type="button" class="btn-add-mini" [disabled]="p.stock === 0">+</button>
+            </div>
           </div>
         </div>
-      </div>
+      }
     </div>
   </section>
 
   <!-- COLUMNA DERECHA: CAJA -->
   <aside class="pos-checkout-column">
     <div class="doc-type-segmented">
-      <button type="button" (click)="selectDocType('Boleta')" [class.doc-active]="docType() === 'Boleta'">
+      <button
+        type="button"
+        (click)="selectDocType('Boleta')"
+        [class.doc-active]="docType() === 'Boleta'"
+      >
         Boleta
       </button>
-      <button type="button" (click)="selectDocType('Factura')" [class.doc-active]="docType() === 'Factura'">
+      <button
+        type="button"
+        (click)="selectDocType('Factura')"
+        [class.doc-active]="docType() === 'Factura'"
+      >
         Factura
       </button>
     </div>
 
-    <div class="pos-client-row" style="flex-direction: column; align-items: stretch; gap: 0.5rem;">
+    <div class="pos-client-row" style="flex-direction: column; align-items: stretch; gap: 0.5rem">
       <!-- Buscador directo en el panel -->
       <div class="search-doc-wrapper">
         <input
@@ -102,30 +125,41 @@
         (ngModelChange)="customerName.set($event)"
         placeholder="Nombre / Razón Social"
         class="pos-field-input client-current-name"
-        style="border: none; background: transparent; padding: 0.25rem 0; font-weight: 600;"
+        style="border: none; background: transparent; padding: 0.25rem 0; font-weight: 600"
       />
     </div>
 
     <div class="pos-cart-items-container">
-      <div *ngIf="cart().length === 0" class="empty-pos-cart">
-        <span class="empty-cart-icon">🛒</span>
-        <p>No hay artículos en la orden</p>
-        <small>Selecciona productos del catálogo</small>
-      </div>
+      @if (cart().length === 0) {
+        <div class="empty-pos-cart">
+          <span class="empty-cart-icon">🛒</span>
+          <p>No hay artículos en la orden</p>
+          <small>Selecciona productos del catálogo</small>
+        </div>
+      }
 
-      <div *ngFor="let item of cart()" class="pos-cart-row">
-        <div class="cart-row-details">
-          <p class="cart-item-name">{{ item.product.name }}</p>
-          <span class="cart-item-unit-price">{{ formatPrice(item.unitPrice) }} c/u</span>
+      @for (item of cart(); track item) {
+        <div class="pos-cart-row">
+          <div class="cart-row-details">
+            <p class="cart-item-name">{{ item.product.name }}</p>
+            <span class="cart-item-unit-price">{{ formatPrice(item.unitPrice) }} c/u</span>
+          </div>
+          <div class="cart-stepper-box">
+            <button type="button" (click)="decreaseQty(item)" class="btn-step">−</button>
+            <span class="step-num-val">{{ item.qty }}</span>
+            <button type="button" (click)="increaseQty(item)" class="btn-step">+</button>
+          </div>
+          <span class="cart-line-total">{{ formatPrice(item.subtotal) }}</span>
+          <button
+            type="button"
+            (click)="removeFromCart(item)"
+            class="btn-remove-line"
+            title="Quitar"
+          >
+            ✕
+          </button>
         </div>
-        <div class="cart-stepper-box">
-          <button type="button" (click)="decreaseQty(item)" class="btn-step">−</button>
-          <span class="step-num-val">{{ item.qty }}</span>
-          <button type="button" (click)="increaseQty(item)" class="btn-step">+</button>
-        </div>
-        <span class="cart-line-total">{{ formatPrice(item.subtotal) }}</span>
-        <button type="button" (click)="removeFromCart(item)" class="btn-remove-line" title="Quitar">✕</button>
-      </div>
+      }
     </div>
 
     <div class="pos-ticket-bottom">
@@ -133,7 +167,12 @@
         <span>Total a Pagar</span>
         <strong class="big-total-number">{{ formatPrice(totalAmount()) }}</strong>
       </div>
-      <button type="button" (click)="openPaymentModal()" [disabled]="cart().length === 0" class="btn-submit-payment">
+      <button
+        type="button"
+        (click)="openPaymentModal()"
+        [disabled]="cart().length === 0"
+        class="btn-submit-payment"
+      >
         <span>Cobrar Orden</span>
         <span class="btn-pay-icon">💳</span>
       </button>
@@ -141,142 +180,226 @@
   </aside>
 
   <!-- MODAL NUEVO CLIENTE -->
-  <div *ngIf="isCustomerModalOpen()" class="modal-backdrop" (click)="closeCustomerModal()">
-    <div class="modal-card-box modal-client-styled" (click)="$event.stopPropagation()">
-      <div class="modal-top-bar">
-        <div>
-          <span class="modal-micro-tag">CLIENTE</span>
-          <h3 class="modal-heading-text">Datos del Comprobante</h3>
-        </div>
-        <button type="button" (click)="closeCustomerModal()" class="btn-close-modal">✕</button>
-      </div>
-      <div class="form-client-body">
-        <div class="client-form-grid">
-          <div class="field-item">
-            <label class="pos-field-label">Tipo Documento</label>
-            <select [ngModel]="newCustomer().docType" (ngModelChange)="updateCustomerField('docType', $event)" class="pos-field-input select-doc">
-              <option value="DNI">DNI ( Persona )</option>
-              <option value="RUC">RUC ( Empresa )</option>
-            </select>
+  @if (isCustomerModalOpen()) {
+    <div class="modal-backdrop" (click)="closeCustomerModal()">
+      <div class="modal-card-box modal-client-styled" (click)="$event.stopPropagation()">
+        <div class="modal-top-bar">
+          <div>
+            <span class="modal-micro-tag">CLIENTE</span>
+            <h3 class="modal-heading-text">Datos del Comprobante</h3>
           </div>
-          <div class="field-item">
-            <label class="pos-field-label">N° Documento</label>
-            <div class="search-doc-wrapper">
+          <button type="button" (click)="closeCustomerModal()" class="btn-close-modal">✕</button>
+        </div>
+        <div class="form-client-body">
+          <div class="client-form-grid">
+            <div class="field-item">
+              <label class="pos-field-label">Tipo Documento</label>
+              <select
+                [ngModel]="newCustomer().docType"
+                (ngModelChange)="updateCustomerField('docType', $event)"
+                class="pos-field-input select-doc"
+              >
+                <option value="DNI">DNI ( Persona )</option>
+                <option value="RUC">RUC ( Empresa )</option>
+              </select>
+            </div>
+            <div class="field-item">
+              <label class="pos-field-label">N° Documento</label>
+              <div class="search-doc-wrapper">
+                <input
+                  type="text"
+                  [ngModel]="newCustomer().docNumber"
+                  (ngModelChange)="updateCustomerField('docNumber', $event)"
+                  placeholder="Ej. 20601928374"
+                  class="pos-field-input font-mono"
+                />
+                <button
+                  type="button"
+                  (click)="buscarClienteBD()"
+                  class="btn-search-doc"
+                  title="Buscar en BD"
+                >
+                  🔍
+                </button>
+              </div>
+            </div>
+            <div class="field-item col-span-full">
+              <label class="pos-field-label">{{
+                newCustomer().docType === 'RUC' ? 'Razón Social' : 'Nombre Completo'
+              }}</label>
               <input
                 type="text"
-                [ngModel]="newCustomer().docNumber"
-                (ngModelChange)="updateCustomerField('docNumber', $event)"
-                placeholder="Ej. 20601928374"
-                class="pos-field-input font-mono"
+                [ngModel]="newCustomer().name"
+                (ngModelChange)="updateCustomerField('name', $event)"
+                placeholder="Ej. Constructora Lima SAC / Juan Pérez"
+                class="pos-field-input"
               />
-              <button type="button" (click)="buscarClienteBD()" class="btn-search-doc" title="Buscar en BD">
-                🔍
-              </button>
+            </div>
+            <div class="field-item">
+              <label class="pos-field-label">Teléfono (Opcional)</label>
+              <input
+                type="text"
+                [ngModel]="newCustomer().phone"
+                (ngModelChange)="updateCustomerField('phone', $event)"
+                placeholder="984 521 908"
+                class="pos-field-input"
+              />
+            </div>
+            <div class="field-item">
+              <label class="pos-field-label">Email (Opcional)</label>
+              <input
+                type="email"
+                [ngModel]="newCustomer().email"
+                (ngModelChange)="updateCustomerField('email', $event)"
+                placeholder="cliente@correo.com"
+                class="pos-field-input"
+              />
             </div>
           </div>
-          <div class="field-item col-span-full">
-            <label class="pos-field-label">{{ newCustomer().docType === 'RUC' ? 'Razón Social' : 'Nombre Completo' }}</label>
-            <input type="text" [ngModel]="newCustomer().name" (ngModelChange)="updateCustomerField('name', $event)" placeholder="Ej. Constructora Lima SAC / Juan Pérez" class="pos-field-input" />
+          <div class="client-modal-footer">
+            <button type="button" (click)="closeCustomerModal()" class="btn-client-cancel">
+              Cancelar
+            </button>
+            <button type="button" (click)="saveCustomer()" class="btn-client-save">Guardar</button>
           </div>
-          <div class="field-item">
-            <label class="pos-field-label">Teléfono (Opcional)</label>
-            <input type="text" [ngModel]="newCustomer().phone" (ngModelChange)="updateCustomerField('phone', $event)" placeholder="984 521 908" class="pos-field-input" />
-          </div>
-          <div class="field-item">
-            <label class="pos-field-label">Email (Opcional)</label>
-            <input type="email" [ngModel]="newCustomer().email" (ngModelChange)="updateCustomerField('email', $event)" placeholder="cliente@correo.com" class="pos-field-input" />
-          </div>
-        </div>
-        <div class="client-modal-footer">
-          <button type="button" (click)="closeCustomerModal()" class="btn-client-cancel">Cancelar</button>
-          <button type="button" (click)="saveCustomer()" class="btn-client-save">Guardar</button>
         </div>
       </div>
     </div>
-  </div>
+  }
 
   <!-- MODAL PAGO -->
-  <div *ngIf="isPaymentModalOpen()" class="modal-backdrop" (click)="closePaymentModal()">
-    <div class="modal-card-box modal-payment-wide" (click)="$event.stopPropagation()">
-      <div class="modal-top-bar">
-        <div>
-          <span class="modal-micro-tag">CAJA REGISTRADORA</span>
-          <h3 class="modal-heading-text">Finalizar Cobro</h3>
+  @if (isPaymentModalOpen()) {
+    <div class="modal-backdrop" (click)="closePaymentModal()">
+      <div class="modal-card-box modal-payment-wide" (click)="$event.stopPropagation()">
+        <div class="modal-top-bar">
+          <div>
+            <span class="modal-micro-tag">CAJA REGISTRADORA</span>
+            <h3 class="modal-heading-text">Finalizar Cobro</h3>
+          </div>
+          <button type="button" (click)="closePaymentModal()" class="btn-close-modal">✕</button>
         </div>
-        <button type="button" (click)="closePaymentModal()" class="btn-close-modal">✕</button>
-      </div>
-
-      <div class="total-due-banner">
-        <span>IMPORTE TOTAL:</span>
-        <strong class="total-banner-text">{{ formatPrice(totalAmount()) }}</strong>
-      </div>
-
-      <label class="pos-field-label">SELECCIONA EL MÉTODO DE PAGO</label>
-      <div class="payment-method-selector-grid">
-        <button type="button" class="method-toggle-btn" [class.active]="selectedPaymentMethod() === 'EFECTIVO'" (click)="setPaymentMethod('EFECTIVO')">💵 Efectivo</button>
-        <button type="button" class="method-toggle-btn" [class.active]="selectedPaymentMethod() === 'YAPE'" (click)="setPaymentMethod('YAPE')">📱 Yape / Plin</button>
-        <button type="button" class="method-toggle-btn" [class.active]="selectedPaymentMethod() === 'TARJETA'" (click)="setPaymentMethod('TARJETA')">💳 Tarjeta (POS)</button>
-      </div>
-
-      <div class="payment-dynamic-box">
-        <!-- 1. EFECTIVO -->
-        <div *ngIf="selectedPaymentMethod() === 'EFECTIVO'" class="cash-input-group fade-in">
-          <label class="pos-field-label">Monto recibido del cliente (S/)</label>
-          <input type="number" [ngModel]="cashGiven()" (ngModelChange)="cashGiven.set($event)" class="input-cash-big font-mono" placeholder="0.00" />
-          <div class="quick-cash-tags">
-            <button type="button" (click)="setQuickCash(totalAmount())">Exacto ({{ formatPrice(totalAmount()) }})</button>
-            <button type="button" (click)="setQuickCash(20)">S/ 20</button>
-            <button type="button" (click)="setQuickCash(50)">S/ 50</button>
-            <button type="button" (click)="setQuickCash(100)">S/ 100</button>
-            <button type="button" (click)="setQuickCash(200)">S/ 200</button>
-          </div>
-          <div class="change-calc-banner">
-            <span>Vuelto a entregar:</span>
-            <strong class="change-amount-text">{{ formatPrice(changeDue()) }}</strong>
-          </div>
+        <div class="total-due-banner">
+          <span>IMPORTE TOTAL:</span>
+          <strong class="total-banner-text">{{ formatPrice(totalAmount()) }}</strong>
         </div>
-
-        <!-- 2. YAPE / PLIN (Muestra QR y pide Operación) -->
-        <div *ngIf="selectedPaymentMethod() === 'YAPE'" class="yape-plin-group fade-in">
-          <div class="qr-display-row">
-            <div class="qr-placeholder-box">
-              <span class="qr-icon">📱</span>
-              <span class="qr-text">QR TIENDA</span>
-            </div>
-            <div class="qr-instructions">
-              <p class="qr-title">Cobro con Billetera Digital</p>
-              <p class="qr-monto">A cobrar: <strong>{{ formatPrice(totalAmount()) }}</strong></p>
-              <p class="qr-help">Pide al cliente que escanee el QR o envíe al <strong>987 654 321</strong>.</p>
-            </div>
-          </div>
-          <div class="validation-input-box mt-3">
-            <label class="pos-field-label">N° de Operación (Obligatorio)</label>
-            <input type="text" [ngModel]="operationRef()" (ngModelChange)="operationRef.set($event)" placeholder="Ej. 012345" class="pos-field-input font-mono" />
-          </div>
+        <label class="pos-field-label">SELECCIONA EL MÉTODO DE PAGO</label>
+        <div class="payment-method-selector-grid">
+          <button
+            type="button"
+            class="method-toggle-btn"
+            [class.active]="selectedPaymentMethod() === 'EFECTIVO'"
+            (click)="setPaymentMethod('EFECTIVO')"
+          >
+            💵 Efectivo
+          </button>
+          <button
+            type="button"
+            class="method-toggle-btn"
+            [class.active]="selectedPaymentMethod() === 'YAPE'"
+            (click)="setPaymentMethod('YAPE')"
+          >
+            📱 Yape / Plin
+          </button>
+          <button
+            type="button"
+            class="method-toggle-btn"
+            [class.active]="selectedPaymentMethod() === 'TARJETA'"
+            (click)="setPaymentMethod('TARJETA')"
+          >
+            💳 Tarjeta (POS)
+          </button>
         </div>
-
-        <!-- 3. TARJETA POS FÍSICO (Instrucciones y Voucher) -->
-        <div *ngIf="selectedPaymentMethod() === 'TARJETA'" class="pos-terminal-group fade-in">
-          <div class="terminal-instruction-box">
-            <div class="terminal-icon-pulse">
-              <span>💳</span>
+        <div class="payment-dynamic-box">
+          <!-- 1. EFECTIVO -->
+          @if (selectedPaymentMethod() === 'EFECTIVO') {
+            <div class="cash-input-group fade-in">
+              <label class="pos-field-label">Monto recibido del cliente (S/)</label>
+              <input
+                type="number"
+                [ngModel]="cashGiven()"
+                (ngModelChange)="cashGiven.set($event)"
+                class="input-cash-big font-mono"
+                placeholder="0.00"
+              />
+              <div class="quick-cash-tags">
+                <button type="button" (click)="setQuickCash(totalAmount())">
+                  Exacto ({{ formatPrice(totalAmount()) }})
+                </button>
+                <button type="button" (click)="setQuickCash(20)">S/ 20</button>
+                <button type="button" (click)="setQuickCash(50)">S/ 50</button>
+                <button type="button" (click)="setQuickCash(100)">S/ 100</button>
+                <button type="button" (click)="setQuickCash(200)">S/ 200</button>
+              </div>
+              <div class="change-calc-banner">
+                <span>Vuelto a entregar:</span>
+                <strong class="change-amount-text">{{ formatPrice(changeDue()) }}</strong>
+              </div>
             </div>
-            <div class="terminal-text">
-              <p class="terminal-title">Procesa el pago en el POS Físico</p>
-              <p class="terminal-monto">Monto exacto: <strong>{{ formatPrice(totalAmount()) }}</strong></p>
+          }
+          <!-- 2. YAPE / PLIN (Muestra QR y pide Operación) -->
+          @if (selectedPaymentMethod() === 'YAPE') {
+            <div class="yape-plin-group fade-in">
+              <div class="qr-display-row">
+                <div class="qr-placeholder-box">
+                  <span class="qr-icon">📱</span>
+                  <span class="qr-text">QR TIENDA</span>
+                </div>
+                <div class="qr-instructions">
+                  <p class="qr-title">Cobro con Billetera Digital</p>
+                  <p class="qr-monto">
+                    A cobrar: <strong>{{ formatPrice(totalAmount()) }}</strong>
+                  </p>
+                  <p class="qr-help">
+                    Pide al cliente que escanee el QR o envíe al <strong>987 654 321</strong>.
+                  </p>
+                </div>
+              </div>
+              <div class="validation-input-box mt-3">
+                <label class="pos-field-label">N° de Operación (Obligatorio)</label>
+                <input
+                  type="text"
+                  [ngModel]="operationRef()"
+                  (ngModelChange)="operationRef.set($event)"
+                  placeholder="Ej. 012345"
+                  class="pos-field-input font-mono"
+                />
+              </div>
             </div>
-          </div>
-          <div class="validation-input-box mt-3">
-            <label class="pos-field-label">N° de Referencia / Voucher (Obligatorio)</label>
-            <input type="text" [ngModel]="operationRef()" (ngModelChange)="operationRef.set($event)" placeholder="Ej. REF-883719" class="pos-field-input font-mono" />
-          </div>
+          }
+          <!-- 3. TARJETA POS FÍSICO (Instrucciones y Voucher) -->
+          @if (selectedPaymentMethod() === 'TARJETA') {
+            <div class="pos-terminal-group fade-in">
+              <div class="terminal-instruction-box">
+                <div class="terminal-icon-pulse">
+                  <span>💳</span>
+                </div>
+                <div class="terminal-text">
+                  <p class="terminal-title">Procesa el pago en el POS Físico</p>
+                  <p class="terminal-monto">
+                    Monto exacto: <strong>{{ formatPrice(totalAmount()) }}</strong>
+                  </p>
+                </div>
+              </div>
+              <div class="validation-input-box mt-3">
+                <label class="pos-field-label">N° de Referencia / Voucher (Obligatorio)</label>
+                <input
+                  type="text"
+                  [ngModel]="operationRef()"
+                  (ngModelChange)="operationRef.set($event)"
+                  placeholder="Ej. REF-883719"
+                  class="pos-field-input font-mono"
+                />
+              </div>
+            </div>
+          }
         </div>
+        <button type="button" (click)="confirmSale()" class="btn-confirm-pos-sale">
+          Guardar e Imprimir Ticket
+        </button>
       </div>
-
-      <button type="button" (click)="confirmSale()" class="btn-confirm-pos-sale">
-        Guardar e Imprimir Ticket
-      </button>
     </div>
-  </div>
-  <app-pos-ticket *ngIf="lastCompletedSale()" [sale]="lastCompletedSale()"></app-pos-ticket>
+  }
+  @if (lastCompletedSale()) {
+    <app-pos-ticket [sale]="lastCompletedSale()"></app-pos-ticket>
+  }
 </div>
